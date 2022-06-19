@@ -109,10 +109,21 @@ Other important configurable settings (some mandatory, some optional) (mainly fo
 <h2>Home Assistant</h2>
 <h4>Gateway device (with its entities) as well as all sensor devices (with their entities) are automatically configured in Home Assistant using MQTT discovery</h4>
 <br>
-Sensor Device on lovelace dashboard:
 
-<img width="400" alt="Screenshot 2022-06-19 at 12 43 51" src="https://user-images.githubusercontent.com/46562447/174488029-645ff458-5a33-4814-8637-d4f40de59a2d.png">
-
-Sensor device as discovered by MQTT:
-
+<b>Gateway device as discovered by MQTT:</b>
+<br><br>
+<img width="540" alt="Screenshot 2022-06-19 at 18 48 53" src="https://user-images.githubusercontent.com/46562447/174493967-357bdf70-0b84-4d87-8edd-88b8b83fb447.png">
+<br><br>
+<b>Gateway device on lovelace dashboard:</b>
+<br><br>
+<img width="402" alt="Screenshot 2022-06-19 at 18 48 35" src="https://user-images.githubusercontent.com/46562447/174493970-9901a285-e271-4ceb-a5f3-530999bfc31e.png">
+<br><br>
+<b>Sensor device as discovered by MQTT:</b>
+<br><br>
 <img width="809" alt="Screenshot 2022-06-19 at 12 43 32" src="https://user-images.githubusercontent.com/46562447/174488031-cf575458-4a8f-4193-bfaf-33d7e14fd2a3.png">
+<br><br>
+<b>Sensor Device on lovelace dashboard:</b>
+<br><br>
+<img width="400" alt="Screenshot 2022-06-19 at 12 43 51" src="https://user-images.githubusercontent.com/46562447/174488029-645ff458-5a33-4814-8637-d4f40de59a2d.png">
+<br><br>
+
