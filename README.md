@@ -35,7 +35,7 @@ Rough calculation:
   <li>10 000 hours ESP32-S2 WROOM with average 80uA = 417 days, 13.7 months
 </ul>
 So apparently the winner is <b>ESP32-S2 WROOM</b>
-<n>
+<p>
 Sensor is powered with LiPo battery and equipped with TP4056 USB-C charger.
 Due to the low overall power consumption, the battery is capable of delivering the power for long time, however sensor can be connected to solar panel or charged from time to time using USB-C charger.
 
