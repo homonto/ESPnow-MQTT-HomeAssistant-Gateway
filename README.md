@@ -2,7 +2,7 @@
 
 Idea:
 <ul>
-  <li>build universal sensor device equipped with temperature, humidity and light sensor</li>
+  <li>build universal sensor device equipped with temperature, humidity and light sensor that can live <b>LOOOONG</b> on 1 battery charge</li>
   <li>add battery monitoring capability
   <li>sensor wakes up, measures the environment and battery, sends to gateway over ESPnow, goes to sleep
   <li>gateway (always ON) receives message over ESPnow, converts to Home Assistant auto discovery code and sends to Home Assistant over MQTT
