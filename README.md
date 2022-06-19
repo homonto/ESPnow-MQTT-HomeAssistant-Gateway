@@ -144,13 +144,23 @@ The sequence is:
   <li>repeat the above 3 points for the next sensor device
 </ul>
 
-
+<br>
+Sender in action (test device):<br>
+<br>
+<img width="433" alt="sender" src="https://user-images.githubusercontent.com/46562447/174503034-f410b265-ab90-4d58-b6a0-f1038b03dfcb.png">
+<br>
 
 <h3>Gateway device - receiver</h3>
 Gateway tasks are more complex (as described above) so the code is split into multiple files - per function<br>
 Entire configuration is in config.h file<br>
 <br>
 Next is the file with credentials: passwords.h (ssid, password, mqtt ip and credentials, webserver where your firmware is stored)
+<br>
+
+<br>
+Receiver in action (real device):<br>
+<br>
+<img width="547" alt="receiver" src="https://user-images.githubusercontent.com/46562447/174503040-2754766e-4f3d-4fa4-be78-58db44685a28.png">
 <br>
 
 <h3>Libraries needed (non standard):</h3>
