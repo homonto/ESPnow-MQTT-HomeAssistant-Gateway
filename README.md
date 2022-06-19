@@ -90,7 +90,7 @@ To perform firmware upgrade there are 2 possibilities - both are with web server
 I am using Apache minimal add on to Home Assistant - since all sensors are in the same network where Home Assistant is, <b>there is no need for internet access for sensors (and gateway).</b><br>
 
 <h2>Configuration</h2>
-All devices used in the sensor (SHT31, TSL2561, MAX17048, checking charging status) are optional and can be disabled in configuration file.
+All sensors used in the sensor device (SHT31, TSL2561, MAX17048, checking charging status) are optional and can be disabled in configuration file.
 On top of that, light sensor (TSL2561) can be replaced with phototransistor (i.e. TEPT4400) - also configurable.
 In the simplest (and useless) configuration, sensor sends only... its name to Home Assistant.
 
