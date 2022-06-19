@@ -105,6 +105,18 @@ Other important configurable settings (some mandatory, some optional) (mainly fo
   <li>MQTT username
   <li>MQTT password
 </ul>
+<br>
+<h2>Software</h2>
+<h4>Sensor device - sender</h4>
+<br>
+Tasks are as described above so the code is in 1 file only: sender.ino
+Additionally there is a configuration file where you must specify details for each device such as sensors used, GPIO etc.: devices_config.h
+Finally the file with your credentials: passwords.h (ssid, password, webserver where your firmware is stored) - this file is only used for OTA
+<h4>Gateway device - receiver</h4>
+Gateway tasks are more complex (as described above) so the code is split into multiple files - per function
+Entire configuration is in config.h file
+Finally the file with your credentials: passwords.h (ssid, password, mqtt ip and credentials, webserver where your firmware is stored)
+<br>
 
 <h2>Home Assistant</h2>
 <h4>Gateway device (with its entities) as well as all sensor devices (with their entities) are automatically configured in Home Assistant using MQTT discovery</h4>
@@ -126,4 +138,3 @@ Other important configurable settings (some mandatory, some optional) (mainly fo
 <br><br>
 <img width="400" alt="Screenshot 2022-06-19 at 12 43 51" src="https://user-images.githubusercontent.com/46562447/174488029-645ff458-5a33-4814-8637-d4f40de59a2d.png">
 <br><br>
-
