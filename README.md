@@ -1,4 +1,4 @@
-# ESPnow MQTT HomeAssistant Gateway
+<h1> ESPnow MQTT HomeAssistant Gateway </h1>
 
 Idea:
 <ul>
@@ -8,7 +8,7 @@ Idea:
   <li>Gateway's tasks: (always ON) receive message over ESPnow from sensors, convert to Home Assistant auto discovery code and send to Home Assistant over MQTT
 </ul>
 
-# To satisfy the requirements I've chosen:
+<h2> To satisfy the requirements I've chosen: </h2>
 <ul>
   <li>SHT31 temperature and humidity sensor, SDA, around 1.5$ on Aliexpress
   <li>TSL2561 light sensor, SDA, around 1.5$ on Aliexpress
@@ -23,7 +23,7 @@ With the above configuration the sleep current is as following (measures with PP
   <li>ESP32-S  WROOM - 4.5uA
   <li>ESP32-S2 WROOM - 22.5uA
 </ul>
-You would say: "ok, ESP32-S is the winner!" but wait, working time and current is as following:
+You would say: "ok, ESP32-S is the winner!" but wait, working time and current are as following:
 <ul>
   <li>ESP32-S  WROOM - 600ms, 50mA average
   <li>ESP32-S2 WROOM - 200ms, 38mA average
@@ -35,9 +35,9 @@ Rough calculation:
   <li>10 000 hours ESP32-S2 WROOM with average 80uA = 417 days, 13.7 months
 </ul>
 So apparently the winner is <b>ESP32-S2 WROOM</b>
-
-Sensor is powered with LiPo battery and equipped with TP4056 usb-c charger.
-Due to the low overall power consumption, the battery is capable of delivering the power for long time, however sensor can be connected to solar panel or charged from time to time using usb-c charger.
+<n>
+Sensor is powered with LiPo battery and equipped with TP4056 USB-C charger.
+Due to the low overall power consumption, the battery is capable of delivering the power for long time, however sensor can be connected to solar panel or charged from time to time using USB-C charger.
 
 Sensor also provides the information about charging status:
 <ul>
