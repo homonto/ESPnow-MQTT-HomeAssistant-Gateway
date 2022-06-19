@@ -1,11 +1,20 @@
 # ESPnow-MQTT-HomeAssistant-Gateway
 ESPnow MQTT Home Assistant Gateway
 
+Idea:
+<ul>
+  <li>build universal sensor device equipped with temperature, humidity and light sensor</li>
+  <li>add battery monitoring capability
+  <li>sensor wakes up, measures the environment and battery, sends to gateway over ESPnow, goes to sleep
+  <li>gateway (always ON) receives message over ESPnow, converts to Home Assistant auto discovery code and sends to Home Assistant over MQTT
+</ul>
+
 This project consists of 2 parts:
 <ul>
   <li>sensor device - sender</li>
   <li>gateway device - receiver</li>
 </ul>
+
 
 Sensor Device on lovelace dashboard:
 
