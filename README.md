@@ -107,7 +107,7 @@ Other important configurable settings (some mandatory, some optional) (mainly fo
 </ul>
 
 <h2>Home Assistant</h2>
-<h4>Both device and all entities are automatically configured in Home Assistant using MQTT discovery</h4>
+<h4>Gateway device with its entities as well as all sensor devices (with their entities) are automatically configured in Home Assistant using MQTT discovery</h4>
 <br>
 Sensor Device on lovelace dashboard:
 
