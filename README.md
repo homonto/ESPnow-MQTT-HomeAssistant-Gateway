@@ -2,8 +2,13 @@
 
 <h2> Idea:</h2>
 <ul>
-  <li>build universal sensor device equipped with temperature, humidity and light sensor that can live <b>LOOOONG</b> on 1 battery charge</li>
-  <li>add battery monitoring capability
+  <li>Build universal sensor device equipped with temperature, humidity and light sensor that can live <b>LOOOONG</b> on 1 battery charge</li>
+  <li>Deploy as many sensors as needed (indoor, outdoor etc.) - all battery powered
+  <li>Build gateway device (that is always powered ON) that transfers data from sensor devices to Home Assistant
+</ul>
+
+<h3>Tasks for the devices:</h3>
+<ul>
   <li>Sensor's tasks: wake up, measure the environment and battery, send to gateway over ESPnow, go to sleep, wake up after specified period and repeat
   <li>Gateway's tasks: (always ON) receive message over ESPnow from sensors, convert to Home Assistant auto discovery code and send to Home Assistant over MQTT
 </ul>
