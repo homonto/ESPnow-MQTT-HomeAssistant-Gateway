@@ -2,8 +2,8 @@
 
 <h2> Idea:</h2>
 <ul>
-  <li>Build universal sensor device equipped with temperature, humidity and light sensor that can live <b>LOOOONG</b> on 1 battery charge</li>
-  <li>Deploy as many sensors as needed (indoor, outdoor etc.) - all battery powered
+  <li>Build universal sensor device (ESP32 based) equipped with temperature, humidity and light sensor that can live long on 1 battery charge</li>
+  <li>Clone/deploy it to as many sensors as needed (indoor, outdoor etc.) without changing the software or reconfiguration (beyond what is specific to the device i.e. GPIO changes)
   <li>Build gateway device (that is always powered ON) that transfers data from sensor devices to Home Assistant
 </ul>
 
