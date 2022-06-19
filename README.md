@@ -29,7 +29,7 @@ You would say: "ok, ESP32-S is the winner!" but wait, working time and current a
   <li>ESP32-S2 WROOM - 200ms, 38mA average
 </ul>
 And that is what really matters with the battery life time calculation, because 3 times shorter working time makes the difference.<br>
-<h4>Rough calculation (1000mAh battery, reserve capacity: 20%, working time as above, sleep time: 180s) as following:</h4>
+<h4>Rough calculation (1000mAh battery, reserve capacity: 20%, working time as above, sleep time: 180s) shows as following:</h4>
 <ul>
   <li>ESP32-S  WROOM: 4 000 hours with average 80uA = 166 days, 5.5 months
   <li>ESP32-S2 WROOM: 10 000 hours with average 80uA = 417 days, 13.7 months
@@ -37,9 +37,9 @@ And that is what really matters with the battery life time calculation, because 
 So apparently the winner is <b>ESP32-S2 WROOM</b>
 <br>
 <h3> Sensor is powered with LiPo battery and equipped with TP4056 USB-C charger.</h3>
-Due to the low overall power consumption, the battery is capable of delivering the power for long time, however sensor can be connected to solar panel or charged from time to time using USB-C charger.
+It can be connected to solar panel or - from time to time if possible - to USB-C charger.
 
-Sensor also provides the information about charging status:
+Sensor also provides information about charging status:
 <ul>
   <li>NC - not connected
   <li>ON - charging
