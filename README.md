@@ -21,6 +21,11 @@
   <li>ESP32S-WROOM or ESP32-S2 WROOM, around 2$ on Aliexpress (bare metal - <b>not the development board</b> with additional components!)
   <li>few additional components as per schematics (see below)
 </ul>
+
+<img width="1056" alt="s" src="https://user-images.githubusercontent.com/46562447/174493436-59580695-339b-47a6-a3c7-aca9be8a14dc.png">
+<img width="1030" alt="s2" src="https://user-images.githubusercontent.com/46562447/174493450-0c83bded-bc4d-4e2b-81a3-2a97067c947f.png">
+
+
 <h2>Power consumption and management</h2>
 To minimise the sleep current, the power for all sensors is drawn from one of the sensor's GPIO, so during the sleep time there is no current leakage.
 With the above configuration the sleep current is as following (measures with PPK2):
