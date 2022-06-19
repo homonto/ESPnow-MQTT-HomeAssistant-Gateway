@@ -108,10 +108,10 @@ Other important configurable settings (some mandatory, some optional) (mainly fo
 <br>
 <h2>Software</h2>
 <h4>Sensor device - sender</h4>
-<br>
 Tasks are as described above so the code is in 1 file only: sender.ino
 Additionally there is a configuration file where you must specify details for each device such as sensors used, GPIO etc.: devices_config.h
 Finally the file with your credentials: passwords.h (ssid, password, webserver where your firmware is stored) - this file is only used for OTA
+
 <h4>Gateway device - receiver</h4>
 Gateway tasks are more complex (as described above) so the code is split into multiple files - per function
 Entire configuration is in config.h file
