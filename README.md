@@ -27,6 +27,9 @@
 
 
 <h2>Power consumption and management</h2>
+<h3> Sensor device is powered with LiPo battery and equipped with TP4056 USB-C charger.</h3>
+It can be connected to solar panel or - from time to time if possible/needed - to USB-C charger.
+<br><br>
 To minimise the sleep current, the power for all sensors is drawn from one of the ESP32 GPIO, so during the sleep time there is no current leakage - sensors are not powered up.
 With the above configuration the sleep current is as following (measured with PPK2):
 <ul>
@@ -39,15 +42,6 @@ You would say: "ok, ESP32-S is the winner!" but wait, working time and current a
   <li>ESP32-S2 WROOM - 200ms, 38mA average
 </ul>
 
-<b>ESP32-S WROOM battery life time calculation:</b>
-
-<img width="454" alt="Screenshot 2022-06-19 at 22 20 17" src="https://user-images.githubusercontent.com/46562447/174500770-1351d85c-a8c1-42b8-aea3-41405e792389.png">
-
-<b>ESP32-S2 WROOM battery life time calculation:</b>
-
-<img width="435" alt="Screenshot 2022-06-19 at 22 20 59" src="https://user-images.githubusercontent.com/46562447/174500776-ef852615-7fdb-45a6-85d1-3d61e4a3afaf.png">
-
-
 
 And that is what really matters with the battery life time calculation, because 3 times shorter working time makes the difference.<br>
 <h4>Rough and rouded up calculation (1000mAh battery, reserve capacity=20%, working time as above, sleep time=180s) shows as following:</h4>
@@ -57,18 +51,21 @@ And that is what really matters with the battery life time calculation, because 
 </ul>
 
 <br>
-<img width="432" alt="Screenshot 2022-06-19 at 22 09 25" src="https://user-images.githubusercontent.com/46562447/174500482-5b25b632-7d2a-4c09-8ffd-83440a04dc59.png">
+<b>ESP32-S WROOM battery life time calculation:</b>
+<br><br>
+
+<img width="454" alt="Screenshot 2022-06-19 at 22 20 17" src="https://user-images.githubusercontent.com/46562447/174500944-ad46fd8c-fa2e-4983-8f97-e45409a844da.png">
+
 
 <br>
-<img width="430" alt="Screenshot 2022-06-19 at 22 10 41" src="https://user-images.githubusercontent.com/46562447/174500495-bff6dec5-2eb2-4787-9cd6-8159307d82ce.png">
+<b>ESP32-S2 WROOM battery life time calculation:</b>
+<br><br>
 
+<img width="435" alt="Screenshot 2022-06-19 at 22 20 59" src="https://user-images.githubusercontent.com/46562447/174500948-ce6a89dc-d225-4094-a5b6-923444074d7f.png">
 <br>
+So apparently the winner is <b>ESP32-S2 WROOM</b> with almost triple battery life.
+<br><br>
 
-So apparently the winner is <b>ESP32-S2 WROOM</b>
-<br><br>
-<h3> Sensor device is powered with LiPo battery and equipped with TP4056 USB-C charger.</h3>
-It can be connected to solar panel or - from time to time if possible/needed - to USB-C charger.
-<br><br>
 Sensor also provides information about charging status:
 <ul>
   <li>NC - not connected
