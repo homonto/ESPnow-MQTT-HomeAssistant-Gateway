@@ -35,6 +35,7 @@ Information from sensor on Home Assistant:
   <li>humidity [%]
   <li>light [lux]
   <li>battery in [%] and [Volt]
+</ul>
 
 Additionally few diagnostic information:
 <ul>
