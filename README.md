@@ -47,9 +47,24 @@ Additionally few diagnostic information:
 To perform firmware upgrade there are 2 possibilities - both are with web server in use, where you store the binary file (sender.ino.esp32.bin)
 <ul>
   <li>double reset click - built in library recognises double reset and if so, performs firmware upgrade - of course you need to visit the sensor to do it
-  <li>routine check new firmware availability on the server: every 24h sensors connects to server and if new file found, performs upgrade
+  <li>routine check new firmware availability on the server: every 24h (configurable) sensors connects to server and if new file found, performs upgrade
 </ul>
 
+All devices used in the sensor (SHT31, TSL2561, MAX17048, checking charging status) are optional and can be disabled in configuration file.
+On top of that, light sensor (TSL2561) can be replaced with phototransistor (i.e. TEPT4400) - also configurable.
+In the simplest (and useless) configuration, sensor sends only... its name to Home Assistant.
+
+Sleep time (configurable) is initially set to 180s (3 minutes).
+
+Other important configurable settings (some mandatory, some optional) (mainly for gateway):
+<ul>
+  <li>WiFi channel - it must be the same for ESPnow communication and gateway to AP (router) communication
+  <li>SSID
+  <li>password
+  <li>MQTT server IP
+  <li>MQTT username
+  <li>MQTT password
+</ul>
 
 Sensor Device on lovelace dashboard:
 
