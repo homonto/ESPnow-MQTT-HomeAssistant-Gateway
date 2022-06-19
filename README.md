@@ -88,6 +88,8 @@ Other important configurable settings (some mandatory, some optional) (mainly fo
 </ul>
 
 <h2>Home Assistant</h2>
+<h3>Both device and all entities are automatically configured in Home Assistant using MQTT discovery</h3>
+<br>
 Sensor Device on lovelace dashboard:
 
 <img width="400" alt="Screenshot 2022-06-19 at 12 43 51" src="https://user-images.githubusercontent.com/46562447/174488029-645ff458-5a33-4814-8637-d4f40de59a2d.png">
