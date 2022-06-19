@@ -177,3 +177,9 @@ Next is the file with credentials: passwords.h (ssid, password, mqtt ip and cred
 <br><br>
 <img width="400" alt="Screenshot 2022-06-19 at 12 43 51" src="https://user-images.githubusercontent.com/46562447/174488029-645ff458-5a33-4814-8637-d4f40de59a2d.png">
 <br><br>
+
+<h2>TODO list</h2>
+<ul>
+  <li>Gateway device: OTA not yet finished
+  <li>Sensors device: OTA over ESPnow, in case sensor device cannot reach AP/router
+</ul>
