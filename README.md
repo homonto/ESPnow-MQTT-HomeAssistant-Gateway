@@ -9,12 +9,32 @@ Idea:
   <li>gateway (always ON) receives message over ESPnow, converts to Home Assistant auto discovery code and sends to Home Assistant over MQTT
 </ul>
 
-This project consists of 2 parts:
+To satisfy the requirements I've chosen:
 <ul>
-  <li>sensor device - sender</li>
-  <li>gateway device - receiver</li>
+  <li>SHT31 temperature and humidity sensor, SDA
+  <li>TSL2561 light sensor, SDA
+  <li>MAX17048 LiPo battery sensor, SDA
 </ul>
 
+To minimize the sleep current, the power for all sensors is drawn from one of the sensor's GPIO, so during the sleep time there is no current leakage.
+
+Sensor is powered with LiPo battery and equipped with TP4056 usb-c charger.
+Due to the low overall power consumption, the battery is capable of delivering the power for long time, however sensor can be connected to solar panel or charged from time to time using usb-c charger.
+
+Sensor also provides the information about charging status:
+<ul>
+  <li>NC - not connected
+  <li>ON - charging
+  <li>FULL - charged
+</ul>  
+
+Information from sensor on Home Assistant:
+<ul>
+  <li>device name
+  <li>temperature [C]
+  <li>humidity [%]
+  <li>light [lux]
+  <li>battery in [%] and [Volt]
 
 Sensor Device on lovelace dashboard:
 
