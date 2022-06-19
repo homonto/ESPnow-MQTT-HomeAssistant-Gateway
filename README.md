@@ -68,7 +68,9 @@ To perform firmware upgrade there are 2 possibilities - both are with web server
   <li>double reset click - built in functions recognise double reset and if so done, performs firmware upgrade - of course you need to visit the sensor to double click it
   <li>routine check for new firmware availability on the server: every 24h (configurable) sensors connects to server and if new file found, performs upgrade
 </ul>
-I am using Apache minimal add on to Home Assistant - since all sensors are in the same network where Home Assistant is, <b>there is no need for internet access for sensors (and gateway).</b>
+I am using Apache minimal add on to Home Assistant - since all sensors are in the same network where Home Assistant is, <b>there is no need for internet access for sensors (and gateway).</b><br>
+
+<h2>Configuration</h2>
 All devices used in the sensor (SHT31, TSL2561, MAX17048, checking charging status) are optional and can be disabled in configuration file.
 On top of that, light sensor (TSL2561) can be replaced with phototransistor (i.e. TEPT4400) - also configurable.
 In the simplest (and useless) configuration, sensor sends only... its name to Home Assistant.
