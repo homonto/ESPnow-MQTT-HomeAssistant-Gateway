@@ -56,8 +56,8 @@ And that is what really matters with the battery life time calculation, because 
 So apparently the winner is <b>ESP32-S2 WROOM</b>
 <br>
 <h3> Sensor device is powered with LiPo battery and equipped with TP4056 USB-C charger.</h3>
-It can be connected to solar panel or - from time to time if possible/needed - to USB-C charger.<br>
-
+It can be connected to solar panel or - from time to time if possible/needed - to USB-C charger.
+<br><br>
 Sensor also provides information about charging status:
 <ul>
   <li>NC - not connected
