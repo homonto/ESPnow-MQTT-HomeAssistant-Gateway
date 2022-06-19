@@ -18,7 +18,7 @@
   <li>SHT31 temperature and humidity sensor, SDA, around 1.5$ on Aliexpress (breakout)
   <li>TSL2561 light sensor, SDA, around 1.5$ on Aliexpress (breakout)
   <li>MAX17048 LiPo battery sensor, SDA 1-5$ (depending if chip only or breakout)
-  <li>ESP32S-WROOM or ESP32-S2 WROOM, around 2$ on Aliexpress (bare metal - <b>not the development board</b> with additional components!)
+  <li>ESP32S-WROOM or ESP32-S2 WROOM, around 2$ on Aliexpress (bare metal - <b>do NOT use the development board with additional components! - they cannot go to uA due to the on board elements, i.e. LDO, LED etc.)</b> 
   <li>few additional components as per schematics (see below)
 </ul>
 
