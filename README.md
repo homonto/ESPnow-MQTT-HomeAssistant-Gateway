@@ -64,6 +64,7 @@ Sensor also provides information about charging status:
   <li>ON - charging
   <li>FULL - charged
 </ul>  
+To achieve this, you need to connect the pins from TP4056 that control charging/power LEDs - see below: 
 
 Information from sensor on Home Assistant:
 <ul>
