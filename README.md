@@ -28,6 +28,11 @@ You would say: "ok, ESP32-S is the winner!" but wait, working time and current a
   <li>ESP32-S  WROOM - 600ms, 50mA average
   <li>ESP32-S2 WROOM - 200ms, 38mA average
 </ul>
+
+<b>ESP32-S WROOM working time:</b>
+<img width="1728" alt="s working time 1-2022-06-17 at 20 33 04" src="https://user-images.githubusercontent.com/46562447/174492567-4cf963dc-221a-435c-8372-2569ce1bdb9a.png">
+
+
 And that is what really matters with the battery life time calculation, because 3 times shorter working time makes the difference.<br>
 <h4>Rough calculation (1000mAh battery, reserve capacity=20%, working time as above, sleep time=180s) shows as following:</h4>
 <ul>
