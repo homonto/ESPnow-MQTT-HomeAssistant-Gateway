@@ -1,5 +1,4 @@
-# ESPnow-MQTT-HomeAssistant-Gateway
-ESPnow MQTT Home Assistant Gateway
+# ESPnow MQTT HomeAssistant Gateway
 
 Idea:
 <ul>
