@@ -113,8 +113,8 @@ Additionally there is a configuration file where you must specify details for ea
 <br>
 The sequence is:
 <ul>
-  <li>configure all devices in devices_config.h
-  <li>uncomment the device you want to compile the sketch for in main sketch:  sender.ino
+  <li>configure the device in devices_config.h
+  <li>uncomment the DEVICE_ID you want to compile the sketch for in main sketch: sender.ino
   <li>compile
   <li>repeat the above 3 points for the next sensor device
 </ul>
