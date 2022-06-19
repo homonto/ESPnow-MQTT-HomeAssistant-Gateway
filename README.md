@@ -36,7 +36,7 @@ Rough calculation:
 </ul>
 So apparently the winner is <b>ESP32-S2 WROOM</b>
 <p>
-Sensor is powered with LiPo battery and equipped with TP4056 USB-C charger.
+<h2> Sensor is powered with LiPo battery and equipped with TP4056 USB-C charger.</h2> 
 Due to the low overall power consumption, the battery is capable of delivering the power for long time, however sensor can be connected to solar panel or charged from time to time using USB-C charger.
 
 Sensor also provides the information about charging status:
