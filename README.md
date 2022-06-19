@@ -30,6 +30,10 @@ You would say: "ok, ESP32-S is the winner!" but wait, working time and current a
 </ul>
 
 <b>ESP32-S WROOM working time:</b>
+<img width="1635" alt="s working time 1-2022-06-17 at 20 33 04" src="https://user-images.githubusercontent.com/46562447/174492638-ced6a7ae-1e08-4c57-b3ef-5d4f652dbff0.png">
+
+<b>ESP32-S2 WROOM working time:</b>
+<img width="1667" alt="s2 working time 1-2022-06-18 at 12 51 43" src="https://user-images.githubusercontent.com/46562447/174492694-d02a87da-8b9a-471e-8958-c4b7a4ad815b.png">
 
 
 
