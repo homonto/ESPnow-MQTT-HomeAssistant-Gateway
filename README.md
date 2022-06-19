@@ -10,12 +10,31 @@ Idea:
 
 # To satisfy the requirements I've chosen:
 <ul>
-  <li>SHT31 temperature and humidity sensor, SDA
-  <li>TSL2561 light sensor, SDA
-  <li>MAX17048 LiPo battery sensor, SDA
+  <li>SHT31 temperature and humidity sensor, SDA, around 1.5$ on Aliexpress
+  <li>TSL2561 light sensor, SDA, around 1.5$ on Aliexpress
+  <li>MAX17048 LiPo battery sensor, SDA, 2-3$ on ebay or 5$ SparkFun
+  <li>ESP32S-WROOM or ESP32-S2 WROOM, around 2$ on Aliexpress
+  <li>few additional components as per schematics (see below)
 </ul>
 
-To minimize the sleep current, the power for all sensors is drawn from one of the sensor's GPIO, so during the sleep time there is no current leakage.
+To minimise the sleep current, the power for all sensors is drawn from one of the sensor's GPIO, so during the sleep time there is no current leakage.
+With the above configuration the sleep current is as following (measures with PPK2):
+<ul>
+  <li>ESP32-S  WROOM - 4.5uA
+  <li>ESP32-S2 WROOM - 22.5uA
+</ul>
+You would say: "ok, ESP32-S is the winner!" but wait, working time and current is as following:
+<ul>
+  <li>ESP32-S  WROOM - 600ms, 50mA average
+  <li>ESP32-S2 WROOM - 200ms, 38mA average
+</ul>
+And that is what really matters with the battery life time calculation, because 3 times shorter working time for S2 makes it a winner.
+Rough calculation:
+<ul>
+  <li> 4 000 hours ESP32-S  WROOM with average 80uA = 166 days, 5.5 months
+  <li>10 000 hours ESP32-S2 WROOM with average 80uA = 417 days, 13.7 months
+</ul>
+So apparently the winner is <b>ESP32-S2 WROOM</b>
 
 Sensor is powered with LiPo battery and equipped with TP4056 usb-c charger.
 Due to the low overall power consumption, the battery is capable of delivering the power for long time, however sensor can be connected to solar panel or charged from time to time using usb-c charger.
