@@ -1,6 +1,6 @@
 <h1> ESPnow MQTT HomeAssistant Gateway </h1>
 
-<h2> Idea:
+<h2> Idea:</h2>
 <ul>
   <li>build universal sensor device equipped with temperature, humidity and light sensor that can live <b>LOOOONG</b> on 1 battery charge</li>
   <li>add battery monitoring capability
