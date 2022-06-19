@@ -110,7 +110,7 @@ Other important configurable settings (some mandatory, some optional) (mainly fo
 <h4>Sensor device - sender</h4>
 Tasks are as described above so the code is in 1 file only: sender.ino <br>
 <br>
-Next: the file with credentials: passwords.h (ssid, password, webserver where your firmware is stored) - this file is only used for OTA.<br>
+Next is the file with credentials: passwords.h (ssid, password, webserver where your firmware is stored) - this file is only used for OTA.<br>
 <br>
 Finally there is a configuration file where you must specify details for each sensor device (such as sensors used, GPIO etc.): devices_config.h<br>
 <br>
@@ -127,7 +127,8 @@ The sequence is:
 <h4>Gateway device - receiver</h4>
 Gateway tasks are more complex (as described above) so the code is split into multiple files - per function<br>
 Entire configuration is in config.h file<br>
-Finally the file with your credentials: passwords.h (ssid, password, mqtt ip and credentials, webserver where your firmware is stored)
+<br>
+Next is the file with credentials: passwords.h (ssid, password, mqtt ip and credentials, webserver where your firmware is stored)
 <br>
 
 <h4>Libraries needed (non standard):</h4>
