@@ -1,5 +1,4 @@
 #pragma once
-
 /*
 mqtt functions for gateway
 */

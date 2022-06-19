@@ -1,9 +1,7 @@
 #pragma once
-#include "config.h"
 /*
 wifi functions
 */
-
 #include "config.h"
 #include "variables.h"
 

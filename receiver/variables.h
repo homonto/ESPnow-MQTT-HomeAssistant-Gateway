@@ -1,5 +1,7 @@
 #pragma once
-
+/*
+variables
+*/
 #include "config.h"
 
 // data structure for sensors
