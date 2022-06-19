@@ -110,7 +110,8 @@ Other important configurable settings (some mandatory, some optional) (mainly fo
 <h4>Sensor device - sender</h4>
 Tasks are as described above so the code is in 1 file only: sender.ino <br>
 Additionally there is a configuration file where you must specify details for each sensor device (such as sensors used, GPIO etc.): devices_config.h<br>
-The idea is:
+<br>
+The sequence is:
 <ul>
   <li>configure all devices in devices_config.h
   <li>uncomment the device you want to compile the sketch for in main sketch:  sender.ino
