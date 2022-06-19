@@ -39,11 +39,13 @@ You would say: "ok, ESP32-S is the winner!" but wait, working time and current a
   <li>ESP32-S2 WROOM - 200ms, 38mA average
 </ul>
 
-<b>ESP32-S WROOM working time:</b>
-<img width="1635" alt="s working time 1-2022-06-17 at 20 33 04" src="https://user-images.githubusercontent.com/46562447/174492638-ced6a7ae-1e08-4c57-b3ef-5d4f652dbff0.png">
+<b>ESP32-S WROOM battery life time:</b>
 
-<b>ESP32-S2 WROOM working time:</b>
-<img width="1667" alt="s2 working time 1-2022-06-18 at 12 51 43" src="https://user-images.githubusercontent.com/46562447/174492694-d02a87da-8b9a-471e-8958-c4b7a4ad815b.png">
+<img width="454" alt="Screenshot 2022-06-19 at 22 20 17" src="https://user-images.githubusercontent.com/46562447/174500770-1351d85c-a8c1-42b8-aea3-41405e792389.png">
+
+<b>ESP32-S2 WROOM battery life time:</b>
+
+<img width="435" alt="Screenshot 2022-06-19 at 22 20 59" src="https://user-images.githubusercontent.com/46562447/174500776-ef852615-7fdb-45a6-85d1-3d61e4a3afaf.png">
 
 
 
