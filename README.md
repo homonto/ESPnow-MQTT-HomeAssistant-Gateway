@@ -108,7 +108,8 @@ Other important configurable settings (some mandatory, some optional) (mainly fo
 <br>
 <h2>Software</h2>
 <h4>Sensor device - sender</h4>
-Tasks are as described above so the code is in 1 file only: sender.ino <br><p>
+Tasks are as described above so the code is in 1 file only: sender.ino <br>
+<p>
 Additionally there is a configuration file where you must specify details for each sensor device (such as sensors used, GPIO etc.): devices_config.h<br>
 Finally the file with your credentials: passwords.h (ssid, password, webserver where your firmware is stored) - this file is only used for OTA
 
