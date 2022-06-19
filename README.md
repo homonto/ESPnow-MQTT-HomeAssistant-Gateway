@@ -71,7 +71,7 @@ To achieve this, you need to connect the pins from TP4056 that control charging/
 <img width="626" alt="Screenshot 2022-06-19 at 21 40 27" src="https://user-images.githubusercontent.com/46562447/174499788-fd8f5c83-6684-4a11-8a63-4529930a9508.png">
 
 
-<h3>Information from sensor on Home Assistant:</h3>
+<h3>Information from sensor device on Home Assistant:</h3>
 <ul>
   <li>device name
   <li>temperature [C]
