@@ -4,7 +4,7 @@
 <ul>
   <li>build universal sensor device equipped with temperature, humidity and light sensor that can live <b>LOOOONG</b> on 1 battery charge</li>
   <li>add battery monitoring capability
-  <li>Sensor's tasks: wake up, measure the environment and battery, send to gateway over ESPnow, goe to sleep, wake up after specified period and repeat
+  <li>Sensor's tasks: wake up, measure the environment and battery, send to gateway over ESPnow, go to sleep, wake up after specified period and repeat
   <li>Gateway's tasks: (always ON) receive message over ESPnow from sensors, convert to Home Assistant auto discovery code and send to Home Assistant over MQTT
 </ul>
 
@@ -35,7 +35,7 @@ Rough calculation:
   <li>10 000 hours ESP32-S2 WROOM with average 80uA = 417 days, 13.7 months
 </ul>
 So apparently the winner is <b>ESP32-S2 WROOM</b>
-<p>
+<br>
 <h3> Sensor is powered with LiPo battery and equipped with TP4056 USB-C charger.</h3>
 Due to the low overall power consumption, the battery is capable of delivering the power for long time, however sensor can be connected to solar panel or charged from time to time using USB-C charger.
 
