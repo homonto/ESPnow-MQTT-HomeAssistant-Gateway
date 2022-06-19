@@ -27,7 +27,7 @@
 
 
 <h2>Power consumption and management</h2>
-To minimise the sleep current, the power for all sensors is drawn from one of the sensor's GPIO, so during the sleep time there is no current leakage.
+To minimise the sleep current, the power for all sensors is drawn from one of the ESP32 GPIO, so during the sleep time there is no current leakage - sensors are not powered up.
 With the above configuration the sleep current is as following (measured with PPK2):
 <ul>
   <li>ESP32-S  WROOM - 4.5uA
