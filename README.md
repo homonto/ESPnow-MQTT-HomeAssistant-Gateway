@@ -107,7 +107,7 @@ Other important configurable settings (some mandatory, some optional) (mainly fo
 </ul>
 <br>
 <h2>Software</h2>
-<h4>Sensor device - sender</h4>
+<h3>Sensor device - sender</h3>
 Tasks are as described above so the code is in 1 file only: sender.ino <br>
 <br>
 Next is the file with credentials: passwords.h (ssid, password, webserver where your firmware is stored) - this file is only used for OTA.<br>
@@ -124,14 +124,14 @@ The sequence is:
 
 
 
-<h4>Gateway device - receiver</h4>
+<h3>Gateway device - receiver</h3>
 Gateway tasks are more complex (as described above) so the code is split into multiple files - per function<br>
 Entire configuration is in config.h file<br>
 <br>
 Next is the file with credentials: passwords.h (ssid, password, mqtt ip and credentials, webserver where your firmware is stored)
 <br>
 
-<h4>Libraries needed (non standard):</h4>
+<h3>Libraries needed (non standard):</h3>
 <ul>
   <li>ESP_DoubleResetDetector
   <li>HTTPClient
