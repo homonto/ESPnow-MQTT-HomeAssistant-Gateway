@@ -119,6 +119,7 @@ Finally the file with your credentials: passwords.h (ssid, password, mqtt ip and
 <br>
 
 <h4>Libraries needed:</h4>
+ESP_DoubleResetDetector
 
 <h2>Home Assistant</h2>
 <h4>Gateway device (with its entities) as well as all sensor devices (with their entities) are automatically configured in Home Assistant using MQTT discovery</h4>
