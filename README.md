@@ -110,6 +110,14 @@ Other important configurable settings (some mandatory, some optional) (mainly fo
 <h4>Sensor device - sender</h4>
 Tasks are as described above so the code is in 1 file only: sender.ino <br>
 Additionally there is a configuration file where you must specify details for each sensor device (such as sensors used, GPIO etc.): devices_config.h<br>
+The idea is:
+<ul>
+  <li>configure all devices in devices_config.h
+  <li>uncomment the device you want to compile the sketch for in main sketch:  sender.ino
+  <li>compile
+  <li>repeat the above 3 points for the next sensor device
+</ul>
+
 Finally the file with your credentials: passwords.h (ssid, password, webserver where your firmware is stored) - this file is only used for OTA
 
 <h4>Gateway device - receiver</h4>
