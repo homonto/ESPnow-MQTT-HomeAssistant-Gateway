@@ -73,7 +73,11 @@ And that is what really matters with the battery life time calculation, because 
 <br>
 So apparently the winner is <b>ESP32-S2 WROOM</b> with almost triple battery life.
 <br><br>
+<h3>Measuring the working time</h3>
+To measure working time you shall NOT use millis or micros - ESP32 gives totally strange readings even if you print millis() just as the second line in void setup() (after Serial.begin(x)) - I used PPK2 and estimated the time the ESP32 works measuring the power consumption. 
+<br><br>
 
+<h3>Charging details</h3>
 Sensor device also provides information about charging status:
 <ul>
   <li>NC - not connected
