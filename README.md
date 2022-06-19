@@ -62,6 +62,7 @@ Additionally few diagnostic information:
   <li>boot number
 </ul>
 
+<h2>Firmware upgrade - OTA</h2>
 To perform firmware upgrade there are 2 possibilities - both are with web server in use, where you store the binary file (sender.ino.esp32.bin)
 <ul>
   <li>double reset click - built in library recognises double reset and if so, performs firmware upgrade - of course you need to visit the sensor to do it
