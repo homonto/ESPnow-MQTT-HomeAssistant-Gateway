@@ -1,4 +1,4 @@
-<h1> ESPnow MQTT HomeAssistant Gateway </h1>
+<h1> ESPnow MQTT Home Assistant Gateway </h1>
 
 <h2> Idea:</h2>
 <ul>
