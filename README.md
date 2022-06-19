@@ -15,10 +15,10 @@
 
 <h3> To satisfy the requirements I've chosen: </h3>
 <ul>
-  <li>SHT31 temperature and humidity sensor, SDA, around 1.5$ on Aliexpress
-  <li>TSL2561 light sensor, SDA, around 1.5$ on Aliexpress
-  <li>MAX17048 LiPo battery sensor, SDA, 2-3$ on ebay or 5$ SparkFun
-  <li>ESP32S-WROOM or ESP32-S2 WROOM, around 2$ on Aliexpress
+  <li>SHT31 temperature and humidity sensor, SDA, around 1.5$ on Aliexpress (breakout)
+  <li>TSL2561 light sensor, SDA, around 1.5$ on Aliexpress (breakout)
+  <li>MAX17048 LiPo battery sensor, SDA, 1$-5$ (depending if chip only or breakout)
+  <li>ESP32S-WROOM or ESP32-S2 WROOM, around 2$ on Aliexpress (bare metal - <b>not the development board</b> with additional components!)
   <li>few additional components as per schematics (see below)
 </ul>
 <h2>Power consumption and management</h2>
