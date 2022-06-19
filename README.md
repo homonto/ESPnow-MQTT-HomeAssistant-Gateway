@@ -3,14 +3,14 @@
 <h2> Idea:</h2>
 <ul>
   <li>Build universal sensor device (ESP32 based) equipped with temperature, humidity and light sensor that can live long on 1 battery charge</li>
-  <li>Clone/deploy it to as many sensors as needed (indoor, outdoor etc.) without changing the software or reconfiguration (beyond what is specific to the device i.e. GPIO changes)
+  <li>Clone/deploy it to as many sensors as needed (indoor, outdoor etc.) without changing the software or reconfiguration (beyond what is specific to the device i.e. GPIO connection changes)
   <li>Build gateway device (that is always powered ON) that transfers data from sensor devices to Home Assistant
 </ul>
 
 <h3>Tasks for the devices:</h3>
 <ul>
-  <li>Sensor devices tasks: wake up, measure the environment and battery, send to gateway over ESPnow, go to sleep, wake up after specified period and repeat
-  <li>Gateway device tasks: (always ON) receive message over ESPnow from sensors, convert to Home Assistant auto discovery code and send to Home Assistant over MQTT
+  <li>Sensor devices: (battery powered) wake up, measure the environment and battery, send to gateway over ESPnow, go to sleep, wake up after specified period and repeat
+  <li>Gateway device: (always ON) receive message over ESPnow from sensors, convert to Home Assistant auto discovery code and send to Home Assistant over MQTT/WiFi
 </ul>
 
 <h3> To satisfy the requirements I've chosen: </h3>
