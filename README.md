@@ -4,11 +4,11 @@ Idea:
 <ul>
   <li>build universal sensor device equipped with temperature, humidity and light sensor that can live <b>LOOOONG</b> on 1 battery charge</li>
   <li>add battery monitoring capability
-  <li>sensor wakes up, measures the environment and battery, sends to gateway over ESPnow, goes to sleep
-  <li>gateway (always ON) receives message over ESPnow, converts to Home Assistant auto discovery code and sends to Home Assistant over MQTT
+  <li>Sensor's tasks: wake up, measure the environment and battery, send to gateway over ESPnow, goe to sleep, wake up after specified period and repeat
+  <li>Gateway's tasks: (always ON) receive message over ESPnow from sensors, convert to Home Assistant auto discovery code and send to Home Assistant over MQTT
 </ul>
 
-To satisfy the requirements I've chosen:
+# To satisfy the requirements I've chosen:
 <ul>
   <li>SHT31 temperature and humidity sensor, SDA
   <li>TSL2561 light sensor, SDA
