@@ -200,10 +200,9 @@ Receiver in action (real device):<br>
 <img width="400" alt="Screenshot 2022-06-19 at 12 43 51" src="https://user-images.githubusercontent.com/46562447/174488029-645ff458-5a33-4814-8637-d4f40de59a2d.png">
 <br><br>
 <h3>MQTT structure</h3>
-All information from sensor device is sent to Home Assistant MQTT broker in one topic: sensor_hostname/sensor/state
+All information from sensor device is sent to Home Assistant MQTT broker in one topic: sensor_hostname/sensor/state<br>
 <br>
 <img width="593" alt="Screenshot 2022-06-20 at 00 17 05" src="https://user-images.githubusercontent.com/46562447/174503988-5944ceb1-49b5-40a9-a96f-f9aeae532dee.png">
-<br>
 <br>
 And message structure is in JSON format:<br>
 <br>
