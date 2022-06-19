@@ -28,7 +28,7 @@
 
 <h2>Power consumption and management</h2>
 To minimise the sleep current, the power for all sensors is drawn from one of the sensor's GPIO, so during the sleep time there is no current leakage.
-With the above configuration the sleep current is as following (measures with PPK2):
+With the above configuration the sleep current is as following (measured with PPK2):
 <ul>
   <li>ESP32-S  WROOM - 4.5uA
   <li>ESP32-S2 WROOM - 22.5uA
@@ -55,8 +55,8 @@ And that is what really matters with the battery life time calculation, because 
 </ul>
 So apparently the winner is <b>ESP32-S2 WROOM</b>
 <br>
-<h3> Sensor is powered with LiPo battery and equipped with TP4056 USB-C charger.</h3>
-It can be connected to solar panel or - from time to time if possible - to USB-C charger.
+<h3> Sensor device is powered with LiPo battery and equipped with TP4056 USB-C charger.</h3>
+It can be connected to solar panel or - from time to time if possible/needed - to USB-C charger.<br>
 
 Sensor also provides information about charging status:
 <ul>
