@@ -87,6 +87,7 @@ Other important configurable settings (some mandatory, some optional) (mainly fo
   <li>MQTT password
 </ul>
 
+<h2>Home Assistant</h2>
 Sensor Device on lovelace dashboard:
 
 <img width="400" alt="Screenshot 2022-06-19 at 12 43 51" src="https://user-images.githubusercontent.com/46562447/174488029-645ff458-5a33-4814-8637-d4f40de59a2d.png">
