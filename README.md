@@ -2,8 +2,10 @@
 ESPnow MQTT Home Assistant Gateway
 
 This project consists of 2 parts:
-1 - sketch for sender device
-2 - sketch for receiver device - gateway
+<ul>
+  <li>sensor device - sender</li>
+  <li>gateway device - receiver</li>
+</ul>
 
 Sensor Device on lovelace dashboard:
 
