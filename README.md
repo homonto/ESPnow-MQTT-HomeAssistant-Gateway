@@ -28,8 +28,8 @@ You would say: "ok, ESP32-S is the winner!" but wait, working time and current a
   <li>ESP32-S  WROOM - 600ms, 50mA average
   <li>ESP32-S2 WROOM - 200ms, 38mA average
 </ul>
-And that is what really matters with the battery life time calculation, because 3 times shorter working time for S2 makes it a winner.<br>
-Rough calculation (1000mAh battery, reserve capacity: 20%, working time as above, sleep time: 180s):
+And that is what really matters with the battery life time calculation, because 3 times shorter working time makes the difference.<br>
+<h3>Rough calculation (1000mAh battery, reserve capacity: 20%, working time as above, sleep time: 180s):</h3>
 <ul>
   <li>ESP32-S  WROOM: 4 000 hours with average 80uA = 166 days, 5.5 months
   <li>ESP32-S2 WROOM: 10 000 hours with average 80uA = 417 days, 13.7 months
