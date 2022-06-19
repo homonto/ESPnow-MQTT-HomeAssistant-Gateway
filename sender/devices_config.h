@@ -1,5 +1,4 @@
 #pragma once
-
 /*
 device configuration template:
 
