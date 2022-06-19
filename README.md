@@ -118,8 +118,17 @@ Entire configuration is in config.h file<br>
 Finally the file with your credentials: passwords.h (ssid, password, mqtt ip and credentials, webserver where your firmware is stored)
 <br>
 
-<h4>Libraries needed:</h4>
-ESP_DoubleResetDetector
+<h4>Libraries needed (non standard):</h4>
+<ul>
+  <li>ESP_DoubleResetDetector
+  <li>HTTPClient
+  <li>Update
+  <li>Adafruit_SHT31
+  <li>SparkFunTSL2561
+  <li>SparkFun_MAX1704x_Fuel_Gauge_Arduino_Library
+  <li>PubSubClient
+  <li>ArduinoJson
+</ul>
 
 <h2>Home Assistant</h2>
 <h4>Gateway device (with its entities) as well as all sensor devices (with their entities) are automatically configured in Home Assistant using MQTT discovery</h4>
