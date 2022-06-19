@@ -36,6 +36,20 @@ Information from sensor on Home Assistant:
   <li>light [lux]
   <li>battery in [%] and [Volt]
 
+Additionally few diagnostic information:
+<ul>
+  <li>wifi signal/rssi [dBm]
+  <li>firmware version
+  <li>boot number
+</ul>
+
+To perform firmware upgrade there are 2 possibilities - both are with web server in use, where you store the binary file (sender.ino.esp32.bin)
+<ul>
+  <li>double reset click - built in library recognises double reset and if so, performs firmware upgrade - of course you need to visit the sensor to do it
+  <li>routine check new firmware availability on the server: every 24h sensors connects to server and if new file found, performs upgrade
+</ul>
+
+
 Sensor Device on lovelace dashboard:
 
 <img width="400" alt="Screenshot 2022-06-19 at 12 43 51" src="https://user-images.githubusercontent.com/46562447/174488029-645ff458-5a33-4814-8637-d4f40de59a2d.png">
