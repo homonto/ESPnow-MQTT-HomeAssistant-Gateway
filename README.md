@@ -66,7 +66,7 @@ And that is what really matters with the battery life time calculation, because 
 So apparently the winner is <b>ESP32-S2 WROOM</b> with almost triple battery life.
 <br><br>
 
-Sensor also provides information about charging status:
+Sensor device also provides information about charging status:
 <ul>
   <li>NC - not connected
   <li>ON - charging
