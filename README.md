@@ -9,8 +9,8 @@
 
 <h3>Tasks for the devices:</h3>
 <ul>
-  <li>Sensor's tasks: wake up, measure the environment and battery, send to gateway over ESPnow, go to sleep, wake up after specified period and repeat
-  <li>Gateway's tasks: (always ON) receive message over ESPnow from sensors, convert to Home Assistant auto discovery code and send to Home Assistant over MQTT
+  <li>Sensor devices tasks: wake up, measure the environment and battery, send to gateway over ESPnow, go to sleep, wake up after specified period and repeat
+  <li>Gateway device tasks: (always ON) receive message over ESPnow from sensors, convert to Home Assistant auto discovery code and send to Home Assistant over MQTT
 </ul>
 
 <h3> To satisfy the requirements I've chosen: </h3>
