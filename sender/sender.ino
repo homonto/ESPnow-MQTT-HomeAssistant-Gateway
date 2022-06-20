@@ -3,7 +3,7 @@ sender.ino
 */
 
 // ******************************* DEBUG ***************************************
-// #define DEBUG
+#define DEBUG
 
 // to see which board is compiled
 #define PRINT_COMPILER_MESSAGES
@@ -242,7 +242,7 @@ int bootCount = 1;
     read_digital /= 10;
 
     #ifdef DEBUG
-      Serial.print("read_digital=");Serial.println(read_digital);
+      Serial.printf("read_digital=%d\n",read_digital);
     #endif
 
     if (read_digital > LUX_MAX_RAW_READING) read_digital = LUX_MAX_RAW_READING;
@@ -302,18 +302,14 @@ void listDir(fs::FS &fs, const char * dirname, uint8_t levels)
   {
     if(file.isDirectory())
     {
-        Serial.print("  DIR : ");
-        Serial.println(file.name());
-        if(levels)
-        {
-            listDir(fs, file.name(), levels -1);
-        }
+      Serial.printf("  DIR : %s\n",file.name());
+      if(levels)
+      {
+          listDir(fs, file.name(), levels -1);
+      }
     } else
     {
-        Serial.print("  FILE: ");
-        Serial.print(file.name());
-        Serial.print("\tSIZE: ");
-        Serial.println(file.size());
+      Serial.printf("  FILE: %s\tSIZE: %d\n",file.name(),file.size());
     }
     file = root.openNextFile();
   }
@@ -395,7 +391,9 @@ void hibernate()
     #endif
   #endif
 
-  em = millis(); tt = em - program_start_time; Serial.print("Program finished after: "); Serial.print(tt); Serial.println("ms\n[END]: Going to sleep for "+String(SLEEP_TIME)+"s\n");
+  em = millis(); tt = em - program_start_time;
+  Serial.printf("Program finished after: %dms\n[END]: Going to sleep for %ds\n",tt,SLEEP_TIME);
+
   esp_deep_sleep_start();
 }
 
@@ -407,7 +405,7 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
     Serial.println(status == ESP_NOW_SEND_SUCCESS ? "ESPnow SUCCESSFULL" : "ESPnow FAILED");
     em=millis();
     tt=em - start_espnow_time;
-    Serial.print("[send_data] over ESPnow took:...."); Serial.print(tt);Serial.println("ms");
+    Serial.printf("[send_data] over ESPnow took:....%dms\n",tt);
   }
 }
 
@@ -421,14 +419,13 @@ bool gather_data()
   // hostname
   strcpy(myData.host, HOSTNAME);
   #ifdef DEBUG
-    Serial.println("Data gatehered:");
-    Serial.print("\thost=");Serial.println(myData.host);
+    Serial.printf("Data gatehered:\thost=%s\n",myData.host);
   #endif
 
   // name
   strcpy(myData.name, DEVICE_NAME);
   #ifdef DEBUG
-    Serial.print("\tname=");Serial.println(myData.name);
+    Serial.printf("\tname=%s\n",myData.name);
   #endif
 
   // sht31
@@ -442,8 +439,8 @@ bool gather_data()
     }
   #endif
   #ifdef DEBUG
-    Serial.print("\ttemp=");Serial.println(myData.temp);
-    Serial.print("\thum=");Serial.println(myData.hum);
+    Serial.printf("\ttemp=%s\n",myData.temp);
+    Serial.printf("\thum=%s\n",myData.hum);
   #endif
 
   // lux
@@ -490,7 +487,7 @@ bool gather_data()
     }
   #endif
   #ifdef DEBUG
-    Serial.print("\tlux=");Serial.println(myData.lux);
+    Serial.printf("\tlux=%s\n",myData.lux);
   #endif
 
   // battery
