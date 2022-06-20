@@ -913,20 +913,6 @@ void setup()
     #endif
   #endif
 
-// format FS if needed
-  if (!FileFS.begin(true))
-  {
-    #ifdef DEBUG
-      Serial.println("formatting FS");
-    #endif
-    FileFS.format();
-  } else
-  {
-    #ifdef DEBUG
-      Serial.println("formatting FS NOT NEEDED");
-    #endif
-  }
-
 // Firmware update
   #ifdef DEBUG
     Serial.println("UPDATE_FIRMWARE_FILE="+String(UPDATE_FIRMWARE_FILE));
