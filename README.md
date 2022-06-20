@@ -18,7 +18,7 @@
   <li>SHT31 temperature and humidity sensor, SDA, around 1.5$ on Aliexpress (breakout)
   <li>TSL2561 light sensor, SDA, around 1.5$ on Aliexpress (breakout)
   <li>MAX17048 LiPo battery sensor, SDA 1-5$ (depending if chip only or breakout)
-  <li>ESP32S-WROOM or ESP32-S2 WROOM, around 2$ on Aliexpress (bare metal - <b>not the development board</b> with additional components!)
+  <li>ESP32S-WROOM or ESP32-S2 WROOM, around 2$ on Aliexpress (bare metal - <b>do NOT use the development board with additional components! - they cannot go to uA due to the on board elements, i.e. LDO, LED etc.)</b> 
   <li>few additional components as per schematics (see below)
 </ul>
 
@@ -41,6 +41,14 @@ You would say: "ok, ESP32-S is the winner!" but wait, working time and current a
   <li>ESP32-S  WROOM - 600ms, 50mA average
   <li>ESP32-S2 WROOM - 200ms, 38mA average
 </ul>
+
+ESP32-S WROOM working time and current:
+<br>
+<img width="1635" alt="s working time 1-2022-06-17 at 20 33 04" src="https://user-images.githubusercontent.com/46562447/174502504-b3937797-6bf0-40bb-af8e-29bc7e98cdff.png">
+
+ESP32-S3 WROOM working time and current:
+<br>
+<img width="1667" alt="s2 working time 1-2022-06-18 at 12 51 43" src="https://user-images.githubusercontent.com/46562447/174502510-bb3200b7-647a-4269-9ca5-2978d3c97793.png">
 
 
 And that is what really matters with the battery life time calculation, because 3 times shorter working time makes the difference.<br>
@@ -65,7 +73,11 @@ And that is what really matters with the battery life time calculation, because 
 <br>
 So apparently the winner is <b>ESP32-S2 WROOM</b> with almost triple battery life.
 <br><br>
+<h3>Measuring the working time</h3>
+To measure working time you shall NOT use millis or micros - ESP32 gives totally strange readings even if you print millis() just as the second line in void setup() (after Serial.begin(x)) - I used PPK2 and estimated the time the ESP32 works measuring the power consumption. 
+<br><br>
 
+<h3>Charging details</h3>
 Sensor device also provides information about charging status:
 <ul>
   <li>NC - not connected
@@ -98,10 +110,10 @@ Additionally few diagnostic information:
 <h2>Firmware upgrade - OTA</h2>
 To perform firmware upgrade there are 2 possibilities - both are with web server in use, where you store the binary file (sender.ino.esp32.bin)
 <ul>
-  <li>double reset click - built in functions recognise double reset and if so done, performs firmware upgrade - of course you need to visit the sensor to double click it
+  <li>double reset click - built in functions recognise double reset and if so done, performs firmware upgrade - of course you need to visit the sensor to double click it ;-)
   <li>routine check for new firmware availability on the server: every 24h (configurable) sensors connects to server and if new file found, performs upgrade
 </ul>
-I am using Apache minimal add on to Home Assistant - since all sensors are in the same network where Home Assistant is, <b>there is no need for internet access for sensors (and gateway) but sensor device needs to be in the accessible range of the AP/router.</b><br>
+I am using Apache minimal add on Home Assistant - since all sensors are in the same network where Home Assistant is, <b>there is no need for internet access for sensors (and gateway) but sensor device needs to be in the accessible range of the AP/router.</b><br>
 
 <h2>Configuration</h2>
 All sensors used in the sensor device (SHT31, TSL2561, MAX17048, checking charging status) are optional and can be disabled in configuration file.
@@ -136,13 +148,23 @@ The sequence is:
   <li>repeat the above 3 points for the next sensor device
 </ul>
 
-
+<br>
+Sender in action (test device):<br>
+<br>
+<img width="433" alt="sender" src="https://user-images.githubusercontent.com/46562447/174503034-f410b265-ab90-4d58-b6a0-f1038b03dfcb.png">
+<br>
 
 <h3>Gateway device - receiver</h3>
 Gateway tasks are more complex (as described above) so the code is split into multiple files - per function<br>
 Entire configuration is in config.h file<br>
 <br>
 Next is the file with credentials: passwords.h (ssid, password, mqtt ip and credentials, webserver where your firmware is stored)
+<br>
+
+<br>
+Receiver in action (real device):<br>
+<br>
+<img width="547" alt="receiver" src="https://user-images.githubusercontent.com/46562447/174503040-2754766e-4f3d-4fa4-be78-58db44685a28.png">
 <br>
 
 <h3>Libraries needed (non standard):</h3>
@@ -177,7 +199,15 @@ Next is the file with credentials: passwords.h (ssid, password, mqtt ip and cred
 <br><br>
 <img width="400" alt="Screenshot 2022-06-19 at 12 43 51" src="https://user-images.githubusercontent.com/46562447/174488029-645ff458-5a33-4814-8637-d4f40de59a2d.png">
 <br><br>
+<h3>MQTT structure</h3>
+All information from sensor device is sent to Home Assistant MQTT broker in one topic: sensor_hostname/sensor/state<br>
+<br>
+<img width="593" alt="Screenshot 2022-06-20 at 00 17 05" src="https://user-images.githubusercontent.com/46562447/174503988-5944ceb1-49b5-40a9-a96f-f9aeae532dee.png">
+And message arrives in JSON format:<br>
+<br>
+<img width="395" alt="Screenshot 2022-06-20 at 00 16 53" src="https://user-images.githubusercontent.com/46562447/174504004-356fc1b7-342f-4d90-b8f4-7a72785a3e20.png">
 
+<br>
 <h2>TODO list</h2>
 <ul>
   <li>Gateway device: OTA not yet finished
