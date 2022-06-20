@@ -24,6 +24,9 @@ sender.ino
 // **** reset MAX17048 on first deployment only, then comment it out ***********
 // #define RESET_MAX17048
 
+// **** format FS on first deployment only, then change to 0 or comment out ****
+#define FORMAT_FS   0
+
 // versions - description
 #define VERSION "1.8.1"
 /*
@@ -324,7 +327,7 @@ bool readFile(fs::FS &fs, const char * path, char * data)
   if (!file)
   {
     #ifdef DEBUG
-      Serial.println(F("Failed to open file"));
+      Serial.println("Failed to open file: " + String(path));
     #endif
     return false;
   }
@@ -340,7 +343,7 @@ bool readFile(fs::FS &fs, const char * path, char * data)
 bool writeFile(fs::FS &fs, const char * path, const char * message)
 {
   #ifdef DEBUG
-    Serial.printf("Writing file: %s\r\n", path);
+    Serial.printf("Writing file: %s\r", path);
   #endif
   File file = fs.open(path, FILE_WRITE);
   if(!file){
@@ -351,11 +354,11 @@ bool writeFile(fs::FS &fs, const char * path, const char * message)
   }
   if(file.print(message)){
     #ifdef DEBUG
-      Serial.println("- file written");
+      Serial.println(" - file written");
     #endif
   } else {
     #ifdef DEBUG
-      Serial.println("- write failed");
+      Serial.println(" - write failed");
     #endif
   }
   file.close();
@@ -404,7 +407,7 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
     Serial.println(status == ESP_NOW_SEND_SUCCESS ? "ESPnow SUCCESSFULL" : "ESPnow FAILED");
     em=millis();
     tt=em - start_espnow_time;
-    Serial.print("Sending data over ESPnow took:...."); Serial.print(tt);Serial.println("ms\n");
+    Serial.print("[send_data] over ESPnow took:...."); Serial.print(tt);Serial.println("ms");
   }
 }
 
@@ -413,12 +416,12 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
 bool gather_data()
 {
   #ifdef DEBUG
-    Serial.println("start gather_data");
+    Serial.println("start [gather_data]...");
   #endif
   // hostname
   strcpy(myData.host, HOSTNAME);
   #ifdef DEBUG
-    Serial.println("\nData gatehered:");
+    Serial.println("Data gatehered:");
     Serial.print("\thost=");Serial.println(myData.host);
   #endif
 
@@ -830,6 +833,11 @@ void setup()
     Serial.println("LittleFS Mount Failed");
   } else
   {
+    // format FS on first deployment
+    #if (FORMAT_FS == 1)
+      Serial.print("formatting FS...");
+      if (LittleFS.format()) Serial.println("SUCCESSFULL"); else Serial.println("FAILED");
+    #endif
     // list files in DEBUT mode only
     #ifdef DEBUG
       listDir(LittleFS,"/",1);
@@ -1015,7 +1023,7 @@ void setup()
   } else
   {
     #ifdef DEBUG
-      em = millis(); tt = em - program_start_time; Serial.print("Gathering data took: "); Serial.print(tt); Serial.println("ms\n");
+      em = millis(); tt = em - program_start_time; Serial.print("[gather_data] took: "); Serial.print(tt); Serial.println("ms");
     #endif
   }
 // gather data END
@@ -1049,7 +1057,7 @@ void setup()
   } else
   {
     #ifdef DEBUG
-      Serial.print("Sending data over ESPnow...");
+      Serial.print("[send_data] over ESPnow...");
     #endif
     send_data();
   }
