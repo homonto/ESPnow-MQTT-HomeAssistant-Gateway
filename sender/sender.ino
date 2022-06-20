@@ -3,7 +3,7 @@ sender.ino
 */
 
 // ******************************* DEBUG ***************************************
-#define DEBUG
+// #define DEBUG
 
 // to see which board is compiled
 #define PRINT_COMPILER_MESSAGES
@@ -249,9 +249,8 @@ int bootCount = 1;
     nbytes = snprintf(NULL,0,"%d",map(read_digital, 0, LUX_MAX_RAW_READING, 0, LUX_MAX_RAW_MAPPED_READING)) +1;
     snprintf(lux,nbytes,"%d",map(read_digital, 0, LUX_MAX_RAW_READING, 0, LUX_MAX_RAW_MAPPED_READING));
     #ifdef DEBUG
-      long em = millis();
-      long mt=em-sm;
-      Serial.println("\tlux_with_tept TIME:"+String(mt)+"ms");
+      long mt=millis()-sm;
+      Serial.printf("\tlux_with_tept TIME: %dms\n",mt);
     #endif
   }
 #endif
@@ -323,7 +322,7 @@ bool readFile(fs::FS &fs, const char * path, char * data)
   if (!file)
   {
     #ifdef DEBUG
-      Serial.println("Failed to open file: " + String(path));
+      Serial.printf("Failed to open file: %s\n",path);
     #endif
     return false;
   }
@@ -377,11 +376,9 @@ void hibernate()
     esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_SLOW_MEM, ESP_PD_OPTION_OFF);
     esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_FAST_MEM, ESP_PD_OPTION_OFF);
     esp_sleep_pd_config(ESP_PD_DOMAIN_XTAL,         ESP_PD_OPTION_OFF);
-
     // added extra, check if no issue
     esp_sleep_pd_config(ESP_PD_DOMAIN_RTC8M,         ESP_PD_OPTION_OFF);
     esp_sleep_pd_config(ESP_PD_DOMAIN_VDDSDIO,       ESP_PD_OPTION_OFF);
-
     #ifdef DEBUG
       Serial.println("sleep mode: hibernate");
     #endif
@@ -390,10 +387,8 @@ void hibernate()
       Serial.println("sleep mode: deep sleep");
     #endif
   #endif
-
-  em = millis(); tt = em - program_start_time;
+  tt = millis() - program_start_time;
   Serial.printf("Program finished after: %dms\n[END]: Going to sleep for %ds\n",tt,SLEEP_TIME);
-
   esp_deep_sleep_start();
 }
 
@@ -403,8 +398,7 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
 {
   {
     Serial.println(status == ESP_NOW_SEND_SUCCESS ? "ESPnow SUCCESSFULL" : "ESPnow FAILED");
-    em=millis();
-    tt=em - start_espnow_time;
+    tt=millis() - start_espnow_time;
     Serial.printf("[send_data] over ESPnow took:....%dms\n",tt);
   }
 }
@@ -506,17 +500,20 @@ bool gather_data()
       if (bat_volts < MINIMUM_VOLTS)
       {
         #ifdef DEBUG
-          Serial.println("battery volts="+String(bat_volts) +"V, that is below minimum [" + String(MINIMUM_VOLTS)+"V]");
+          Serial.printf("battery volts=%0.2fV, that is below minimum [%0.2fV]\n",bat_volts,MINIMUM_VOLTS);
         #endif
+
         if (DRD_Detected)
         {
           #ifdef DEBUG
-            em = millis(); tt = em - program_start_time; Serial.print("NOT hibernating as DRD detected -  after: "); Serial.print(tt); Serial.println("ms");
+            tt = millis() - program_start_time;
+            Serial.printf("NOT hibernating as DRD detected -  after: %dms\n",tt);
           #endif
         } else
         {
           #ifdef DEBUG
-            em = millis(); tt = em - program_start_time; Serial.print("NOT sending data! leaving [gather_data=false] after: "); Serial.print(tt); Serial.println("ms");
+            tt = millis() - program_start_time;
+            Serial.printf("NOT sending data! leaving [gather_data=false] after: %dms\n",tt);
           #endif
           return false;
         }
@@ -532,8 +529,8 @@ bool gather_data()
     // lipo.sleep();
   #endif
   #ifdef DEBUG
-    Serial.print("\tbat=");Serial.println(myData.bat);
-    Serial.print("\tbatpct=");Serial.println(myData.batpct);
+    Serial.printf("\tbat=%s\n",myData.bat);
+    Serial.printf("\tbatpct=%s\n",myData.batpct);
   #endif
 
   // version
@@ -546,7 +543,7 @@ bool gather_data()
     strcpy(myData.ver, VERSION);
   }
   #ifdef DEBUG
-    Serial.print("\tver=");Serial.println(myData.ver);
+    Serial.printf("\tver=%s\n",myData.ver);
   #endif
 
   // charging
@@ -556,13 +553,13 @@ bool gather_data()
     snprintf(myData.charg,4,"%s","N/A");
   #endif
   #ifdef DEBUG
-    Serial.print("\tcharg=");Serial.println(myData.charg);
+    Serial.printf("\tcharg=%s\n",myData.charg);
   #endif
 
   // bootCount
   snprintf(myData.boot,sizeof(myData.boot),"%d",bootCount);
   #ifdef DEBUG
-    Serial.print("\tboot=");Serial.println(myData.boot);
+    Serial.printf("\tboot=%s\n",myData.boot);
   #endif
 
   return true;
@@ -601,19 +598,18 @@ void setup_wifi()
   WiFi.mode(WIFI_MODE_STA);
   wifi_start_time = millis();
   WiFi.begin(BT_SSID, BT_PASSWORD,WIFI_CHANNEL);
-  Serial.printf("Connecting to %s ...", BT_SSID);
+  Serial.printf("\nConnecting to %s ...", BT_SSID);
 
   while (WiFi.status() != WL_CONNECTED)
   {
     ttc = millis() - wifi_start_time;
     sm1=millis(); while(millis() < sm1 + 20) {}
     if (ttc > (WAIT_FOR_WIFI * 1000)) {
-      Serial.println("still NOT connected after " + String(ttc)+"ms");
-      Serial.println("RESTARTING - WiFi not connected\n\n\n");
+      Serial.printf("still NOT connected after %dms\nRESTARTING - WiFi not connected\n\n\n",ttc);
       ESP.restart();
     }
   }
-  Serial.println("connected after " + String(ttc)+"ms");
+  Serial.printf("connected after %dms\n",ttc);
 }
 
 
@@ -686,15 +682,12 @@ void do_update()
 
     } else
     {
-      Serial.println("FW update failed - reason: " + String(update_firmware_status));
-      Serial.println("RESTARTING - FW update failed\n\n\n");
-
+      Serial.printf("FW update failed - reason: %d\nRESTARTING - FW update failed\n\n\n",update_firmware_status);
       #ifdef FW_UPGRADE_LED_GPIO
         sos(FW_UPGRADE_LED_GPIO);
       #elif defined(ACTIVITY_LED_GPIO)
         sos(ACTIVITY_LED_GPIO);
       #endif
-
     }
   ESP.restart();
 }
@@ -725,27 +718,19 @@ void updateFirmware(uint8_t *data, size_t len)
     #endif
   #endif
 
-  char update_progress_char[20];
   Update.write(data, len);
   fw_currentLength += len;
-
   old_update_progress=update_progress;
-
   update_progress=(fw_currentLength * 100) / fw_totalLength;
   if (update_progress>old_update_progress){
     if (update_progress % 5 == 0){ //if uncomment it prints every 2%, otherwise every 5%
-      sprintf(update_progress_char, "FW update: %d%%", update_progress);
-      Serial.println(update_progress_char);
+      Serial.printf("FW update: %d%%\n",update_progress);
     }
   }
-
   // if current length of written firmware is not equal to total firmware size, repeat
-  if(fw_currentLength != fw_totalLength)
-  {
-    return;
-  }
+  if(fw_currentLength != fw_totalLength) return;
   Update.end(true);
-    Serial.printf("\nUpdate Success, Total Size: %d\n", fw_currentLength);
+  Serial.printf("\nUpdate Success, Total Size: %d\n", fw_currentLength);
 }
 
 
@@ -754,11 +739,10 @@ int update_firmware_prepare(){
   String firmware_file = UPDATE_FIRMWARE_FILE;
   fw_totalLength=0;
   fw_currentLength=0;
-  Serial.println("uploading file: "+firmware_file);
+  Serial.println("uploading file: " +String(UPDATE_FIRMWARE_FILE));
   firmware_update_client.begin(firmware_file);
   int resp = firmware_update_client.GET();
-  Serial.print("Response: ");
-  Serial.println(resp);
+  Serial.printf("Response: %d\n",resp);
   // If file is reachable, start downloading
   if(resp == 200){
     // get length of document (is -1 when Server sends no Content-Length header)
@@ -793,11 +777,13 @@ int update_firmware_prepare(){
   }else
   {
     Serial.println("Cannot download firmware file. Only HTTP response 200: OK is supported. Double check firmware location #defined in UPDATE_FIRMWARE_FILE.");
-    Serial.println("update_firmware_prepare UNSUCESSFUL - time: "+String(millis()-program_start_time)+"ms");
+    tt = millis()-program_start_time;
+    Serial.printf("update_firmware_prepare UNSUCESSFUL - time: %dms\n",tt);
     return resp;
   }
   firmware_update_client.end();
-  Serial.println("update_firmware_prepare SUCESSFUL - time: "+String(millis()-program_start_time)+"ms");
+  tt = millis()-program_start_time;
+  Serial.printf("update_firmware_prepare SUCESSFUL - time: %dms\n",tt);
   return 0;
 }
 // update firmware END
@@ -809,7 +795,7 @@ void setup()
   program_start_time = millis();
 
   Serial.begin(115200);
-  Serial.println("\n[START]: Device: " + String(DEVICE_NAME) + " (" + String(HOSTNAME) + ")");
+  Serial.printf("\n[START]: Device: %s (%s)\n",DEVICE_NAME,HOSTNAME);
   esp_sleep_enable_timer_wakeup(SLEEP_TIME * uS_TO_S_FACTOR);
 
 // custom SDA & SCL
@@ -833,7 +819,7 @@ void setup()
     // format FS on first deployment
     #if (FORMAT_FS == 1)
       Serial.print("formatting FS...");
-      if (LittleFS.format()) Serial.println("SUCCESSFULL"); else Serial.println("FAILED");
+      Serial.println(LittleFS.format() ? "SUCCESSFULL" : "FAILED");
     #endif
     // list files in DEBUT mode only
     #ifdef DEBUG
@@ -844,8 +830,7 @@ void setup()
     {
       bootCount = atoi(data) + 1;
       #ifdef DEBUG
-        Serial.print("bootCount=");
-        Serial.println(bootCount);
+        Serial.printf("bootCount=%d\n",bootCount);
       #endif
       if (bootCount >= PERIODIC_FW_CHECK)
       {
@@ -855,7 +840,6 @@ void setup()
         bootCount = 1;
       }
     }
-
     // convert int to char array
     int nbytes = snprintf(NULL,0,"%d",bootCount) + 1;
     snprintf(data,nbytes,"%d",bootCount);
@@ -929,7 +913,7 @@ void setup()
   {
     drd->stop(); //needed here? I did not figure it out yet
     // #ifdef DEBUG
-      Serial.println("\n\nSETUP: Double Reset Detected\n\n");
+      Serial.println("\nSETUP: Double Reset Detected\n");
     // #endif
     DRD_Detected = true;
     #ifdef FW_UPGRADE_LED_GPIO
@@ -975,7 +959,7 @@ void setup()
       if (light.setPowerUp())
       {
         #ifdef DEBUG
-          Serial.print("tslok =");Serial.println(tslok);
+          Serial.printf("tslok =%d\n",tslok);
         #endif
       } else
       {
@@ -1001,7 +985,7 @@ void setup()
     } else
     {
       #ifdef DEBUG
-        Serial.print("sht31ok =");Serial.println(sht31ok);
+        Serial.printf("sht31ok =%d\n",sht31ok);
       #endif
     }
   #else
@@ -1020,7 +1004,8 @@ void setup()
   } else
   {
     #ifdef DEBUG
-      em = millis(); tt = em - program_start_time; Serial.print("[gather_data] took: "); Serial.print(tt); Serial.println("ms");
+      em = millis(); tt = em - program_start_time;
+      Serial.printf("[gather_data] took: %dms\n",tt);
     #endif
   }
 // gather data END
@@ -1072,7 +1057,7 @@ void loop()
   }
   else
   {
-    Serial.println("\nUpgrading firmware\n");
+    Serial.println("Upgrading firmware scheduled\n");
     drd->stop();
     disable_espnow();
     setup_wifi();
