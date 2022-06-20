@@ -28,8 +28,12 @@ sender.ino
 #define FORMAT_FS   0
 
 // versions - description
-#define VERSION "1.8.1"
+#define VERSION "1.8.2"
 /*
+2022-06-20:
+  1.8.2 - cleaning even more: printf instead of print(ln) where possible
+        - reset bootCount on DRD_Detected
+
 2022-06-19:
   1.8.1 - cleaning code for github ;-)
 
@@ -809,55 +813,55 @@ void setup()
     digitalWrite(ACTIVITY_LED_GPIO, HIGH);
   #endif
 
-// read/increase/save bootCount
-  char data[5];
-  if(!LittleFS.begin(true))
-  {
-    Serial.println("LittleFS Mount Failed");
-  } else
-  {
-    // format FS on first deployment
-    #if (FORMAT_FS == 1)
-      Serial.print("formatting FS...");
-      Serial.println(LittleFS.format() ? "SUCCESSFULL" : "FAILED");
-    #endif
-    // list files in DEBUT mode only
-    #ifdef DEBUG
-      listDir(LittleFS,"/",1);
-    #endif
-    // read bootCount from file
-    if (readFile(LittleFS, BOOT_COUNT_FILE, data))
-    {
-      bootCount = atoi(data) + 1;
-      #ifdef DEBUG
-        Serial.printf("bootCount=%d\n",bootCount);
-      #endif
-      if (bootCount >= PERIODIC_FW_CHECK)
-      {
-        Serial.println("time to check FW");
-        // cheating here: reusing DRD_Detected to initiate the FW upgrade
-        DRD_Detected = true;
-        bootCount = 1;
-      }
-    }
-    // convert int to char array
-    int nbytes = snprintf(NULL,0,"%d",bootCount) + 1;
-    snprintf(data,nbytes,"%d",bootCount);
-
-    // write to file
-    if (writeFile(LittleFS, BOOT_COUNT_FILE, data))
-    {
-      #ifdef DEBUG
-        Serial.println("bootCount saved");
-      #endif
-    } else
-    {
-      #ifdef DEBUG
-        Serial.println("bootCount NOT saved");
-      #endif
-    }
-  }
-// save bootCount END
+// // read/increase/save bootCount
+//   char data[5];
+//   if(!LittleFS.begin(true))
+//   {
+//     Serial.println("LittleFS Mount Failed");
+//   } else
+//   {
+//     // format FS on first deployment
+//     #if (FORMAT_FS == 1)
+//       Serial.print("formatting FS...");
+//       Serial.println(LittleFS.format() ? "SUCCESSFULL" : "FAILED");
+//     #endif
+//     // list files in DEBUT mode only
+//     #ifdef DEBUG
+//       listDir(LittleFS,"/",1);
+//     #endif
+//     // read bootCount from file
+//     if (readFile(LittleFS, BOOT_COUNT_FILE, data))
+//     {
+//       bootCount = atoi(data) + 1;
+//       #ifdef DEBUG
+//         Serial.printf("bootCount=%d\n",bootCount);
+//       #endif
+//       if (bootCount >= PERIODIC_FW_CHECK)
+//       {
+//         Serial.println("time to check FW");
+//         // cheating here: reusing DRD_Detected to initiate the FW upgrade
+//         DRD_Detected = true;
+//         bootCount = 1;
+//       }
+//     }
+//     // convert int to char array
+//     int nbytes = snprintf(NULL,0,"%d",bootCount) + 1;
+//     snprintf(data,nbytes,"%d",bootCount);
+//
+//     // write to file
+//     if (writeFile(LittleFS, BOOT_COUNT_FILE, data))
+//     {
+//       #ifdef DEBUG
+//         Serial.println("bootCount saved");
+//       #endif
+//     } else
+//     {
+//       #ifdef DEBUG
+//         Serial.println("bootCount NOT saved");
+//       #endif
+//     }
+//   }
+// // save bootCount END
 
 // power for sensors from GPIO - MUST be before any SDA sensor is in use obviously!
   #ifdef ENABLE_3V_GPIO
@@ -880,9 +884,9 @@ void setup()
     #endif
     if (! lipo.begin())
     {
-      #ifdef DEBUG
+      // #ifdef DEBUG
         Serial.println("MAX17048 NOT detected ... Check your wiring or I2C ADDR!");
-      #endif
+      // #endif
       max17ok = false;
     } else
     {
@@ -928,6 +932,58 @@ void setup()
 
   }
 // DRD END
+
+// read/increase/save bootCount
+  char data[5];
+  if(!LittleFS.begin(true))
+  {
+    Serial.println("LittleFS Mount Failed");
+  } else
+  {
+    // format FS on first deployment
+    #if (FORMAT_FS == 1)
+      Serial.print("formatting FS...");
+      Serial.println(LittleFS.format() ? "SUCCESSFULL" : "FAILED");
+    #endif
+    // list files in DEBUT mode only
+    #ifdef DEBUG
+      listDir(LittleFS,"/",1);
+    #endif
+    // read bootCount from file
+    if (readFile(LittleFS, BOOT_COUNT_FILE, data))
+    {
+      bootCount = atoi(data) + 1;
+      #ifdef DEBUG
+        Serial.printf("bootCount=%d\n",bootCount);
+      #endif
+      if (bootCount >= PERIODIC_FW_CHECK)
+      {
+        Serial.println("time to check FW");
+        // cheating here: reusing DRD_Detected to initiate the FW upgrade
+        DRD_Detected = true;
+        bootCount = 1;
+      }
+    }
+    // reset bootCount on DRD_Detected
+    if (DRD_Detected) bootCount = 1;
+    // convert int to char array
+    int nbytes = snprintf(NULL,0,"%d",bootCount) + 1;
+    snprintf(data,nbytes,"%d",bootCount);
+
+    // write to file
+    if (writeFile(LittleFS, BOOT_COUNT_FILE, data))
+    {
+      #ifdef DEBUG
+        Serial.println("bootCount saved");
+      #endif
+    } else
+    {
+      #ifdef DEBUG
+        Serial.println("bootCount NOT saved");
+      #endif
+    }
+  }
+// save bootCount END
 
 // check if charging
   #if (defined(CHARGING_GPIO) and defined(POWER_GPIO))
@@ -978,9 +1034,9 @@ void setup()
       Serial.println("start USE_SHT31");
     #endif
     if (! sht31.begin(0x44)) {   // Set to 0x45 for alternate i2c addr
-      #ifdef DEBUG
+      // #ifdef DEBUG
         Serial.println("SHT31    NOT detected ... Check your wiring or I2C ADDR!");
-      #endif
+      // #endif
       sht31ok = false;
     } else
     {
