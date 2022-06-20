@@ -131,7 +131,6 @@ Other important configurable settings (some mandatory, some optional) (mainly fo
   <li>MQTT username
   <li>MQTT password
 </ul>
-<br>
 <h2>Software</h2>
 <h3>Sensor device - sender</h3>
 Tasks are as described above so the code is in 1 file only: sender.ino <br>
