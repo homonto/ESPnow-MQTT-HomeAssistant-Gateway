@@ -90,23 +90,6 @@ To achieve this, you need to connect the pins from TP4056 that control charging/
 
 <img width="626" alt="Screenshot 2022-06-19 at 21 40 27" src="https://user-images.githubusercontent.com/46562447/174499788-fd8f5c83-6684-4a11-8a63-4529930a9508.png">
 
-
-<h3>Information from sensor device on Home Assistant:</h3>
-<ul>
-  <li>device name
-  <li>temperature [C]
-  <li>humidity [%]
-  <li>light [lux]
-  <li>battery in [%] and [Volt]
-</ul>
-
-Additionally few diagnostic information:
-<ul>
-  <li>wifi signal/rssi [dBm]
-  <li>firmware version
-  <li>boot number
-</ul>
-
 <h2>Firmware upgrade - OTA</h2>
 To perform firmware upgrade there are 2 possibilities - both are with web server in use, where you store the binary file (sender.ino.esp32.bin)
 <ul>
@@ -179,6 +162,21 @@ Receiver in action (real device):<br>
 </ul>
 
 <h2>Home Assistant</h2>
+<h3>Information from sensor device on Home Assistant:</h3>
+<ul>
+  <li>device name
+  <li>temperature [C]
+  <li>humidity [%]
+  <li>light [lux]
+  <li>battery in [%] and [Volt]
+</ul>
+
+Additionally few diagnostic information:
+<ul>
+  <li>wifi signal/rssi [dBm]
+  <li>firmware version
+  <li>boot number
+</ul>
 <h4>Gateway device (with its entities) as well as all sensor devices (with their entities) are automatically configured in Home Assistant using MQTT discovery</h4>
 <br>
 
