@@ -52,7 +52,7 @@ ESP32-S3 WROOM working time and current:
 
 
 And that is what really matters with the battery life time calculation, because 3 times shorter working time makes the difference.<br>
-<h4>Rough and rouded up calculation (1000mAh battery, reserve capacity=20%, working time as above, sleep time=180s) shows as following:</h4>
+<h4>Rough and rounded up calculation (1000mAh battery, reserve capacity=20%, working time as above, sleep time=180s) shows as following:</h4>
 <ul>
   <li>ESP32-S  WROOM: 4 700 hours with average 170uA = 195 days, 6.5 months
   <li>ESP32-S2 WROOM: 12 370 hours with average 65uA = 515 days, 17 months
