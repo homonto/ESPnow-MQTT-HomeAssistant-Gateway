@@ -27,7 +27,6 @@
 
 
 <h2>Power consumption and management</h2>
-<br>
 <h3> Sensor device is powered with LiPo battery and equipped with TP4056 USB-C charger.</h3>
 It can be connected to solar panel or - from time to time if possible/needed - to USB-C charger.
 <br>
