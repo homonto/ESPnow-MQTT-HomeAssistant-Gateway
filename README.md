@@ -3,8 +3,8 @@
 <h2> Idea:</h2>
 <ul>
   <li>Build universal sensor device (ESP32 based) equipped with temperature, humidity and light sensor that can live long on 1 battery charge</li>
-  <li>Clone/deploy it to as many sensors as needed (indoor, outdoor etc.) without changing the software or reconfiguration (beyond what is specific to the device i.e. GPIO connection changes)
-  <li>Build gateway device (that is always powered ON) that transfers data from sensor devices to Home Assistant
+  <li>Clone/deploy it to as many sensors as needed (indoor, outdoor etc.) without changing the software or reconfiguration (beyond what is specific to the device i.e. GPIO connection etc.)
+  <li>Build gateway device (that is always powered ON) that transfers data from sensor devices to Home Assistant and automatically creates devices/entities on Home Assistant (no configuration needed)
 </ul>
 
 <h3>Tasks for the devices:</h3>
@@ -52,7 +52,7 @@ ESP32-S3 WROOM working time and current:
 
 
 And that is what really matters with the battery life time calculation, because 3 times shorter working time makes the difference.<br>
-<h4>Rough and rouded up calculation (1000mAh battery, reserve capacity=20%, working time as above, sleep time=180s) shows as following:</h4>
+<h4>Rough and rounded up calculation (1000mAh battery, reserve capacity=20%, working time as above, sleep time=180s) shows as following:</h4>
 <ul>
   <li>ESP32-S  WROOM: 4 700 hours with average 170uA = 195 days, 6.5 months
   <li>ESP32-S2 WROOM: 12 370 hours with average 65uA = 515 days, 17 months
@@ -90,23 +90,6 @@ To achieve this, you need to connect the pins from TP4056 that control charging/
 
 <img width="626" alt="Screenshot 2022-06-19 at 21 40 27" src="https://user-images.githubusercontent.com/46562447/174499788-fd8f5c83-6684-4a11-8a63-4529930a9508.png">
 
-
-<h3>Information from sensor device on Home Assistant:</h3>
-<ul>
-  <li>device name
-  <li>temperature [C]
-  <li>humidity [%]
-  <li>light [lux]
-  <li>battery in [%] and [Volt]
-</ul>
-
-Additionally few diagnostic information:
-<ul>
-  <li>wifi signal/rssi [dBm]
-  <li>firmware version
-  <li>boot number
-</ul>
-
 <h2>Firmware upgrade - OTA</h2>
 To perform firmware upgrade there are 2 possibilities - both are with web server in use, where you store the binary file (sender.ino.esp32.bin)
 <ul>
@@ -131,7 +114,6 @@ Other important configurable settings (some mandatory, some optional) (mainly fo
   <li>MQTT username
   <li>MQTT password
 </ul>
-<br>
 <h2>Software</h2>
 <h3>Sensor device - sender</h3>
 Tasks are as described above so the code is in 1 file only: sender.ino <br>
@@ -180,6 +162,21 @@ Receiver in action (real device):<br>
 </ul>
 
 <h2>Home Assistant</h2>
+<h3>Information from sensor device on Home Assistant:</h3>
+<ul>
+  <li>device name
+  <li>temperature [C]
+  <li>humidity [%]
+  <li>light [lux]
+  <li>battery in [%] and [Volt]
+</ul>
+
+Additionally few diagnostic information:
+<ul>
+  <li>wifi signal/rssi [dBm]
+  <li>firmware version
+  <li>boot number
+</ul>
 <h4>Gateway device (with its entities) as well as all sensor devices (with their entities) are automatically configured in Home Assistant using MQTT discovery</h4>
 <br>
 
