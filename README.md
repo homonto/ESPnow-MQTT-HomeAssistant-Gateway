@@ -6,13 +6,13 @@
   <li>Clone/deploy it to as many sensors as needed (indoor, outdoor etc.) without changing the software or reconfiguration (beyond what is specific to the device i.e. GPIO connection etc.)
   <li>Build gateway device (that is always powered ON) that transfers data from sensor devices to Home Assistant and automatically creates devices/entities on Home Assistant (no configuration needed)
 </ul>
-<br><br>
+<br>
 <h3>Tasks for the devices:</h3>
 <ul>
   <li>Sensor devices: (battery powered) wake up, measure the environment and battery, send to gateway over ESPnow, go to sleep, wake up after specified period and repeat
   <li>Gateway device: (always ON) receive message over ESPnow from sensors, convert to Home Assistant auto discovery code and send to Home Assistant over MQTT/WiFi
 </ul>
-<br><br>
+<br>
 <h3> To satisfy the requirements I've chosen: </h3>
 <ul>
   <li>SHT31 temperature and humidity sensor, SDA, around 1.5$ on Aliexpress (breakout)
@@ -27,10 +27,10 @@
 
 
 <h2>Power consumption and management</h2>
-<br><br>
+<br>
 <h3> Sensor device is powered with LiPo battery and equipped with TP4056 USB-C charger.</h3>
 It can be connected to solar panel or - from time to time if possible/needed - to USB-C charger.
-<br><br>
+<br>
 To minimise the sleep current, the power for all sensors is drawn from one of the ESP32 GPIO, so during the sleep time there is no current leakage - sensors are not powered up.
 With the above configuration the sleep current is as following (measured with PPK2):
 <ul>
@@ -61,22 +61,22 @@ And that is what really matters with the battery life time calculation, because 
 
 <br>
 <b>ESP32-S WROOM battery life time calculation:</b>
-<br><br>
+<br>
 
 <img width="454" alt="Screenshot 2022-06-19 at 22 20 17" src="https://user-images.githubusercontent.com/46562447/174500944-ad46fd8c-fa2e-4983-8f97-e45409a844da.png">
 
 
 <br>
 <b>ESP32-S2 WROOM battery life time calculation:</b>
-<br><br>
+<br>
 
 <img width="435" alt="Screenshot 2022-06-19 at 22 20 59" src="https://user-images.githubusercontent.com/46562447/174500948-ce6a89dc-d225-4094-a5b6-923444074d7f.png">
 <br>
 So apparently the winner is <b>ESP32-S2 WROOM</b> with almost triple battery life.
-<br><br>
+<br>
 <h3>Measuring the working time</h3>
 To measure working time you shall NOT use millis or micros - ESP32 gives totally strange readings even if you print millis() just as the second line in void setup() (after Serial.begin(x)) - I used PPK2 and estimated the time the ESP32 works measuring the power consumption. 
-<br><br>
+<br>
 
 <h3>Charging details</h3>
 Sensor device also provides information about charging status:
@@ -92,18 +92,18 @@ To achieve this, you need to connect the pins from TP4056 that control charging/
 <img width="626" alt="Screenshot 2022-06-19 at 21 40 27" src="https://user-images.githubusercontent.com/46562447/174499788-fd8f5c83-6684-4a11-8a63-4529930a9508.png">
 
 <h2>Firmware update - OTA</h2>
-<br><br>
+<br>
 <h3>Sensor device</h3>
 To perform firmware update there are 2 possibilities - both are with web server in use, where you store the binary file (sender.ino.esp32.bin)
 <ul>
   <li>double reset click - built in functions recognise double reset and if so done, performs firmware upgrade - of course you need to visit the sensor to double click it ;-)
   <li>routine check for new firmware availability on the server: every 24h (configurable) sensors connects to server and if new file found, performs upgrade
 </ul>
-<br><br>
+<br>
 <h3>Gateway device</h3>
 To perform firmware update you simply click the button "Update" on Home Assistant (in the device section of gateway) - gateway will connect to the server where the binary is stored and if file is found, it will perform firmware update and restart gateway.
 I am using Apache minimal add on Home Assistant - since all sensors are in the same network where Home Assistant is, <b>there is no need for internet access for sensors (and gateway) but sensor device needs to be in the accessible range of the AP/router.</b>
-<br><br>
+<br>
 
 <h2>Configuration</h2>
 All sensors used in the sensor device (SHT31, TSL2561, MAX17048, checking charging status) are optional and can be disabled in configuration file.
@@ -122,7 +122,7 @@ Other important configurable settings (some mandatory, some optional) (mainly fo
   <li>MQTT password
 </ul>
 <h2>Software</h2>
-<br><br>
+<br>
 <h3>Sensor device - sender</h3>
 Tasks are as described above so the code is in 1 file only: sender.ino <br>
 <br>
@@ -142,7 +142,7 @@ The sequence is:
 Sender in action (test device):<br>
 <br>
 <img width="433" alt="sender" src="https://user-images.githubusercontent.com/46562447/174503034-f410b265-ab90-4d58-b6a0-f1038b03dfcb.png">
-<br><br>
+<br>
 
 <h3>Gateway device - receiver</h3>
 Gateway tasks are more complex (as described above) so the code is split into multiple files - per function<br>
@@ -155,7 +155,7 @@ Next is the file with credentials: passwords.h (ssid, password, mqtt ip and cred
 Receiver in action (real device):<br>
 <br>
 <img width="547" alt="receiver" src="https://user-images.githubusercontent.com/46562447/174503040-2754766e-4f3d-4fa4-be78-58db44685a28.png">
-<br><br>
+<br>
 
 <h3>Libraries needed (non standard):</h3>
 <ul>
@@ -170,7 +170,7 @@ Receiver in action (real device):<br>
 </ul>
 
 <h2>Home Assistant</h2>
-<br><br>
+<br>
 <h3>Information from sensor device on Home Assistant:</h3>
 <ul>
   <li>device name
@@ -190,21 +190,21 @@ Additionally few diagnostic information:
 <br>
 
 <b>Gateway device as discovered by MQTT:</b>
-<br><br>
+<br>
 <img width="540" alt="Screenshot 2022-06-19 at 18 48 53" src="https://user-images.githubusercontent.com/46562447/174493967-357bdf70-0b84-4d87-8edd-88b8b83fb447.png">
-<br><br>
+<br>
 <b>Gateway device on lovelace dashboard:</b>
-<br><br>
+<br>
 <img width="402" alt="Screenshot 2022-06-19 at 18 48 35" src="https://user-images.githubusercontent.com/46562447/174493970-9901a285-e271-4ceb-a5f3-530999bfc31e.png">
-<br><br>
+<br>
 <b>Sensor device as discovered by MQTT:</b>
-<br><br>
+<br>
 <img width="809" alt="Screenshot 2022-06-19 at 12 43 32" src="https://user-images.githubusercontent.com/46562447/174488031-cf575458-4a8f-4193-bfaf-33d7e14fd2a3.png">
-<br><br>
+<br>
 <b>Sensor Device on lovelace dashboard:</b>
-<br><br>
+<br>
 <img width="400" alt="Screenshot 2022-06-19 at 12 43 51" src="https://user-images.githubusercontent.com/46562447/174488029-645ff458-5a33-4814-8637-d4f40de59a2d.png">
-<br><br>
+<br>
 <h3>MQTT structure</h3>
 All information from sensor device is sent to Home Assistant MQTT broker in one topic: sensor_hostname/sensor/state<br>
 <br>
