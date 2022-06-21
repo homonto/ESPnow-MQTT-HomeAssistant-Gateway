@@ -207,6 +207,5 @@ And message arrives in JSON format:<br>
 <br>
 <h2>TODO list</h2>
 <ul>
-  <li>Gateway device: OTA not yet finished
   <li>Sensors device: OTA over ESPnow, in case sensor device cannot reach AP/router
 </ul>
