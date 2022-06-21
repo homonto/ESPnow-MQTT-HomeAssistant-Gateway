@@ -92,7 +92,6 @@ To achieve this, you need to connect the pins from TP4056 that control charging/
 <img width="626" alt="Screenshot 2022-06-19 at 21 40 27" src="https://user-images.githubusercontent.com/46562447/174499788-fd8f5c83-6684-4a11-8a63-4529930a9508.png">
 
 <h2>Firmware update - OTA</h2>
-<br>
 <h3>Sensor device</h3>
 To perform firmware update there are 2 possibilities - both are with web server in use, where you store the binary file (sender.ino.esp32.bin)
 <ul>
@@ -122,7 +121,6 @@ Other important configurable settings (some mandatory, some optional) (mainly fo
   <li>MQTT password
 </ul>
 <h2>Software</h2>
-<br>
 <h3>Sensor device - sender</h3>
 Tasks are as described above so the code is in 1 file only: sender.ino <br>
 <br>
@@ -170,7 +168,6 @@ Receiver in action (real device):<br>
 </ul>
 
 <h2>Home Assistant</h2>
-<br>
 <h3>Information from sensor device on Home Assistant:</h3>
 <ul>
   <li>device name
