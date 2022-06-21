@@ -6,13 +6,13 @@
   <li>Clone/deploy it to as many sensors as needed (indoor, outdoor etc.) without changing the software or reconfiguration (beyond what is specific to the device i.e. GPIO connection etc.)
   <li>Build gateway device (that is always powered ON) that transfers data from sensor devices to Home Assistant and automatically creates devices/entities on Home Assistant (no configuration needed)
 </ul>
-
+<br><br>
 <h3>Tasks for the devices:</h3>
 <ul>
   <li>Sensor devices: (battery powered) wake up, measure the environment and battery, send to gateway over ESPnow, go to sleep, wake up after specified period and repeat
   <li>Gateway device: (always ON) receive message over ESPnow from sensors, convert to Home Assistant auto discovery code and send to Home Assistant over MQTT/WiFi
 </ul>
-
+<br><br>
 <h3> To satisfy the requirements I've chosen: </h3>
 <ul>
   <li>SHT31 temperature and humidity sensor, SDA, around 1.5$ on Aliexpress (breakout)
@@ -27,6 +27,7 @@
 
 
 <h2>Power consumption and management</h2>
+<br><br>
 <h3> Sensor device is powered with LiPo battery and equipped with TP4056 USB-C charger.</h3>
 It can be connected to solar panel or - from time to time if possible/needed - to USB-C charger.
 <br><br>
@@ -91,12 +92,14 @@ To achieve this, you need to connect the pins from TP4056 that control charging/
 <img width="626" alt="Screenshot 2022-06-19 at 21 40 27" src="https://user-images.githubusercontent.com/46562447/174499788-fd8f5c83-6684-4a11-8a63-4529930a9508.png">
 
 <h2>Firmware update - OTA</h2>
+<br><br>
 <h3>Sensor device</h3>
 To perform firmware update there are 2 possibilities - both are with web server in use, where you store the binary file (sender.ino.esp32.bin)
 <ul>
   <li>double reset click - built in functions recognise double reset and if so done, performs firmware upgrade - of course you need to visit the sensor to double click it ;-)
   <li>routine check for new firmware availability on the server: every 24h (configurable) sensors connects to server and if new file found, performs upgrade
 </ul>
+<br><br>
 <h3>Gateway device</h3>
 To perform firmware update you simply click the button "Update" on Home Assistant (in the device section of gateway) - gateway will connect to the server where the binary is stored and if file is found, it will perform firmware update and restart gateway.
 I am using Apache minimal add on Home Assistant - since all sensors are in the same network where Home Assistant is, <b>there is no need for internet access for sensors (and gateway) but sensor device needs to be in the accessible range of the AP/router.</b>
@@ -119,6 +122,7 @@ Other important configurable settings (some mandatory, some optional) (mainly fo
   <li>MQTT password
 </ul>
 <h2>Software</h2>
+<br><br>
 <h3>Sensor device - sender</h3>
 Tasks are as described above so the code is in 1 file only: sender.ino <br>
 <br>
@@ -138,7 +142,7 @@ The sequence is:
 Sender in action (test device):<br>
 <br>
 <img width="433" alt="sender" src="https://user-images.githubusercontent.com/46562447/174503034-f410b265-ab90-4d58-b6a0-f1038b03dfcb.png">
-<br>
+<br><br>
 
 <h3>Gateway device - receiver</h3>
 Gateway tasks are more complex (as described above) so the code is split into multiple files - per function<br>
@@ -151,7 +155,7 @@ Next is the file with credentials: passwords.h (ssid, password, mqtt ip and cred
 Receiver in action (real device):<br>
 <br>
 <img width="547" alt="receiver" src="https://user-images.githubusercontent.com/46562447/174503040-2754766e-4f3d-4fa4-be78-58db44685a28.png">
-<br>
+<br><br>
 
 <h3>Libraries needed (non standard):</h3>
 <ul>
@@ -166,6 +170,7 @@ Receiver in action (real device):<br>
 </ul>
 
 <h2>Home Assistant</h2>
+<br><br>
 <h3>Information from sensor device on Home Assistant:</h3>
 <ul>
   <li>device name
