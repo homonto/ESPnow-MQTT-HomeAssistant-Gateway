@@ -99,7 +99,8 @@ To perform firmware update there are 2 possibilities - both are with web server 
 </ul>
 <h3>Gateway device</h3>
 To perform firmware update you simply click the button "Update" on Home Assistant (in the device section of gateway) - gateway will connect to the server where the binary is stored and if file is found, it will perform firmware update and restart gateway.
-I am using Apache minimal add on Home Assistant - since all sensors are in the same network where Home Assistant is, <b>there is no need for internet access for sensors (and gateway) but sensor device needs to be in the accessible range of the AP/router.</b><br>
+I am using Apache minimal add on Home Assistant - since all sensors are in the same network where Home Assistant is, <b>there is no need for internet access for sensors (and gateway) but sensor device needs to be in the accessible range of the AP/router.</b>
+<br><br>
 
 <h2>Configuration</h2>
 All sensors used in the sensor device (SHT31, TSL2561, MAX17048, checking charging status) are optional and can be disabled in configuration file.
