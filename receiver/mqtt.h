@@ -141,7 +141,7 @@ void mqtt_callback(char* topic, byte* message, unsigned int length)
       if (publish_status)
       {
         Serial.println("UPDATING FIRMWARE on MQTT message");
-        // perform_update_firmware=true; - not yet done here as it is permanently connected to Raspberry Pi
+        perform_update_firmware=true;
       }
     }
   }

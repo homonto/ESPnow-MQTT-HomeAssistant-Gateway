@@ -1,8 +1,11 @@
 /*
 receiver.ino
 */
-#define VERSION "1.4.1"
+#define VERSION "1.5.0"
 /*
+2022-06-21:
+  1.5.0 - gateway firmware update implemented
+
 2022-06-19:
   1.4.1 - cleaning for github
 
@@ -30,6 +33,9 @@ receiver.ino
 #include "esp_wifi.h"
 #include <PubSubClient.h>   // MQTT client
 #include <ArduinoJson.h>
+// Firmware update
+#include <HTTPClient.h>
+#include <Update.h>
 
 
 // fuctions declarations
@@ -61,6 +67,11 @@ bool mqtt_publish_button_update_config();
 bool mqtt_publish_switch_publish_config();
 bool mqtt_publish_switch_publish_values();
 
+// firmware update
+void do_update();
+void updateFirmware(uint8_t *data, size_t len);
+int update_firmware_prepare();
+
 // various, here - UPDATE_INTERVAL
 void hearbeat();
 
@@ -73,6 +84,7 @@ void hearbeat();
 #include "mqtt.h"
 #include "mqtt_publish_gw_data.h"
 #include "mqtt_publish_sensors_data.h"
+#include "fw_update.h"
 
 
 void hearbeat()
@@ -100,6 +112,7 @@ void hearbeat()
 
 void setup()
 {
+  program_start_time = millis();
   Serial.begin(115200);
   delay(100);
   Serial.println("\n\n=============================================================");
@@ -156,6 +169,8 @@ void loop()
     mqtt_reconnect();
   }
   mqttc.loop();
+
+  do_update();
 
   if (start_loop_time > (aux_update_interval + UPDATE_INTERVAL))
   {

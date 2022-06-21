@@ -41,8 +41,18 @@ volatile bool data_to_send  = false;
 // measured rssi level by receiver between receiver and sender (not from router!)
 int rssi;
 
+// firmware update
+HTTPClient firmware_update_client;
+int fw_totalLength = 0;
+int fw_currentLength = 0;
+bool perform_update_firmware=false;
+int update_progress=0;
+int old_update_progress=0;
+bool blink_led_status=false;
+
 // global others
 bool debug_mode = false;  // change to true to see tones of messages
 long aux_update_interval = 0;
 bool publish_sensors_to_ha = true;
+long tt, program_start_time;
 // global others END
