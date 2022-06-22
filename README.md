@@ -199,7 +199,7 @@ Ontime is also reduced by turning of the logo during wake up from sleep.
 <img width="540" alt="Screenshot 2022-06-19 at 18 48 53" src="https://user-images.githubusercontent.com/46562447/174493967-357bdf70-0b84-4d87-8edd-88b8b83fb447.png">
 
 <br><br>
-<b>Gateway device on lovelace dashboard:</b>
+<b>Gateway device on lovelace dashboard:<br>
 <br>
 <img width="402" alt="Screenshot 2022-06-19 at 18 48 35" src="https://user-images.githubusercontent.com/46562447/174493970-9901a285-e271-4ceb-a5f3-530999bfc31e.png">
 
