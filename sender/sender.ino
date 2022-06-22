@@ -12,12 +12,12 @@ sender.ino
 // detailed config in the file devices_config.h
 
 // #define DEVICE_ID  1           // "esp32028" - S,  Garage
-// #define DEVICE_ID  2           // "esp32086" - S2, Lilygo2
+#define DEVICE_ID  2           // "esp32086" - S2, Lilygo2
 // #define DEVICE_ID  3           // "esp32091" - S,  test
 // #define DEVICE_ID  4           // "esp32100" - S2, Table
 // #define DEVICE_ID  5           // "esp32101" - S,  Dining
 // #define DEVICE_ID  6           // "esp32102" - S,  Toilet
-#define DEVICE_ID  7           // "esp32104" - S,  Milena
+// #define DEVICE_ID  7           // "esp32104" - S,  Milena
 // #define DEVICE_ID  8           // "esp32090" - S2,  test
 // #define DEVICE_ID  9           // "esp32105" - S2,  Garden
 
@@ -28,8 +28,11 @@ sender.ino
 #define FORMAT_FS   0
 
 // versions - description
-#define VERSION "1.9.0"
+#define VERSION "1.9.1"
 /*
+2022-06-22:
+  1.9.1 - cosmetics
+
 2022-06-22:
   1.9.0 - ontime saved
         - define ESP32_IS_CHEATING
@@ -407,7 +410,7 @@ void load_ontime()
   {
     saved_ontime_l = atol(saved_ontime_ch);
     #ifdef DEBUG
-      Serial.printf("[%s]: saved_ontime_l=%lu[ms]\n",__func__,saved_ontime_l);
+      Serial.printf("[%s]: saved_ontime_l=%lums\n",__func__,saved_ontime_l);
       #endif
   } else
   {
@@ -439,12 +442,12 @@ void save_ontime()
     {
       saved_ontime_l = 0;
       #ifdef DEBUG
-        Serial.printf("[%s]: Device is CHARGING, reset: saved_ontime_l=%lu[ms]\n",__func__,saved_ontime_l);
+        Serial.printf("[%s]: Device is CHARGING, reset: saved_ontime_l=%lums\n",__func__,saved_ontime_l);
       #endif
     } else
     {
       #ifdef DEBUG
-        Serial.printf("[%s]: Device is NOT CHARGING, new saved_ontime_l=%lu[ms]\n",__func__,saved_ontime_l);
+        Serial.printf("[%s]: Device is NOT CHARGING, new saved_ontime_l=%lums\n",__func__,saved_ontime_l);
       #endif
     }
   #endif
@@ -463,7 +466,7 @@ void save_ontime()
       Serial.printf("[%s]: total_ontime NOT saved to file\n",__func__);
     #endif
   }
-  Serial.printf("[%s]: Program finished after %lu[ms]. Bye...\n",__func__,millis());
+  Serial.printf("[%s]: Program finished after %lums. Bye...\n",__func__,millis());
 }
 
 
@@ -625,13 +628,13 @@ bool gather_data()
         {
           #ifdef DEBUG
             tt = millis() - program_start_time;
-            Serial.printf("[%s]: NOT hibernating as DRD detected %d[ms] after boot\n",__func__,tt);
+            Serial.printf("[%s]: NOT hibernating as DRD detected %dms after boot\n",__func__,tt);
           #endif
         } else
         {
           #ifdef DEBUG
             tt = millis() - program_start_time;
-            Serial.printf("[%s]: NOT sending data! leaving [gather_data=false] %d[ms] after boot\n",__func__,tt);
+            Serial.printf("[%s]: NOT sending data! leaving [gather_data=false] %dms after boot\n",__func__,tt);
           #endif
           return false;
         }
