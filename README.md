@@ -97,6 +97,9 @@ To perform firmware update there are 2 possibilities - both are with web server 
   <li>double reset click - built in functions recognise double reset and if so done, performs firmware upgrade - of course you need to visit the sensor to double click it ;-)
   <li>routine check for new firmware availability on the server: every 24h (configurable) sensors connects to server and if new file found, performs upgrade
 </ul>
+Sender during firmware update:<br>
+<br>
+<img width="540" alt="Screenshot 2022-06-22 at 18 55 39" src="https://user-images.githubusercontent.com/46562447/175105073-ad607c41-860e-4edd-8235-77bd8709eb10.png">
 <br>
 <h3>Gateway device</h3>
 To perform firmware update you simply click the button "Update" on Home Assistant (in the device section of gateway) - gateway will connect to the server where the binary is stored and if file is found, it will perform firmware update and restart gateway.
@@ -138,7 +141,7 @@ The sequence is:
 <br>
 Sender in action (test device):<br>
 <br>
-<img width="433" alt="sender" src="https://user-images.githubusercontent.com/46562447/174503034-f410b265-ab90-4d58-b6a0-f1038b03dfcb.png">
+<img width="484" alt="Screenshot 2022-06-22 at 18 56 08" src="https://user-images.githubusercontent.com/46562447/175104814-a21c53e7-a631-441d-b5cc-1bffd557b9a9.png">
 <br>
 
 <h3>Gateway device - receiver</h3>
@@ -151,7 +154,8 @@ Next is the file with credentials: passwords.h (ssid, password, mqtt ip and cred
 <br>
 Receiver in action (real device):<br>
 <br>
-<img width="547" alt="receiver" src="https://user-images.githubusercontent.com/46562447/174503040-2754766e-4f3d-4fa4-be78-58db44685a28.png">
+<img width="529" alt="Screenshot 2022-06-22 at 18 41 34" src="https://user-images.githubusercontent.com/46562447/175102381-c1ade15e-66b6-44f4-95fa-aba3ba5a88b8.png">
+
 <br>
 
 <h3>Libraries needed (non standard):</h3>
@@ -181,36 +185,47 @@ Additionally few diagnostic information:
   <li>wifi signal/rssi [dBm]
   <li>firmware version
   <li>boot number
+  <li>ontime (in seconds) for further postprocessing i.e. in Grafana
+  <li>pretty ontime, i.e.: "1d 17h 23m 12s" (human readable)
 </ul>
+<br>
+<b>Ontime is calculated</b> based on millis (time just before hibernation - start time) including empirically established difference between real startup time and measured with PPK2 (apparently both: ESP32 and ESP32-S2 are "cheating" with millis, however S2 shows hundreds of millis just after start, while ESP32 shows very low value after start - both are innaccurate and mainly depend on the size of the binary file, that has to be loaded into ESP32 memory during startup by bootloader).
+Ontime is also reduced by turning of the logo during wake up from sleep.
 <h4>Gateway device (with its entities) as well as all sensor devices (with their entities) are automatically configured in Home Assistant using MQTT discovery</h4>
 <br>
-
-<b>Gateway device as discovered by MQTT:</b>
+<br>
+<b>Gateway device as discovered by MQTT:<br>
 <br>
 <img width="540" alt="Screenshot 2022-06-19 at 18 48 53" src="https://user-images.githubusercontent.com/46562447/174493967-357bdf70-0b84-4d87-8edd-88b8b83fb447.png">
-<br>
-<b>Gateway device on lovelace dashboard:</b>
+
+<br><br>
+<b>Gateway device on lovelace dashboard:<br>
 <br>
 <img width="402" alt="Screenshot 2022-06-19 at 18 48 35" src="https://user-images.githubusercontent.com/46562447/174493970-9901a285-e271-4ceb-a5f3-530999bfc31e.png">
+
+<br><br>
+<b>Sensor device as discovered by MQTT:<br>
 <br>
-<b>Sensor device as discovered by MQTT:</b>
+<img width="536" alt="Screenshot 2022-06-22 at 19 12 06" src="https://user-images.githubusercontent.com/46562447/175107889-da291f5f-ed44-462e-b29a-bca389bfd934.png">
+
 <br>
-<img width="809" alt="Screenshot 2022-06-19 at 12 43 32" src="https://user-images.githubusercontent.com/46562447/174488031-cf575458-4a8f-4193-bfaf-33d7e14fd2a3.png">
+<b>Sensor Device on lovelace dashboard:<br>
 <br>
-<b>Sensor Device on lovelace dashboard:</b>
-<br>
-<img width="400" alt="Screenshot 2022-06-19 at 12 43 51" src="https://user-images.githubusercontent.com/46562447/174488029-645ff458-5a33-4814-8637-d4f40de59a2d.png">
+<img width="359" alt="Screenshot 2022-06-22 at 19 21 57" src="https://user-images.githubusercontent.com/46562447/175109198-72bdbb4a-d14e-4ea6-bb15-cc64a2b748db.png">
+
 <br>
 <h3>MQTT structure</h3>
 All information from sensor device is sent to Home Assistant MQTT broker in one topic: sensor_hostname/sensor/state<br>
 <br>
 <img width="593" alt="Screenshot 2022-06-20 at 00 17 05" src="https://user-images.githubusercontent.com/46562447/174503988-5944ceb1-49b5-40a9-a96f-f9aeae532dee.png">
-And message arrives in JSON format:<br>
+
+<br>And message arrives in JSON format:<br>
 <br>
-<img width="395" alt="Screenshot 2022-06-20 at 00 16 53" src="https://user-images.githubusercontent.com/46562447/174504004-356fc1b7-342f-4d90-b8f4-7a72785a3e20.png">
+<img width="628" alt="Screenshot 2022-06-22 at 19 26 51" src="https://user-images.githubusercontent.com/46562447/175109966-148e09bf-1cd4-48b1-bd95-0f66ca9b1206.png">
+
 
 <br>
 <h2>TODO list</h2>
 <ul>
-  <li>Sensors device: OTA over ESPnow, in case sensor device cannot reach AP/router
+  <li>Sensor device: OTA over ESPnow, in case sensor device cannot reach AP/router
 </ul>
