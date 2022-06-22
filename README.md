@@ -227,5 +227,5 @@ All information from sensor device is sent to Home Assistant MQTT broker in one 
 <br>
 <h2>TODO list</h2>
 <ul>
-  <li>Sensors device: OTA over ESPnow, in case sensor device cannot reach AP/router
+  <li>Sensor device: OTA over ESPnow, in case sensor device cannot reach AP/router
 </ul>
