@@ -58,10 +58,14 @@ bool mqtt_publish_sensors_config(const char* hostname)
   char boot_conf_topic[60];
   snprintf(boot_conf_topic,sizeof(boot_conf_topic),"homeassistant/sensor/%s/boot/config",hostname);
   if (debug_mode) Serial.println("boot_conf_topic="+String(boot_conf_topic));
-  
+
   char ontime_conf_topic[60];
   snprintf(ontime_conf_topic,sizeof(ontime_conf_topic),"homeassistant/sensor/%s/ontime/config",hostname);
   if (debug_mode) Serial.println("ontime_conf_topic="+String(ontime_conf_topic));
+
+  char pretty_ontime_conf_topic[60];
+  snprintf(pretty_ontime_conf_topic,sizeof(pretty_ontime_conf_topic),"homeassistant/sensor/%s/pretty_ontime/config",hostname);
+  if (debug_mode) Serial.println("pretty_ontime_conf_topic="+String(pretty_ontime_conf_topic));
 
 // sensors/entities names
   char temp_name[30];
@@ -103,10 +107,14 @@ bool mqtt_publish_sensors_config(const char* hostname)
   char boot_name[30];
   snprintf(boot_name,sizeof(boot_name),"%s_boot",hostname);
   if (debug_mode) Serial.println("boot_name="+String(boot_name));
-  
+
   char ontime_name[30];
   snprintf(ontime_name,sizeof(ontime_name),"%s_ontime",hostname);
   if (debug_mode) Serial.println("ontime_name="+String(ontime_name));
+
+  char pretty_ontime_name[30];
+  snprintf(pretty_ontime_name,sizeof(pretty_ontime_name),"%s_pretty_ontime",hostname);
+  if (debug_mode) Serial.println("pretty_ontime_name="+String(pretty_ontime_name));
 
 // values/state topic
   char sensors_topic_state[60];
@@ -435,7 +443,7 @@ bool mqtt_publish_sensors_config(const char* hostname)
     }
     Serial.println("============ DEBUG CONFIG BOOT END ========\n");
   }
-  
+
 // sensor ontime config
   config.clear();
   config["name"] = ontime_name;
@@ -466,7 +474,37 @@ bool mqtt_publish_sensors_config(const char* hostname)
     }
     Serial.println("============ DEBUG CONFIG ONTIME END ========\n");
   }
-  
+
+// sensor pretty_ontime config
+  config.clear();
+  config["name"] = pretty_ontime_name;
+  config["stat_t"] = sensors_topic_state;
+  config["val_tpl"] = "{{value_json.pretty_ontime}}";
+  config["uniq_id"] = pretty_ontime_name;
+  config["frc_upd"] = "true";
+  config["entity_category"] = "diagnostic";
+  config["exp_aft"] = 600;
+
+  CREATE_SENSOR_MQTT_DEVICE
+
+  size_c = serializeJson(config, config_json);
+  if (mqtt_connected){ if (!mqttc.publish(pretty_ontime_conf_topic,(uint8_t*)config_json,strlen(config_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}}
+  if (debug_mode) {
+    Serial.println("\n============ DEBUG CONFIG PRETTY ONTIME ============");
+    Serial.println("Size of pretty_ontime config="+String(size_c)+" bytes");
+    Serial.println("Serialised config_json:");
+    Serial.println(config_json);
+    Serial.println("serializeJsonPretty");
+    serializeJsonPretty(config, Serial);
+    if (publish_status) {
+      Serial.println("\n PRETTY ONTIME CONFIG OK");
+    } else
+    {
+      Serial.println("\n PRETTYONTIME CONFIG UNSUCCESSFULL");
+    }
+    Serial.println("============ DEBUG CONFIG PRETTY ONTIME END ========\n");
+  }
+
   return publish_status;
 }
 
@@ -497,6 +535,7 @@ bool mqtt_publish_sensors_values(const char* hostname)
   payload["name"]               = myData.name;
   payload["boot"]               = myData.boot;
   payload["ontime"]             = myData.ontime;
+  payload["pretty_ontime"]      = pretty_ontime;
 
   char payload_json[JSON_PAYLOAD_SIZE];
   int size_pl = serializeJson(payload, payload_json);

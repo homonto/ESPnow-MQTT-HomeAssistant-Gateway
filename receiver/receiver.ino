@@ -1,8 +1,11 @@
 /*
 receiver.ino
 */
-#define VERSION "1.6.0"
+#define VERSION "1.6.1"
 /*
+2022-06-22:
+  1.6.1 - pretty_ontime implemented as string
+
 2022-06-22:
   1.6.0 - ontime implemented in seconds
 
@@ -77,6 +80,7 @@ int update_firmware_prepare();
 
 // various, here - UPDATE_INTERVAL
 void hearbeat();
+void ConvertSectoDay(unsigned long n, char * pretty_ontime);
 
 
 // custom files
@@ -88,6 +92,42 @@ void hearbeat();
 #include "mqtt_publish_gw_data.h"
 #include "mqtt_publish_sensors_data.h"
 #include "fw_update.h"
+
+void ConvertSectoDay(unsigned long n, char *pretty_ontime)
+{
+  size_t nbytes;
+  int day = n / (24 * 3600);
+  n = n % (24 * 3600);
+  int hour = n / 3600;
+  n %= 3600;
+  int minutes = n / 60 ;
+  n %= 60;
+  int seconds = n;
+  if (day>0)
+  {
+    nbytes = snprintf(NULL,0,"%0dd %0dh %0dm %0ds",day,hour,minutes,seconds)+1;
+    snprintf(pretty_ontime,nbytes,"%0dd %0dh %0dm %0ds",day,hour,minutes,seconds);
+  } else
+  {
+    if (hour>0)
+    {
+      nbytes = snprintf(NULL,0,"%0dh %0dm %0ds",hour,minutes,seconds)+1;
+      snprintf(pretty_ontime,nbytes,"%0dh %0dm %0ds",hour,minutes,seconds);
+    } else
+    {
+      if (minutes>0)
+      {
+        nbytes = snprintf(NULL,0,"%0dm %0ds",minutes,seconds)+1;
+        snprintf(pretty_ontime,nbytes,"%0dm %0ds",minutes,seconds);
+      } else
+      {
+        nbytes = snprintf(NULL,0,"%0ds",seconds)+1;
+        snprintf(pretty_ontime,nbytes,"%0ds",seconds);
+      }
+    }
+  }
+  if (debug_mode) Serial.printf("\n\nontime for %s=%s\n\n",myData.host,pretty_ontime);
+}
 
 
 void hearbeat()

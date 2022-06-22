@@ -189,6 +189,10 @@ bool mqtt_publish_data()
   long sm = millis();
   bool publish_status = true;
   digitalWrite(STATUS_LED_GPIO,HIGH);
+
+  // char pretty_ontime[17]; // "999d 24h 60m 60s" = 16 characters
+  ConvertSectoDay(myData.ontime,pretty_ontime);
+
   // if (debug_mode)
   // {
     Serial.println("\nESPnow Message received from:");
@@ -206,7 +210,8 @@ bool mqtt_publish_data()
     Serial.print("\trssi=");Serial.println(rssi);
     Serial.print("\tboot=");Serial.println(myData.boot);
     Serial.print("\tontime=");Serial.println(myData.ontime);
-
+    Serial.print("\tpretty_ontime=");Serial.println(pretty_ontime);
+    Serial.println();
   // }
 
   // send sensors data to HA
