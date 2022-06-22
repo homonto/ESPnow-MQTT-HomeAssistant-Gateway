@@ -28,8 +28,12 @@ sender.ino
 #define FORMAT_FS   0
 
 // versions - description
-#define VERSION "1.8.2"
+#define VERSION "1.9.0"
 /*
+2022-06-22:
+  1.9.0 - ontime saved
+        - define ESP32_IS_CHEATING
+
 2022-06-20:
   1.8.2 - cleaning even more: printf instead of print(ln) where possible
         - reset bootCount on DRD_Detected
@@ -131,7 +135,6 @@ bool DRD_Detected = false;
 #else
   #error "FW update defined only for ESP32 and ESP32-S2 boards"
 #endif
-#define UPDATE_FIRMWARE_FILE (String(UPDATE_FIRMWARE_HOST) + "/01-Production/0-ESPnow/" + String(HOSTNAME) + String(FW_BIN_FILE))
 HTTPClient firmware_update_client;
 int fw_totalLength = 0;
 int fw_currentLength = 0;
@@ -207,6 +210,7 @@ typedef struct struct_message
   char charg[5];
   char name[11];
   char boot[5];
+  unsigned long ontime;
 } struct_message;
 
 struct_message myData;
@@ -219,13 +223,44 @@ bool sht31ok = true;
 bool max17ok = true;
 bool tslok   = true;
 long program_start_time,em,tt,start_espnow_time;
-
-// // bootCount in the file as we hibernate
-#define BOOT_COUNT_FILE     "/bootcount.dat"
-// 1 is OK for initial number
 int bootCount = 1;
+unsigned long saved_ontime_l = 0;
+
+// files to store some data
+#define BOOT_COUNT_FILE     "/bootcount.dat"
+#define ONTIME_FILE         "/ontime.dat"
+
+
+// charging constants
+#define CHARGING_NC   "NC"
+#define CHARGING_ON   "ON"
+#define CHARGING_FULL "FULL"
+#define CHARGING_OFF  "OFF"
 
 // ****************  FUNCTIONS *************************
+
+// declaration
+void lux_with_tept(char* lux);
+void charging_state(char *ch_state);
+void listDir(fs::FS &fs, const char * dirname, uint8_t levels);
+bool readFile(fs::FS &fs, const char * path, char * data);
+bool writeFile(fs::FS &fs, const char * path, const char * message);
+void load_ontime();
+void save_ontime();
+void hibernate();
+void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status);
+bool gather_data();
+void send_data();
+void disable_espnow();
+void setup_wifi();
+void sos(int led);
+void do_update();
+void updateFirmware(uint8_t *data, size_t len);
+int update_firmware_prepare();
+void do_esp_restart();
+
+
+// implementation
 // lux from ADC
 #if (USE_TEPT4400 == 1)
   void lux_with_tept(char* lux)
@@ -246,7 +281,7 @@ int bootCount = 1;
     read_digital /= 10;
 
     #ifdef DEBUG
-      Serial.printf("read_digital=%d\n",read_digital);
+      Serial.printf("[%s]: read_digital=%d\n",__func__,read_digital);
     #endif
 
     if (read_digital > LUX_MAX_RAW_READING) read_digital = LUX_MAX_RAW_READING;
@@ -254,7 +289,7 @@ int bootCount = 1;
     snprintf(lux,nbytes,"%d",map(read_digital, 0, LUX_MAX_RAW_READING, 0, LUX_MAX_RAW_MAPPED_READING));
     #ifdef DEBUG
       long mt=millis()-sm;
-      Serial.printf("\tlux_with_tept TIME: %dms\n",mt);
+      Serial.printf("\t[%s]: lux_with_tept TIME: %dms\n",__func__,mt);
     #endif
   }
 #endif
@@ -277,10 +312,10 @@ int bootCount = 1;
     charged: H,L
     existing LEDs on TP4506 must be still connected to pins of TP4506 otherwise pins are floating, or rewire them to new LEDs on the box
     */
-    if ((digitalRead(POWER_GPIO) == 0) and (digitalRead(CHARGING_GPIO) == 0)) {snprintf(ch_state,sizeof("NC"), "%s", "NC");}
-    if ((digitalRead(POWER_GPIO) == 0) and (digitalRead(CHARGING_GPIO) == 1)) {snprintf(ch_state,sizeof("ON"), "%s", "ON");}
-    if ((digitalRead(POWER_GPIO) == 1) and (digitalRead(CHARGING_GPIO) == 0)) {snprintf(ch_state,sizeof("FULL"), "%s", "FULL");}
-    if ((digitalRead(POWER_GPIO) == 1) and (digitalRead(CHARGING_GPIO) == 1)) {snprintf(ch_state,sizeof("OFF"), "%s", "OFF");}
+    if ((digitalRead(POWER_GPIO) == 0) and (digitalRead(CHARGING_GPIO) == 0)) {snprintf(ch_state,sizeof(CHARGING_NC), "%s", CHARGING_NC);}
+    if ((digitalRead(POWER_GPIO) == 0) and (digitalRead(CHARGING_GPIO) == 1)) {snprintf(ch_state,sizeof(CHARGING_ON), "%s", CHARGING_ON);}
+    if ((digitalRead(POWER_GPIO) == 1) and (digitalRead(CHARGING_GPIO) == 0)) {snprintf(ch_state,sizeof(CHARGING_FULL), "%s", CHARGING_FULL);}
+    if ((digitalRead(POWER_GPIO) == 1) and (digitalRead(CHARGING_GPIO) == 1)) {snprintf(ch_state,sizeof(CHARGING_OFF), "%s", CHARGING_OFF);}
   }
 #endif
 
@@ -288,16 +323,16 @@ int bootCount = 1;
 // list directory
 void listDir(fs::FS &fs, const char * dirname, uint8_t levels)
 {
-  Serial.printf("Listing directory: %s\r\n", dirname);
+  Serial.printf("[%s]: Listing directory: %s\r\n",__func__,dirname);
   File root = fs.open(dirname);
   if(!root)
   {
-    Serial.println("- failed to open directory");
+    Serial.printf("[%s]: - failed to open directory\n",__func__);
     return;
   }
   if(!root.isDirectory())
   {
-    Serial.println(" - not a directory");
+    Serial.printf("[%s]: - not a directory\n",__func__);
     return;
   }
   File file = root.openNextFile();
@@ -305,14 +340,14 @@ void listDir(fs::FS &fs, const char * dirname, uint8_t levels)
   {
     if(file.isDirectory())
     {
-      Serial.printf("  DIR : %s\n",file.name());
+      Serial.printf("[%s]:  DIR : %s\n",__func__,file.name());
       if(levels)
       {
           listDir(fs, file.name(), levels -1);
       }
     } else
     {
-      Serial.printf("  FILE: %s\tSIZE: %d\n",file.name(),file.size());
+      Serial.printf("[%s]:  FILE: %s\tSIZE: %d\n",__func__,file.name(),file.size());
     }
     file = root.openNextFile();
   }
@@ -326,7 +361,7 @@ bool readFile(fs::FS &fs, const char * path, char * data)
   if (!file)
   {
     #ifdef DEBUG
-      Serial.printf("Failed to open file: %s\n",path);
+      Serial.printf("[%s]: Failed to open file: %s\n",__func__,path);
     #endif
     return false;
   }
@@ -342,26 +377,100 @@ bool readFile(fs::FS &fs, const char * path, char * data)
 bool writeFile(fs::FS &fs, const char * path, const char * message)
 {
   #ifdef DEBUG
-    Serial.printf("Writing file: %s\r", path);
+    Serial.printf("[%s]: Writing file: %s\r",__func__,path);
   #endif
   File file = fs.open(path, FILE_WRITE);
   if(!file){
     #ifdef DEBUG
-      Serial.println("- failed to open file for writing");
+      Serial.printf(" - failed to open file for writing\n",__func__);
     #endif
     return false;
   }
   if(file.print(message)){
     #ifdef DEBUG
-      Serial.println(" - file written");
+      Serial.printf(" - file written\n",__func__);
     #endif
   } else {
     #ifdef DEBUG
-      Serial.println(" - write failed");
+      Serial.printf(" - write failed\n",__func__);
     #endif
   }
   file.close();
   return true;
+}
+
+
+void load_ontime()
+{
+  char saved_ontime_ch[12];
+  if (readFile(LittleFS, ONTIME_FILE, saved_ontime_ch))
+  {
+    saved_ontime_l = atol(saved_ontime_ch);
+    #ifdef DEBUG
+      Serial.printf("[%s]: saved_ontime_l=%lu[ms]\n",__func__,saved_ontime_l);
+      #endif
+  } else
+  {
+    #ifdef DEBUG
+      Serial.printf("[%s]: CANNOT READ SAVED ONTIME!\n",__func__);
+    #endif
+  }
+}
+
+
+void save_ontime()
+{
+  char total_ontime_ch[12];
+
+  // add new running time to saved_ontime_l
+  saved_ontime_l = saved_ontime_l + millis() + ESP32_IS_CHEATING;
+
+  // reset saved_ontime_l if device is charging
+  #if defined(CHARGING_GPIO) and defined(POWER_GPIO)
+    char charging[5];
+    charging_state(charging);
+    // testing charging
+    // snprintf(charging,sizeof(charging),"%s",CHARGING_FULL);
+    #ifdef DEBUG
+      // Serial.printf("charging=%s\n",charging);
+    #endif
+    // strcmp = 0 when strings ARE equal
+    if ( (strcmp(charging, CHARGING_ON) == 0) or (strcmp(charging, CHARGING_FULL) == 0) )
+    {
+      saved_ontime_l = 0;
+      #ifdef DEBUG
+        Serial.printf("[%s]: Device is CHARGING, reset: saved_ontime_l=%lu[ms]\n",__func__,saved_ontime_l);
+      #endif
+    } else
+    {
+      #ifdef DEBUG
+        Serial.printf("[%s]: Device is NOT CHARGING, new saved_ontime_l=%lu[ms]\n",__func__,saved_ontime_l);
+      #endif
+    }
+  #endif
+
+  int nbytes = snprintf(NULL,0,"%lu",saved_ontime_l) + 1;
+  snprintf(total_ontime_ch,nbytes,"%lu",saved_ontime_l);
+  // write to file
+  if (writeFile(LittleFS, ONTIME_FILE, total_ontime_ch))
+  {
+    #ifdef DEBUG
+      Serial.printf("[%s]: total_ontime saved to file\n",__func__);
+    #endif
+  } else
+  {
+    #ifdef DEBUG
+      Serial.printf("[%s]: total_ontime NOT saved to file\n",__func__);
+    #endif
+  }
+  Serial.printf("[%s]: Program finished after %lu[ms]. Bye...\n",__func__,millis());
+}
+
+
+void do_esp_restart()
+{
+  save_ontime();
+  ESP.restart();
 }
 
 
@@ -384,15 +493,14 @@ void hibernate()
     esp_sleep_pd_config(ESP_PD_DOMAIN_RTC8M,         ESP_PD_OPTION_OFF);
     esp_sleep_pd_config(ESP_PD_DOMAIN_VDDSDIO,       ESP_PD_OPTION_OFF);
     #ifdef DEBUG
-      Serial.println("sleep mode: hibernate");
+      Serial.printf("[%s]: sleep mode: hibernate\n",__func__);
     #endif
   #else
     #ifdef DEBUG
-      Serial.println("sleep mode: deep sleep");
+      Serial.printf("[%s]: sleep mode: deep sleep\n",__func__);
     #endif
   #endif
-  tt = millis() - program_start_time;
-  Serial.printf("Program finished after: %dms\n[END]: Going to sleep for %ds\n",tt,SLEEP_TIME);
+  save_ontime();
   esp_deep_sleep_start();
 }
 
@@ -401,9 +509,15 @@ void hibernate()
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
 {
   {
-    Serial.println(status == ESP_NOW_SEND_SUCCESS ? "ESPnow SUCCESSFULL" : "ESPnow FAILED");
+    if (status == ESP_NOW_SEND_SUCCESS)
+    {
+      Serial.printf("[%s]: ESPnow SUCCESSFULL\n",__func__);
+    } else
+    {
+      Serial.printf("[%s]: ESPnow FAILED\n",__func__);
+    }
     tt=millis() - start_espnow_time;
-    Serial.printf("[send_data] over ESPnow took:....%dms\n",tt);
+    Serial.printf("[%s]: ESPnow took:....%dms\n",__func__,tt);
   }
 }
 
@@ -412,12 +526,12 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
 bool gather_data()
 {
   #ifdef DEBUG
-    Serial.println("start [gather_data]...");
+    Serial.printf("[%s]:\n",__func__);
   #endif
   // hostname
   strcpy(myData.host, HOSTNAME);
   #ifdef DEBUG
-    Serial.printf("Data gatehered:\thost=%s\n",myData.host);
+    Serial.printf(" Data gatehered:\n\thost=%s\n",myData.host);
   #endif
 
   // name
@@ -504,26 +618,26 @@ bool gather_data()
       if (bat_volts < MINIMUM_VOLTS)
       {
         #ifdef DEBUG
-          Serial.printf("battery volts=%0.2fV, that is below minimum [%0.2fV]\n",bat_volts,MINIMUM_VOLTS);
+          Serial.printf("[%s]: battery volts=%0.2fV, that is below minimum [%0.2fV]\n",__func__,bat_volts,MINIMUM_VOLTS);
         #endif
 
         if (DRD_Detected)
         {
           #ifdef DEBUG
             tt = millis() - program_start_time;
-            Serial.printf("NOT hibernating as DRD detected -  after: %dms\n",tt);
+            Serial.printf("[%s]: NOT hibernating as DRD detected %d[ms] after boot\n",__func__,tt);
           #endif
         } else
         {
           #ifdef DEBUG
             tt = millis() - program_start_time;
-            Serial.printf("NOT sending data! leaving [gather_data=false] after: %dms\n",tt);
+            Serial.printf("[%s]: NOT sending data! leaving [gather_data=false] %d[ms] after boot\n",__func__,tt);
           #endif
           return false;
         }
       } else {
         #ifdef DEBUG
-          Serial.println(" battery level OK");
+          Serial.printf("[%s]: battery level OK\n",__func__);
         #endif
       }
     }
@@ -566,6 +680,12 @@ bool gather_data()
     Serial.printf("\tboot=%s\n",myData.boot);
   #endif
 
+  // ontime in seconds rather than ms
+  myData.ontime = saved_ontime_l/1000;
+  #ifdef DEBUG
+    Serial.printf("\tontime=%lu\n",myData.ontime);
+  #endif
+
   return true;
 }
 
@@ -576,12 +696,12 @@ void send_data()
   esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
   if (result != ESP_OK) {
     #ifdef DEBUG
-      Serial.println("Error sending the data");
+      Serial.printf("[%s]: Error sending the data\n",__func__);
     #endif
   } else
   {
     #ifdef DEBUG
-      Serial.println(" data sent");
+      Serial.printf("[%s]: data sent\n",__func__);
     #endif
   }
 }
@@ -602,18 +722,18 @@ void setup_wifi()
   WiFi.mode(WIFI_MODE_STA);
   wifi_start_time = millis();
   WiFi.begin(BT_SSID, BT_PASSWORD,WIFI_CHANNEL);
-  Serial.printf("\nConnecting to %s ...", BT_SSID);
+  Serial.printf("\n[%s]: Connecting to %s ...\n",__func__,BT_SSID);
 
   while (WiFi.status() != WL_CONNECTED)
   {
     ttc = millis() - wifi_start_time;
     sm1=millis(); while(millis() < sm1 + 20) {}
     if (ttc > (WAIT_FOR_WIFI * 1000)) {
-      Serial.printf("still NOT connected after %dms\nRESTARTING - WiFi not connected\n\n\n",ttc);
-      ESP.restart();
+      Serial.printf("[%s]: still NOT connected after %dms\nRESTARTING - WiFi not connected\n",__func__,ttc);
+      do_esp_restart();
     }
   }
-  Serial.printf("connected after %dms\n",ttc);
+  Serial.printf("[%s]: connected after %dms\n",__func__,ttc);
 }
 
 
@@ -665,35 +785,35 @@ void do_update()
 {
   int update_firmware_status = -1;
   update_firmware_status=update_firmware_prepare();
-    if (update_firmware_status == 0)
+  if (update_firmware_status == 0)
+  {
+    Serial.printf("[%s]: RESTARTING - FW update SUCCESSFULL\n\n",__func__);
+    // blink nicely when FW upgrade successfull
+    for (int i=0;i<3;i++)
     {
-      Serial.println("RESTARTING - FW update SUCCESSFULL\n\n\n");
-      // blink nicely when FW upgrade successfull
-      for (int i=0;i<3;i++)
-      {
-        #ifdef FW_UPGRADE_LED_GPIO
-          digitalWrite(FW_UPGRADE_LED_GPIO,LOW);
-          delay(500);
-          digitalWrite(FW_UPGRADE_LED_GPIO,HIGH);
-          delay(100);
-        #elif defined(ACTIVITY_LED_GPIO)
-          digitalWrite(ACTIVITY_LED_GPIO,LOW);
-          delay(500);
-          digitalWrite(ACTIVITY_LED_GPIO,HIGH);
-          delay(100);
-        #endif
-      }
-
-    } else
-    {
-      Serial.printf("FW update failed - reason: %d\nRESTARTING - FW update failed\n\n\n",update_firmware_status);
       #ifdef FW_UPGRADE_LED_GPIO
-        sos(FW_UPGRADE_LED_GPIO);
+        digitalWrite(FW_UPGRADE_LED_GPIO,LOW);
+        delay(500);
+        digitalWrite(FW_UPGRADE_LED_GPIO,HIGH);
+        delay(100);
       #elif defined(ACTIVITY_LED_GPIO)
-        sos(ACTIVITY_LED_GPIO);
+        digitalWrite(ACTIVITY_LED_GPIO,LOW);
+        delay(500);
+        digitalWrite(ACTIVITY_LED_GPIO,HIGH);
+        delay(100);
       #endif
     }
-  ESP.restart();
+
+  } else
+  {
+    Serial.printf("[%s]: FW update failed - reason: %d\nRESTARTING - FW update failed\n\n",__func__,update_firmware_status);
+    #ifdef FW_UPGRADE_LED_GPIO
+      sos(FW_UPGRADE_LED_GPIO);
+    #elif defined(ACTIVITY_LED_GPIO)
+      sos(ACTIVITY_LED_GPIO);
+    #endif
+  }
+  do_esp_restart();
 }
 
 
@@ -728,25 +848,28 @@ void updateFirmware(uint8_t *data, size_t len)
   update_progress=(fw_currentLength * 100) / fw_totalLength;
   if (update_progress>old_update_progress){
     if (update_progress % 5 == 0){ //if uncomment it prints every 2%, otherwise every 5%
-      Serial.printf("FW update: %d%%\n",update_progress);
+      Serial.printf("[%s]: FW update: %d%%\n",__func__,update_progress);
     }
   }
   // if current length of written firmware is not equal to total firmware size, repeat
   if(fw_currentLength != fw_totalLength) return;
   Update.end(true);
-  Serial.printf("\nUpdate Success, Total Size: %d\n", fw_currentLength);
+  Serial.printf("\n[%s]: Update Success, Total Size: %d\n",__func__,fw_currentLength);
 }
 
 
 // download from webserver
-int update_firmware_prepare(){
-  String firmware_file = UPDATE_FIRMWARE_FILE;
+int update_firmware_prepare()
+{
+  char firmware_file[255];
+  snprintf(firmware_file,sizeof(firmware_file),"%s/01-Production/0-ESPnow/%s/%s",UPDATE_FIRMWARE_HOST,HOSTNAME,FW_BIN_FILE);
+
   fw_totalLength=0;
   fw_currentLength=0;
-  Serial.println("uploading file: " +String(UPDATE_FIRMWARE_FILE));
+  Serial.printf("[%s]: uploading file: %s\n",__func__,firmware_file);
   firmware_update_client.begin(firmware_file);
   int resp = firmware_update_client.GET();
-  Serial.printf("Response: %d\n",resp);
+  Serial.printf("[%s]: Response: %d\n",__func__,resp);
   // If file is reachable, start downloading
   if(resp == 200){
     // get length of document (is -1 when Server sends no Content-Length header)
@@ -755,14 +878,14 @@ int update_firmware_prepare(){
     int len = fw_totalLength;
     // this is required to start firmware update process
     Update.begin(UPDATE_SIZE_UNKNOWN);
-    Serial.printf("FW Size: %u\n",fw_totalLength);
+    Serial.printf("[%s]: FW Size: %lu[bytes]\n",__func__,fw_totalLength);
 
     // create buffer for read
     uint8_t buff[128] = { 0 };
     // get tcp stream
     WiFiClient * stream = firmware_update_client.getStreamPtr();
     // read all data from server
-    Serial.println("Updating firmware progress:");
+    Serial.printf("[%s]: Updating firmware progress:\n",__func__);
     while(firmware_update_client.connected() && (len > 0 || len == -1))
     {
       // get available data size
@@ -780,14 +903,12 @@ int update_firmware_prepare(){
       }
   }else
   {
-    Serial.println("Cannot download firmware file. Only HTTP response 200: OK is supported. Double check firmware location #defined in UPDATE_FIRMWARE_FILE.");
-    tt = millis()-program_start_time;
-    Serial.printf("update_firmware_prepare UNSUCESSFUL - time: %dms\n",tt);
+    Serial.printf("[%s]: Cannot download firmware file. Only HTTP response 200: OK is supported. Double check firmware location.\n",__func__);
+    Serial.printf("[%s]: update_firmware_prepare UNSUCESSFUL\n",__func__);
     return resp;
   }
   firmware_update_client.end();
-  tt = millis()-program_start_time;
-  Serial.printf("update_firmware_prepare SUCESSFUL - time: %dms\n",tt);
+  Serial.printf("[%s]: update_firmware_prepare SUCESSFUL\n",__func__);
   return 0;
 }
 // update firmware END
@@ -799,7 +920,7 @@ void setup()
   program_start_time = millis();
 
   Serial.begin(115200);
-  Serial.printf("\n[START]: Device: %s (%s)\n",DEVICE_NAME,HOSTNAME);
+  Serial.printf("\n[%s]: Device: %s (%s)\n",__func__,DEVICE_NAME,HOSTNAME);
   esp_sleep_enable_timer_wakeup(SLEEP_TIME * uS_TO_S_FACTOR);
 
 // custom SDA & SCL
@@ -813,60 +934,10 @@ void setup()
     digitalWrite(ACTIVITY_LED_GPIO, HIGH);
   #endif
 
-// // read/increase/save bootCount
-//   char data[5];
-//   if(!LittleFS.begin(true))
-//   {
-//     Serial.println("LittleFS Mount Failed");
-//   } else
-//   {
-//     // format FS on first deployment
-//     #if (FORMAT_FS == 1)
-//       Serial.print("formatting FS...");
-//       Serial.println(LittleFS.format() ? "SUCCESSFULL" : "FAILED");
-//     #endif
-//     // list files in DEBUT mode only
-//     #ifdef DEBUG
-//       listDir(LittleFS,"/",1);
-//     #endif
-//     // read bootCount from file
-//     if (readFile(LittleFS, BOOT_COUNT_FILE, data))
-//     {
-//       bootCount = atoi(data) + 1;
-//       #ifdef DEBUG
-//         Serial.printf("bootCount=%d\n",bootCount);
-//       #endif
-//       if (bootCount >= PERIODIC_FW_CHECK)
-//       {
-//         Serial.println("time to check FW");
-//         // cheating here: reusing DRD_Detected to initiate the FW upgrade
-//         DRD_Detected = true;
-//         bootCount = 1;
-//       }
-//     }
-//     // convert int to char array
-//     int nbytes = snprintf(NULL,0,"%d",bootCount) + 1;
-//     snprintf(data,nbytes,"%d",bootCount);
-//
-//     // write to file
-//     if (writeFile(LittleFS, BOOT_COUNT_FILE, data))
-//     {
-//       #ifdef DEBUG
-//         Serial.println("bootCount saved");
-//       #endif
-//     } else
-//     {
-//       #ifdef DEBUG
-//         Serial.println("bootCount NOT saved");
-//       #endif
-//     }
-//   }
-// // save bootCount END
-
 // power for sensors from GPIO - MUST be before any SDA sensor is in use obviously!
   #ifdef ENABLE_3V_GPIO
     #ifdef DEBUG
-      Serial.println("enabling ENABLE_3V_GPIO");
+      Serial.printf("[%s]: enabling ENABLE_3V_GPIO\n",__func__);
     #endif
     pinMode(ENABLE_3V_GPIO, OUTPUT);
     digitalWrite(ENABLE_3V_GPIO, HIGH);
@@ -880,19 +951,19 @@ void setup()
   #if (USE_MAX17048 == 1)
     #ifdef DEBUG
       lipo.enableDebugging();
-      Serial.println("start USE_MAX17048");
+      Serial.printf("[%s]: start USE_MAX17048\n",__func__);
     #endif
     if (! lipo.begin())
     {
       // #ifdef DEBUG
-        Serial.println("MAX17048 NOT detected ... Check your wiring or I2C ADDR!");
+        Serial.printf("[%s]: MAX17048 NOT detected ... Check your wiring or I2C ADDR!\n",__func__);
       // #endif
       max17ok = false;
     } else
     {
       // delay(1000);
       #ifdef DEBUG
-        Serial.println("start MAX17048 OK");
+        Serial.printf("[%s]: start MAX17048 OK\n",__func__);
       #endif
       lipo.quickStart();
       delay(10);
@@ -902,13 +973,15 @@ void setup()
     }
   #else
     #ifdef DEBUG
-      Serial.println("DONT USE_MAX17048");
+      Serial.printf("[%s]: DONT USE_MAX17048\n",__func__);
     #endif
   #endif
 
 // Firmware update
   #ifdef DEBUG
-    Serial.println("UPDATE_FIRMWARE_FILE="+String(UPDATE_FIRMWARE_FILE));
+    char firmware_file[255];
+    snprintf(firmware_file,sizeof(firmware_file),"%s/01-Production/0-ESPnow/%s/%s",UPDATE_FIRMWARE_HOST,HOSTNAME,FW_BIN_FILE);
+    Serial.printf("[%s]: firmware file:\n %s\n",__func__,firmware_file);
   #endif
 
 // DRD
@@ -917,7 +990,7 @@ void setup()
   {
     drd->stop(); //needed here? I did not figure it out yet
     // #ifdef DEBUG
-      Serial.println("\nSETUP: Double Reset Detected\n");
+      Serial.printf("\n[%s]: SETUP: Double Reset Detected\n",__func__);
     // #endif
     DRD_Detected = true;
     #ifdef FW_UPGRADE_LED_GPIO
@@ -937,13 +1010,20 @@ void setup()
   char data[5];
   if(!LittleFS.begin(true))
   {
-    Serial.println("LittleFS Mount Failed");
+    Serial.printf("[%s]: LittleFS Mount Failed\n",__func__);
   } else
   {
     // format FS on first deployment
     #if (FORMAT_FS == 1)
-      Serial.print("formatting FS...");
-      Serial.println(LittleFS.format() ? "SUCCESSFULL" : "FAILED");
+      Serial.printf("[%s]: formatting FS...",__func__);
+      // Serial.println(LittleFS.format() ? "SUCCESSFULL" : "FAILED");
+      if (LittleFS.format())
+      {
+        Serial.printf("[%s]: SUCCESSFULL\n",__func__);
+      } else
+      {
+        Serial.printf("[%s]: FAILED\n",__func__);
+      }
     #endif
     // list files in DEBUT mode only
     #ifdef DEBUG
@@ -954,11 +1034,11 @@ void setup()
     {
       bootCount = atoi(data) + 1;
       #ifdef DEBUG
-        Serial.printf("bootCount=%d\n",bootCount);
+        Serial.printf("[%s]: bootCount=%d\n",__func__,bootCount);
       #endif
       if (bootCount >= PERIODIC_FW_CHECK)
       {
-        Serial.println("time to check FW");
+        Serial.printf("[%s]: time to check FW\n",__func__);
         // cheating here: reusing DRD_Detected to initiate the FW upgrade
         DRD_Detected = true;
         bootCount = 1;
@@ -974,39 +1054,42 @@ void setup()
     if (writeFile(LittleFS, BOOT_COUNT_FILE, data))
     {
       #ifdef DEBUG
-        Serial.println("bootCount saved");
+        Serial.printf("[%s]: bootCount saved\n",__func__);
       #endif
     } else
     {
       #ifdef DEBUG
-        Serial.println("bootCount NOT saved");
+        Serial.printf("[%s]: bootCount NOT saved\n",__func__);
       #endif
     }
   }
 // save bootCount END
 
+// load saved ontime
+  load_ontime();
+
 // check if charging
   #if (defined(CHARGING_GPIO) and defined(POWER_GPIO))
     #ifdef DEBUG
-      Serial.println("CHARGING_GPIO and POWER_GPIO enabled");
+      Serial.printf("[%s]: CHARGING_GPIO and POWER_GPIO enabled\n",__func__);
     #endif
     pinMode(CHARGING_GPIO, INPUT_PULLDOWN);  //both down: NC initially, will be changed when checked
     pinMode(POWER_GPIO, INPUT_PULLDOWN);
   #else
     #ifdef DEBUG
-      Serial.println("CHARGING_GPIO and POWER_GPIO DISABLED");
+      Serial.printf("[%s]: CHARGING_GPIO and POWER_GPIO DISABLED\n",__func__);
     #endif
   #endif
 
 //lux
   #if (USE_TSL2561 == 1)
     #ifdef DEBUG
-      Serial.println("start USE_TSL2561");
+      Serial.printf("[%s]: start USE_TSL2561\n",__func__);
     #endif
     if (! light.begin())  // it does NOT return false so this checking is meaningless I think
     {
       #ifdef DEBUG
-        Serial.println("TSL2561  NOT detected ... Check your wiring or I2C ADDR!");
+        Serial.printf("[%s]: TSL2561  NOT detected ... Check your wiring or I2C ADDR!\n",__func__);
       #endif
       tslok = false;
     }
@@ -1015,38 +1098,38 @@ void setup()
       if (light.setPowerUp())
       {
         #ifdef DEBUG
-          Serial.printf("tslok =%d\n",tslok);
+          Serial.printf("[%s]: tslok =%d\n",__func__,tslok);
         #endif
       } else
       {
-        Serial.println("TSL2561  NOT detected ... Check your wiring or I2C ADDR!");
+        Serial.printf("[%s]: TSL2561  NOT detected ... Check your wiring or I2C ADDR!\n",__func__);
       }
     }
   #else
     #ifdef DEBUG
-      Serial.println("DONT USE_TSL2561");
+      Serial.printf("[%s]: DONT USE_TSL2561\n",__func__);
     #endif
   #endif
 
 //sht31
   #if (USE_SHT31 == 1)
     #ifdef DEBUG
-      Serial.println("start USE_SHT31");
+      Serial.printf("[%s]: start USE_SHT31\n",__func__);
     #endif
     if (! sht31.begin(0x44)) {   // Set to 0x45 for alternate i2c addr
       // #ifdef DEBUG
-        Serial.println("SHT31    NOT detected ... Check your wiring or I2C ADDR!");
+        Serial.printf("[%s]: SHT31    NOT detected ... Check your wiring or I2C ADDR!\n",__func__);
       // #endif
       sht31ok = false;
     } else
     {
       #ifdef DEBUG
-        Serial.printf("sht31ok =%d\n",sht31ok);
+        Serial.printf("[%s]: sht31ok =%d\n",__func__,sht31ok);
       #endif
     }
   #else
     #ifdef DEBUG
-      Serial.println("DONT USE_SHT31");
+      Serial.printf("[%s]: DONT USE_SHT31\n",__func__);
     #endif
   #endif
 
@@ -1054,14 +1137,14 @@ void setup()
   if (!gather_data())
   {
     #ifdef DEBUG
-      Serial.println("NOT sending ANY data - gethering data FAILED!");
+      Serial.printf("[%s]: NOT sending ANY data - gethering data FAILED!\n",__func__);
     #endif
     return;
   } else
   {
     #ifdef DEBUG
       em = millis(); tt = em - program_start_time;
-      Serial.printf("[gather_data] took: %dms\n",tt);
+      Serial.printf("[%s]: took: %dms\n",__func__,tt);
     #endif
   }
 // gather data END
@@ -1081,7 +1164,7 @@ void setup()
   #endif
   if (esp_now_init() != ESP_OK) {
     #ifdef DEBUG
-      Serial.println("ESP NOW failed to initialize");
+      Serial.printf("[%s]: ESP NOW failed to initialize\n",__func__);
     #endif
   }
   memcpy(peerInfo.peer_addr, broadcastAddress, 6);
@@ -1090,12 +1173,12 @@ void setup()
   esp_now_register_send_cb(OnDataSent);
   if (esp_now_add_peer(&peerInfo) != ESP_OK) {
     #ifdef DEBUG
-      Serial.println("ESP NOW pairing failure");
+      Serial.printf("[%s]: ESP NOW pairing failure\n",__func__);
     #endif
   } else
   {
     #ifdef DEBUG
-      Serial.print("[send_data] over ESPnow...");
+      Serial.printf("[%s]: over ESPnow...",__func__);
     #endif
     send_data();
   }
@@ -1113,7 +1196,7 @@ void loop()
   }
   else
   {
-    Serial.println("Upgrading firmware scheduled\n");
+    Serial.printf("[%s]: Update firmware scheduled\n",__func__);
     drd->stop();
     disable_espnow();
     setup_wifi();

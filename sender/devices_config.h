@@ -54,8 +54,8 @@ device configuration template:
   // #define ENABLE_3V_GPIO        32
   // #define ACTIVITY_LED_GPIO     33
   // #define FW_UPGRADE_LED_GPIO   33
-  // #define CHARGING_GPIO         38
-  // #define POWER_GPIO            39
+  #define CHARGING_GPIO         38
+  #define POWER_GPIO            39
   #define SLEEP_TIME            5
   #define USE_MAX17048          0
   #define USE_SHT31             0
@@ -247,21 +247,25 @@ device configuration template:
 
   #if (BOARD_TYPE == 1)
     #define MODEL "ESP32"
+    #define ESP32_IS_CHEATING (105)
     #ifdef PRINT_COMPILER_MESSAGES
       #pragma message "chosen BOARD_TYPE = ESP32"
     #endif
   #elif (BOARD_TYPE == 2)
     #define MODEL "ESP32S2"
+    #define ESP32_IS_CHEATING (-240)
     #ifdef PRINT_COMPILER_MESSAGES
       #pragma message "chosen BOARD_TYPE = ESP32S2"
     #endif
   #elif (BOARD_TYPE == 3)
     #define MODEL "ESP32S3"
+    #define ESP32_IS_CHEATING 0
     #ifdef PRINT_COMPILER_MESSAGES
       #pragma message "chosen BOARD_TYPE = ESP32S3"
     #endif
   #elif (BOARD_TYPE == 4)
     #define MODEL "ESP32C3"
+    #define ESP32_IS_CHEATING 0
     #ifdef PRINT_COMPILER_MESSAGES
       #pragma message "chosen BOARD_TYPE = ESP32C3"
     #endif
