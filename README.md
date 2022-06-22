@@ -221,7 +221,8 @@ All information from sensor device is sent to Home Assistant MQTT broker in one 
 
 <br>And message arrives in JSON format:<br>
 <br>
-<img width="395" alt="Screenshot 2022-06-20 at 00 16 53" src="https://user-images.githubusercontent.com/46562447/174504004-356fc1b7-342f-4d90-b8f4-7a72785a3e20.png">
+<img width="628" alt="Screenshot 2022-06-22 at 19 26 51" src="https://user-images.githubusercontent.com/46562447/175109966-148e09bf-1cd4-48b1-bd95-0f66ca9b1206.png">
+
 
 <br>
 <h2>TODO list</h2>
