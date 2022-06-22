@@ -1,0 +1,57 @@
+2022-06-22:
+  1.9.2 - version description in changelog.txt
+
+2022-06-22:
+  1.9.1 - cosmetics
+
+2022-06-22:
+  1.9.0 - ontime saved
+        - define ESP32_IS_CHEATING
+
+2022-06-20:
+  1.8.2 - cleaning even more: printf instead of print(ln) where possible
+        - reset bootCount on DRD_Detected
+
+2022-06-19:
+  1.8.1 - cleaning code for github ;-)
+
+2022-06-18:
+  1.8.0 - bootCount in file and in HA, periodic FW upgrade/check every PERIODIC_FW_CHECK (number of restarts)
+
+2022-06-18:
+  1.7.1 - "FW UPG..." instead of VERSION during upgrade
+
+2022-06-16:
+  1.7.0 - major rework of wire.h etc. - should be ok now
+
+2022-06-16:
+  1.6.1 - choose device to be compiled in main sketch
+
+  1.6.0 -  TSL2561 moved to SparkFunTSL2561, all in gather_data - nothing in setup
+        -  see if battery is still up/down every 30 minutes
+
+2022-06-15:
+  1.5.1 - move boards definitions to "devices_config.h"
+        - supress boot messages from ESP
+
+2022-06-14:
+  1.5.0 - Major redefinitions, choose sensors the device is equipped with
+
+2022-06-14:
+  1.4.0 - MINIMUM_VOLTS added to avoid start wifi if too low battery
+        - WAIT_FOR_WIFI=5s in seconds for upgrade
+
+2022-06-12:
+  1.3.1 - added USE_CUSTOM_I2C_GPIO
+        - moved SLEEP_TIME to each sensor config to have different sleep times
+
+2022-06-12:
+  1.3.0 - added DEVICE_NAME
+
+2022-06-12:
+  1.2.0 - Firmware Upgrade on double push button (fast after boot (led blinks))
+        - FW_UPGRADE_LED_GPIO (flashing during firmware upgrade) - red LED  flashes during upgrade, SOS on failure
+        - if no FW_UPGRADE_LED_GPIO then ACTIVITY_LED_GPIO will flash (if defined)
+
+2022-06-11:
+  1.1.0 - added lux from TEPT/ADC, added CHARGING_GPIO

@@ -54,8 +54,8 @@ device configuration template:
   // #define ENABLE_3V_GPIO        32
   // #define ACTIVITY_LED_GPIO     33
   // #define FW_UPGRADE_LED_GPIO   33
-  #define CHARGING_GPIO         38
-  #define POWER_GPIO            39
+  // #define CHARGING_GPIO         38
+  // #define POWER_GPIO            39
   #define SLEEP_TIME            5
   #define USE_MAX17048          0
   #define USE_SHT31             0
