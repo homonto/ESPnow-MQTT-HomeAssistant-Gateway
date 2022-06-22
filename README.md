@@ -97,6 +97,9 @@ To perform firmware update there are 2 possibilities - both are with web server 
   <li>double reset click - built in functions recognise double reset and if so done, performs firmware upgrade - of course you need to visit the sensor to double click it ;-)
   <li>routine check for new firmware availability on the server: every 24h (configurable) sensors connects to server and if new file found, performs upgrade
 </ul>
+Sender during firmware update:<br>
+<br>
+<img width="540" alt="Screenshot 2022-06-22 at 18 55 39" src="https://user-images.githubusercontent.com/46562447/175105073-ad607c41-860e-4edd-8235-77bd8709eb10.png">
 <br>
 <h3>Gateway device</h3>
 To perform firmware update you simply click the button "Update" on Home Assistant (in the device section of gateway) - gateway will connect to the server where the binary is stored and if file is found, it will perform firmware update and restart gateway.
