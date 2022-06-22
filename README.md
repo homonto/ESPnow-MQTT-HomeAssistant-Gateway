@@ -203,13 +203,13 @@ Ontime is also reduced by turning of the logo during wake up from sleep.
 <br>
 <img width="402" alt="Screenshot 2022-06-19 at 18 48 35" src="https://user-images.githubusercontent.com/46562447/174493970-9901a285-e271-4ceb-a5f3-530999bfc31e.png">
 
-<br>
-<b>Sensor device as discovered by MQTT:</b>
+<br><br>
+<b>Sensor device as discovered by MQTT:<br>
 <br>
 <img width="536" alt="Screenshot 2022-06-22 at 19 12 06" src="https://user-images.githubusercontent.com/46562447/175107889-da291f5f-ed44-462e-b29a-bca389bfd934.png">
 
 <br>
-<b>Sensor Device on lovelace dashboard:</b>
+<b>Sensor Device on lovelace dashboard:<br>
 <br>
 <img width="400" alt="Screenshot 2022-06-19 at 12 43 51" src="https://user-images.githubusercontent.com/46562447/174488029-645ff458-5a33-4814-8637-d4f40de59a2d.png">
 
