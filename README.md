@@ -138,7 +138,7 @@ The sequence is:
 <br>
 Sender in action (test device):<br>
 <br>
-<img width="433" alt="sender" src="https://user-images.githubusercontent.com/46562447/174503034-f410b265-ab90-4d58-b6a0-f1038b03dfcb.png">
+<img width="484" alt="Screenshot 2022-06-22 at 18 56 08" src="https://user-images.githubusercontent.com/46562447/175104814-a21c53e7-a631-441d-b5cc-1bffd557b9a9.png">
 <br>
 
 <h3>Gateway device - receiver</h3>
@@ -151,7 +151,8 @@ Next is the file with credentials: passwords.h (ssid, password, mqtt ip and cred
 <br>
 Receiver in action (real device):<br>
 <br>
-<img width="547" alt="receiver" src="https://user-images.githubusercontent.com/46562447/174503040-2754766e-4f3d-4fa4-be78-58db44685a28.png">
+<img width="529" alt="Screenshot 2022-06-22 at 18 41 34" src="https://user-images.githubusercontent.com/46562447/175102381-c1ade15e-66b6-44f4-95fa-aba3ba5a88b8.png">
+
 <br>
 
 <h3>Libraries needed (non standard):</h3>
