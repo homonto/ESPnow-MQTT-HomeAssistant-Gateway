@@ -194,9 +194,8 @@ Ontime is also reduced by turning of the logo during wake up from sleep.
 <h4>Gateway device (with its entities) as well as all sensor devices (with their entities) are automatically configured in Home Assistant using MQTT discovery</h4>
 <br>
 <br>
-<b>Gateway device as discovered by MQTT:</b>
+<b>Gateway device as discovered by MQTT:<br>
 <br>
-
 <img width="540" alt="Screenshot 2022-06-19 at 18 48 53" src="https://user-images.githubusercontent.com/46562447/174493967-357bdf70-0b84-4d87-8edd-88b8b83fb447.png">
 
 <br>
