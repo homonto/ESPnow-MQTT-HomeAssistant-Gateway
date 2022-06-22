@@ -16,6 +16,7 @@ typedef struct struct_message {
   char charg[5];
   char name[11];
   char boot[5];
+  unsigned long ontime;
 } struct_message;
 // espnow data structure END
 

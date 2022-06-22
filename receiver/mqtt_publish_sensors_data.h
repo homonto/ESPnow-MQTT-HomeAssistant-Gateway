@@ -58,6 +58,10 @@ bool mqtt_publish_sensors_config(const char* hostname)
   char boot_conf_topic[60];
   snprintf(boot_conf_topic,sizeof(boot_conf_topic),"homeassistant/sensor/%s/boot/config",hostname);
   if (debug_mode) Serial.println("boot_conf_topic="+String(boot_conf_topic));
+  
+  char ontime_conf_topic[60];
+  snprintf(ontime_conf_topic,sizeof(ontime_conf_topic),"homeassistant/sensor/%s/ontime/config",hostname);
+  if (debug_mode) Serial.println("ontime_conf_topic="+String(ontime_conf_topic));
 
 // sensors/entities names
   char temp_name[30];
@@ -99,6 +103,10 @@ bool mqtt_publish_sensors_config(const char* hostname)
   char boot_name[30];
   snprintf(boot_name,sizeof(boot_name),"%s_boot",hostname);
   if (debug_mode) Serial.println("boot_name="+String(boot_name));
+  
+  char ontime_name[30];
+  snprintf(ontime_name,sizeof(ontime_name),"%s_ontime",hostname);
+  if (debug_mode) Serial.println("ontime_name="+String(ontime_name));
 
 // values/state topic
   char sensors_topic_state[60];
@@ -427,6 +435,38 @@ bool mqtt_publish_sensors_config(const char* hostname)
     }
     Serial.println("============ DEBUG CONFIG BOOT END ========\n");
   }
+  
+// sensor ontime config
+  config.clear();
+  config["name"] = ontime_name;
+  config["stat_t"] = sensors_topic_state;
+  config["val_tpl"] = "{{value_json.ontime}}";
+  config["uniq_id"] = ontime_name;
+  config["unit_of_meas"] = "s";
+  config["frc_upd"] = "true";
+  config["entity_category"] = "diagnostic";
+  config["exp_aft"] = 600;
+
+  CREATE_SENSOR_MQTT_DEVICE
+
+  size_c = serializeJson(config, config_json);
+  if (mqtt_connected){ if (!mqttc.publish(ontime_conf_topic,(uint8_t*)config_json,strlen(config_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}}
+  if (debug_mode) {
+    Serial.println("\n============ DEBUG CONFIG ONTIME ============");
+    Serial.println("Size of ontime config="+String(size_c)+" bytes");
+    Serial.println("Serialised config_json:");
+    Serial.println(config_json);
+    Serial.println("serializeJsonPretty");
+    serializeJsonPretty(config, Serial);
+    if (publish_status) {
+      Serial.println("\n ONTIME CONFIG OK");
+    } else
+    {
+      Serial.println("\n ONTIME CONFIG UNSUCCESSFULL");
+    }
+    Serial.println("============ DEBUG CONFIG ONTIME END ========\n");
+  }
+  
   return publish_status;
 }
 
@@ -456,6 +496,7 @@ bool mqtt_publish_sensors_values(const char* hostname)
   payload["charging"]           = myData.charg;
   payload["name"]               = myData.name;
   payload["boot"]               = myData.boot;
+  payload["ontime"]             = myData.ontime;
 
   char payload_json[JSON_PAYLOAD_SIZE];
   int size_pl = serializeJson(payload, payload_json);

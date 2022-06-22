@@ -205,6 +205,7 @@ bool mqtt_publish_data()
     Serial.print("\tver=");Serial.println(myData.ver);
     Serial.print("\trssi=");Serial.println(rssi);
     Serial.print("\tboot=");Serial.println(myData.boot);
+    Serial.print("\tontime=");Serial.println(myData.ontime);
 
   // }
 

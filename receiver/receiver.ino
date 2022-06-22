@@ -1,8 +1,11 @@
 /*
 receiver.ino
 */
-#define VERSION "1.5.0"
+#define VERSION "1.6.0"
 /*
+2022-06-22:
+  1.6.0 - ontime implemented in seconds
+
 2022-06-21:
   1.5.0 - gateway firmware update implemented
 
