@@ -193,22 +193,27 @@ Additionally few diagnostic information:
 Ontime is also reduced by turning of the logo during wake up from sleep.
 <h4>Gateway device (with its entities) as well as all sensor devices (with their entities) are automatically configured in Home Assistant using MQTT discovery</h4>
 <br>
-
+<br>
 <b>Gateway device as discovered by MQTT:</b>
 <br>
+
 <img width="540" alt="Screenshot 2022-06-19 at 18 48 53" src="https://user-images.githubusercontent.com/46562447/174493967-357bdf70-0b84-4d87-8edd-88b8b83fb447.png">
+
 <br>
 <b>Gateway device on lovelace dashboard:</b>
 <br>
 <img width="402" alt="Screenshot 2022-06-19 at 18 48 35" src="https://user-images.githubusercontent.com/46562447/174493970-9901a285-e271-4ceb-a5f3-530999bfc31e.png">
+
 <br>
 <b>Sensor device as discovered by MQTT:</b>
 <br>
-<img width="809" alt="Screenshot 2022-06-19 at 12 43 32" src="https://user-images.githubusercontent.com/46562447/174488031-cf575458-4a8f-4193-bfaf-33d7e14fd2a3.png">
+<img width="536" alt="Screenshot 2022-06-22 at 19 12 06" src="https://user-images.githubusercontent.com/46562447/175107889-da291f5f-ed44-462e-b29a-bca389bfd934.png">
+
 <br>
 <b>Sensor Device on lovelace dashboard:</b>
 <br>
 <img width="400" alt="Screenshot 2022-06-19 at 12 43 51" src="https://user-images.githubusercontent.com/46562447/174488029-645ff458-5a33-4814-8637-d4f40de59a2d.png">
+
 <br>
 <h3>MQTT structure</h3>
 All information from sensor device is sent to Home Assistant MQTT broker in one topic: sensor_hostname/sensor/state<br>
