@@ -191,7 +191,7 @@ Additionally few diagnostic information:
 </ul>
 <br>
 <b>Ontime is calculated</b> based on millis (time just before hibernation - start time) including empirically established difference between real startup time and measured with PPK2 (apparently both: ESP32 and ESP32-S2 are "cheating" with millis, however S2 shows hundreds of millis just after start, while ESP32 shows very low value after start - both are innaccurate and mainly depend on the size of the binary file, that has to be loaded into ESP32 memory during startup by bootloader).
-Ontime is also reduced by turning of the logo during wake up from sleep.
+Ontime is also reduced by turning off the bootloader logo during wake up from sleep.
 <h4>Gateway device (with its entities) as well as all sensor devices (with their entities) are automatically configured in Home Assistant using MQTT discovery</h4>
 <br>
 <br>
