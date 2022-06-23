@@ -74,7 +74,8 @@ And that is what really matters with the battery life time calculation, because 
 So apparently the winner is <b>ESP32-S2 WROOM</b> with almost triple battery life.
 <br>
 <h3>Measuring the working time</h3>
-To measure working time you shall NOT rely only on millis or micros - ESP32 gives totally strange readings even if you print millis() just as the second line in void setup() (after Serial.begin(x)) - I used PPK2 and estimated the time the ESP32 works measuring the power consumption.
+To measure working time you shall NOT rely only on millis or micros. I.e. ESP32S reports millis as first line in setup() as xx while ESP32-S2 shows 280ms.
+And actually both are wrong as you can see below on the screens:
 <br>
 <br>
 <b>ESP32S times measured:</b>
@@ -82,6 +83,22 @@ To measure working time you shall NOT rely only on millis or micros - ESP32 give
 <img width="1728" alt="esp32s" src="https://user-images.githubusercontent.com/46562447/175294471-01d2a13f-5269-493d-ad02-d072cb563ad3.png">
 
 <br>
+<br>
+<br>
+<b>ESP32S-2 times measured. And on the left side the correct ontime reported by the sketch with error correction applied:</b>
+<br>
+<br>
+<img width="1707" alt="s2" src="https://user-images.githubusercontent.com/46562447/175366621-a6fbe7bb-2338-48c7-8939-bfce6faa7541.png">
+
+<br>
+<br>
+I used PPK2 and estimated the time the ESP32 works measuring the power consumption. 
+Conclusions:
+<ul>
+  <li>don't rely on millis() only
+  <li>ESP32-S2 starts much faster (35ms) than ESP32S (310ms)
+  <li>ESP32-S2 works much faster so the total consumption with S2 is much lower (battery life)
+</ul> 
 
 <h3>Charging details</h3>
 Sensor device also provides information about charging status:
