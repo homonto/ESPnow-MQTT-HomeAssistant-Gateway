@@ -4,7 +4,7 @@ device configuration template:
 
 #define HOSTNAME              "esp32028"   // obligatory, max 9 characters
 #define DEVICE_NAME           "Garage"     // obligatory, max 10 characters
-#define BOARD_TYPE            1   // obligatory, 1=ESP32 2=ESP32S2 3=ESP32S3 4=ESP32C3
+#define BOARD_TYPE            1   // obligatory, 1=ESP32/WROOM,WROVER 2=ESP32S2 3=ESP32S3 4=ESP32C3
 #define ENABLE_3V_GPIO        21  // if not equipped comment out - power for sensors from Vcc
 #define ACTIVITY_LED_GPIO     25  // if not equipped comment out - it blinks when sensor is ON/ if not defined FW_UPGRADE_LED_GPIO then it blinks when upgrade firmware is ongoing
 #define FW_UPGRADE_LED_GPIO   26  // if not equipped comment out - blinks when upgrade firmware is ongoing
@@ -221,6 +221,28 @@ device configuration template:
   #define SDA_GPIO              18
   #define SCL_GPIO              19
   #pragma message "compilation for: esp32105-Garden"
+
+// *************** esp32087 S S ***************************
+#elif DEVICE_ID == 10
+  #define HOSTNAME              "esp32087"
+  #define DEVICE_NAME           "S"
+  #define BOARD_TYPE            1
+  // #define ENABLE_3V_GPIO        32
+  // #define ACTIVITY_LED_GPIO     33
+  // #define FW_UPGRADE_LED_GPIO   33
+  // #define CHARGING_GPIO         38
+  // #define POWER_GPIO            39
+  #define SLEEP_TIME            5
+  #define USE_MAX17048          0
+  #define USE_SHT31             0
+  #define USE_TSL2561           0
+  #define USE_TEPT4400          0
+  #define LUX_ADC_GPIO          36
+  #define LUX_MAX_RAW_READING   2900
+  #define USE_CUSTOM_I2C_GPIO   0
+  #define SDA_GPIO              18
+  #define SCL_GPIO              19
+  #pragma message "compilation for: esp32086-Lilygo2"
 
 
 #else
