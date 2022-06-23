@@ -76,6 +76,7 @@ So apparently the winner is <b>ESP32-S2 WROOM</b> with almost triple battery lif
 <h3>Measuring the working time</h3>
 To measure working time you shall NOT rely only on millis or micros - ESP32 gives totally strange readings even if you print millis() just as the second line in void setup() (after Serial.begin(x)) - I used PPK2 and estimated the time the ESP32 works measuring the power consumption.
 <br>
+<br>
 <b>ESP32S times measured:</b>
 <br>
 <img width="1728" alt="esp32s" src="https://user-images.githubusercontent.com/46562447/175294471-01d2a13f-5269-493d-ad02-d072cb563ad3.png">
