@@ -46,13 +46,13 @@ device configuration template:
   #define SCL_GPIO              19
   #pragma message "compilation for: esp32028-Garage"
 
-// *************** esp32086 S2 lilygo2 ***************************
+// *************** esp32086 S2 lilygo1 ***************************
 #elif DEVICE_ID == 2
   #define HOSTNAME              "esp32086"
-  #define DEVICE_NAME           "Lilygo2"
+  #define DEVICE_NAME           "Lilygo1"
   #define BOARD_TYPE            2
   // #define ENABLE_3V_GPIO        32
-  // #define ACTIVITY_LED_GPIO     33
+  // #define ACTIVITY_LED_GPIO     14
   // #define FW_UPGRADE_LED_GPIO   33
   // #define CHARGING_GPIO         38
   // #define POWER_GPIO            39
@@ -66,7 +66,7 @@ device configuration template:
   #define USE_CUSTOM_I2C_GPIO   0
   #define SDA_GPIO              18
   #define SCL_GPIO              19
-  #pragma message "compilation for: esp32086-Lilygo2"
+  #pragma message "compilation for: esp32086-Lilygo1"
 
 // *************** esp32091 S test ********************************
 #elif DEVICE_ID == 3
@@ -228,8 +228,8 @@ device configuration template:
   #define DEVICE_NAME           "S"
   #define BOARD_TYPE            1
   // #define ENABLE_3V_GPIO        32
-  // #define ACTIVITY_LED_GPIO     33
-  // #define FW_UPGRADE_LED_GPIO   33
+  #define ACTIVITY_LED_GPIO     33
+  #define FW_UPGRADE_LED_GPIO   32
   // #define CHARGING_GPIO         38
   // #define POWER_GPIO            39
   #define SLEEP_TIME            5
@@ -242,7 +242,7 @@ device configuration template:
   #define USE_CUSTOM_I2C_GPIO   0
   #define SDA_GPIO              18
   #define SCL_GPIO              19
-  #pragma message "compilation for: esp32086-Lilygo2"
+  #pragma message "compilation for: esp32087-S"
 
 
 #else
@@ -269,13 +269,13 @@ device configuration template:
 
   #if (BOARD_TYPE == 1)
     #define MODEL "ESP32"
-    #define ESP32_IS_CHEATING (105)
+    #define ESP32_IS_CHEATING (325) // 310 head, 12 tail, 3ms delay between saved and save_ontime() function start
     #ifdef PRINT_COMPILER_MESSAGES
       #pragma message "chosen BOARD_TYPE = ESP32"
     #endif
   #elif (BOARD_TYPE == 2)
     #define MODEL "ESP32S2"
-    #define ESP32_IS_CHEATING (-240)
+    #define ESP32_IS_CHEATING (0)
     #ifdef PRINT_COMPILER_MESSAGES
       #pragma message "chosen BOARD_TYPE = ESP32S2"
     #endif

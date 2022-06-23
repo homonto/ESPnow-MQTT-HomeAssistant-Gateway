@@ -1,3 +1,7 @@
+2022-06-23:
+  1.10.0 - PPK2_GPIO and code added to measure current and time
+         - ESP32_IS_CHEATING measured for ESP32S to be 325ms (head, tail, last commands) - added and verified
+
 2022-06-22:
   1.9.2 - version description in changelog.txt
 

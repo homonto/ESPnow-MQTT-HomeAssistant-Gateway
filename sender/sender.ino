@@ -4,6 +4,7 @@ sender.ino
 
 // ******************************* DEBUG ***************************************
 // #define DEBUG
+#define PPK2_GPIO 23          // comment out if not used - GPIO to test power and timings on PPK2
 
 // to see which board is compiled
 #define PRINT_COMPILER_MESSAGES
@@ -12,15 +13,15 @@ sender.ino
 // detailed config in the file devices_config.h
 
 // #define DEVICE_ID  1           // "esp32028" - S,  Garage
-// #define DEVICE_ID  2           // "esp32086" - S2, Lilygo2
+// #define DEVICE_ID  2           // "esp32086" - S2, Lilygo1
 // #define DEVICE_ID  3           // "esp32091" - S,  test
 // #define DEVICE_ID  4           // "esp32100" - S2, Table
 // #define DEVICE_ID  5           // "esp32101" - S,  Dining
 // #define DEVICE_ID  6           // "esp32102" - S,  Toilet
 // #define DEVICE_ID  7           // "esp32104" - S,  Milena
 // #define DEVICE_ID  8           // "esp32090" - S2,  test
-#define DEVICE_ID  9           // "esp32105" - S2,  Garden
-// #define DEVICE_ID  10           // "esp32087" - S1,  S
+// #define DEVICE_ID  9           // "esp32105" - S2,  Garden
+#define DEVICE_ID  10           // "esp32087" - S1,  S
 
 // **** reset MAX17048 on first deployment only, then comment it out ***********
 // #define RESET_MAX17048
@@ -29,7 +30,7 @@ sender.ino
 #define FORMAT_FS   0
 
 // version description in changelog.txt
-#define VERSION "1.9.2"
+#define VERSION "1.10.0"
 
 // configure device in this file, choose which one you are compiling for on top of this script: #define DEVICE_ID x
 #include "devices_config.h"
@@ -133,9 +134,9 @@ bool blink_led_status=false;
 // UNICAST:
 // status = 1 when delivered with ack
 // it will try to retransmit few times (10?) before giving status = 0
-// REPLACE WITH YOUR RECEIVER MAC Address - receiver is lilygo 3:
+// REPLACE WITH YOUR RECEIVER MAC Address
 // receiver might also use arbitrary MAC
-// lilygo 3: 7c:df:a1:0b:d9:7c
+// lilygo 3: (BROKEN chip so can be reused as arbitrary): 7c:df:a1:0b:d9:7c
 uint8_t broadcastAddress[] = {0x7c, 0xdF, 0xa1, 0x0b, 0xd9, 0x7c};
 
 // BROADCAST:
@@ -173,6 +174,7 @@ bool tslok   = true;
 long program_start_time,em,tt,start_espnow_time;
 int bootCount = 1;
 unsigned long saved_ontime_l = 0;
+unsigned long current_ontime_l = 0;
 
 // files to store some data
 #define BOOT_COUNT_FILE     "/bootcount.dat"
@@ -371,7 +373,8 @@ void save_ontime()
   char total_ontime_ch[12];
 
   // add new running time to saved_ontime_l
-  saved_ontime_l = saved_ontime_l + millis() + ESP32_IS_CHEATING;
+  current_ontime_l = millis() + ESP32_IS_CHEATING;
+  saved_ontime_l = saved_ontime_l + current_ontime_l;
 
   // reset saved_ontime_l if device is charging
   #if defined(CHARGING_GPIO) and defined(POWER_GPIO)
@@ -403,7 +406,7 @@ void save_ontime()
   if (writeFile(LittleFS, ONTIME_FILE, total_ontime_ch))
   {
     #ifdef DEBUG
-      Serial.printf("[%s]: total_ontime saved to file\n",__func__);
+      Serial.printf("[%s]: total_ontime saved to file=%sms\n",__func__,total_ontime_ch);
     #endif
   } else
   {
@@ -411,7 +414,13 @@ void save_ontime()
       Serial.printf("[%s]: total_ontime NOT saved to file\n",__func__);
     #endif
   }
-  Serial.printf("[%s]: Program finished after %lums. Bye...\n",__func__,millis());
+
+  // testing PPK2
+  #ifdef PPK2_GPIO
+    digitalWrite(PPK2_GPIO,LOW);
+  #endif
+
+  Serial.printf("[%s]: Program finished after %lums. Bye...\n",__func__,current_ontime_l);
 }
 
 
@@ -865,6 +874,12 @@ int update_firmware_prepare()
 // setup
 void setup()
 {
+  // testing PPK2
+  #ifdef PPK2_GPIO
+    pinMode(PPK2_GPIO,OUTPUT);
+    digitalWrite(PPK2_GPIO,HIGH);
+  #endif
+
   program_start_time = millis();
 
   Serial.begin(115200);
