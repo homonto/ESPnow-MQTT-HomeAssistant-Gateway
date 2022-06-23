@@ -92,11 +92,11 @@ To achieve this, you need to connect the pins from TP4056 that control charging/
 
 <h2>Firmware update - OTA</h2>
 <h3>Sensor device</h3>
-To perform firmware update there are 3 possibilities - both are with web server in use, where you store the binary file (sender.ino.esp32.bin)
+To perform firmware update there are 3 possibilities - 2 are with web server in use, where you store the binary file (sender.ino.esp32.bin)
 <ul>
   <li>double reset click - built in functions recognise double reset and if so done, performs firmware upgrade - of course you need to visit the sensor to double click it ;-)
   <li>routine check for new firmware availability on the server: every 24h (configurable) sensors connects to server and if new file found, performs upgrade
-  <li>wired TX/RX to the FTDI programmer
+  <li>3rd: wire TX/RX to the FTDI programmer
 </ul>
 Sender during firmware update:<br>
 <br>
