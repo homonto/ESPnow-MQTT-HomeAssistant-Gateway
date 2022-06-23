@@ -18,7 +18,7 @@
   <li>SHT31 temperature and humidity sensor, SDA, around 1.5$ on Aliexpress (breakout)
   <li>TSL2561 light sensor, SDA, around 1.5$ on Aliexpress (breakout)
   <li>MAX17048 LiPo battery sensor, SDA 1-5$ (depending if chip only or breakout)
-  <li>ESP32S-WROOM or ESP32-S2 WROOM, around 2$ on Aliexpress (bare metal - <b>do NOT use the development board with additional components! - they cannot go to uA due to the on board elements, i.e. LDO, LED etc.)</b> 
+  <li>ESP32S-WROOM or ESP32-S2 WROOM, around 2$ on Aliexpress (bare metal - <b>do NOT use the development board with additional components! - they cannot go to uA due to the on board elements, i.e. LDO, LED etc.)</b>
   <li>few additional components as per schematics (see below)
 </ul>
 
@@ -74,7 +74,7 @@ And that is what really matters with the battery life time calculation, because 
 So apparently the winner is <b>ESP32-S2 WROOM</b> with almost triple battery life.
 <br>
 <h3>Measuring the working time</h3>
-To measure working time you shall NOT rely only on millis or micros - ESP32 gives totally strange readings even if you print millis() just as the second line in void setup() (after Serial.begin(x)) - I used PPK2 and estimated the time the ESP32 works measuring the power consumption. 
+To measure working time you shall NOT rely only on millis or micros - ESP32 gives totally strange readings even if you print millis() just as the second line in void setup() (after Serial.begin(x)) - I used PPK2 and estimated the time the ESP32 works measuring the power consumption.
 <br>
 
 <h3>Charging details</h3>
@@ -94,8 +94,8 @@ To achieve this, you need to connect the pins from TP4056 that control charging/
 <h3>Sensor device</h3>
 To perform firmware update there are 3 possibilities - 2 are with web server in use, where you store the binary file (sender.ino.esp32.bin)
 <ul>
-  <li>double reset click - built in functions recognise double reset and if so done, performs firmware upgrade - of course you need to visit the sensor to double click it ;-)
-  <li>routine check for new firmware availability on the server: every 24h (configurable) sensor device connects to server and if new file found, performs upgrade
+  <li>double reset click - built in functions recognise double reset and if so done, performs firmware update - of course you need to visit the sensor to double click it ;-)
+  <li>routine check for new firmware availability on the server: every 24h (configurable) sensor device connects to server and if new file found, performs update
   <li>3rd: wire TX/RX to the FTDI programmer
 </ul>
 Sensor device during firmware update:<br>
