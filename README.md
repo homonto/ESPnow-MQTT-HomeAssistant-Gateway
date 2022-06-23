@@ -114,14 +114,14 @@ In the simplest (and useless) configuration, sensor sends only... its name to Ho
 
 Sleep time (configurable) is initially set to 180s (3 minutes).
 
-Other important configurable settings (some mandatory, some optional) (mainly for gateway):
+Other important configurable settings (some mandatory, some optional):
 <ul>
-  <li>WiFi channel - it must be the same for ESPnow communication and gateway to AP (router) communication
-  <li>SSID
-  <li>password
-  <li>MQTT server IP
-  <li>MQTT username
-  <li>MQTT password
+  <li>WiFi channel - it must be the same for ESPnow communication and gateway to AP (router) communication - gateway and sensor devices
+  <li>SSID - gateway and sensor devices
+  <li>password - gateway and sensor devices
+  <li>MQTT server IP - gateway device
+  <li>MQTT username - gateway device
+  <li>MQTT password - gateway device
 </ul>
 <h2>Software</h2>
 <h3>Sensor device - sender</h3>
