@@ -2,7 +2,7 @@
 
 <h2> Idea:</h2>
 <ul>
-  <li>Build universal sensor device (ESP32 based) equipped with temperature, humidity and light sensor that can live long on 1 battery charge</li>
+  <li>Build universal sensor device (ESP32 based) equipped with temperature, humidity and light sensors, that can live long on 1 battery charge</li>
   <li>Clone/deploy it to as many sensors as needed (indoor, outdoor etc.) without changing the software or reconfiguration (beyond what is specific to the device i.e. GPIO connection etc.)
   <li>Build gateway device (that is always powered ON) that transfers data from sensor devices to Home Assistant and automatically creates devices/entities on Home Assistant (no configuration needed)
 </ul>
@@ -74,7 +74,7 @@ And that is what really matters with the battery life time calculation, because 
 So apparently the winner is <b>ESP32-S2 WROOM</b> with almost triple battery life.
 <br>
 <h3>Measuring the working time</h3>
-To measure working time you shall NOT use millis or micros - ESP32 gives totally strange readings even if you print millis() just as the second line in void setup() (after Serial.begin(x)) - I used PPK2 and estimated the time the ESP32 works measuring the power consumption. 
+To measure working time you shall NOT rely only on millis or micros - ESP32 gives totally strange readings even if you print millis() just as the second line in void setup() (after Serial.begin(x)) - I used PPK2 and estimated the time the ESP32 works measuring the power consumption. 
 <br>
 
 <h3>Charging details</h3>
@@ -92,12 +92,13 @@ To achieve this, you need to connect the pins from TP4056 that control charging/
 
 <h2>Firmware update - OTA</h2>
 <h3>Sensor device</h3>
-To perform firmware update there are 2 possibilities - both are with web server in use, where you store the binary file (sender.ino.esp32.bin)
+To perform firmware update there are 3 possibilities - 2 are with web server in use, where you store the binary file (sender.ino.esp32.bin)
 <ul>
   <li>double reset click - built in functions recognise double reset and if so done, performs firmware upgrade - of course you need to visit the sensor to double click it ;-)
-  <li>routine check for new firmware availability on the server: every 24h (configurable) sensors connects to server and if new file found, performs upgrade
+  <li>routine check for new firmware availability on the server: every 24h (configurable) sensor device connects to server and if new file found, performs upgrade
+  <li>3rd: wire TX/RX to the FTDI programmer
 </ul>
-Sender during firmware update:<br>
+Sensor device during firmware update:<br>
 <br>
 <img width="540" alt="Screenshot 2022-06-22 at 18 55 39" src="https://user-images.githubusercontent.com/46562447/175105073-ad607c41-860e-4edd-8235-77bd8709eb10.png">
 <br>
