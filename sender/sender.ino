@@ -4,7 +4,7 @@ sender.ino
 
 // ******************************* DEBUG ***************************************
 // #define DEBUG
-#define PPK2_GPIO 23          // comment out if not used - GPIO to test power and timings on PPK2
+// #define PPK2_GPIO 35          // comment out if not used - GPIO to test power and timings on PPK2
 
 // to see which board is compiled
 #define PRINT_COMPILER_MESSAGES
@@ -20,8 +20,8 @@ sender.ino
 // #define DEVICE_ID  6           // "esp32102" - S,  Toilet
 // #define DEVICE_ID  7           // "esp32104" - S,  Milena
 // #define DEVICE_ID  8           // "esp32090" - S2,  test
-// #define DEVICE_ID  9           // "esp32105" - S2,  Garden
-#define DEVICE_ID  10           // "esp32087" - S1,  S
+#define DEVICE_ID  9           // "esp32105" - S2,  Garden
+// #define DEVICE_ID  10           // "esp32087" - S,  S
 
 // **** reset MAX17048 on first deployment only, then comment it out ***********
 // #define RESET_MAX17048
@@ -30,7 +30,7 @@ sender.ino
 #define FORMAT_FS   0
 
 // version description in changelog.txt
-#define VERSION "1.10.0"
+#define VERSION "1.10.1"
 
 // configure device in this file, choose which one you are compiling for on top of this script: #define DEVICE_ID x
 #include "devices_config.h"
@@ -415,7 +415,7 @@ void save_ontime()
     #endif
   }
 
-  // testing PPK2
+  // testing with PPK2
   #ifdef PPK2_GPIO
     digitalWrite(PPK2_GPIO,LOW);
   #endif
@@ -874,13 +874,13 @@ int update_firmware_prepare()
 // setup
 void setup()
 {
-  // testing PPK2
+  program_start_time = millis();
+
+// testing with PPK2
   #ifdef PPK2_GPIO
     pinMode(PPK2_GPIO,OUTPUT);
     digitalWrite(PPK2_GPIO,HIGH);
   #endif
-
-  program_start_time = millis();
 
   Serial.begin(115200);
   Serial.printf("\n[%s]: Device: %s (%s)\n",__func__,DEVICE_NAME,HOSTNAME);

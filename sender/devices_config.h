@@ -188,8 +188,8 @@ device configuration template:
   // #define FW_UPGRADE_LED_GPIO   33
   // #define CHARGING_GPIO         38
   // #define POWER_GPIO            39
-  #define SLEEP_TIME            180
-  #define USE_MAX17048          1
+  #define SLEEP_TIME            10
+  #define USE_MAX17048          0
   #define USE_SHT31             1
   #define USE_TSL2561           1
   #define USE_TEPT4400          0
@@ -198,7 +198,7 @@ device configuration template:
   #define USE_CUSTOM_I2C_GPIO   0
   #define SDA_GPIO              18
   #define SCL_GPIO              19
-  #pragma message "compilation for: esp32091-testS"
+  #pragma message "compilation for: esp32090-testS2"
 
   // *************** esp32090 S2 test ********************************
 #elif DEVICE_ID == 9
@@ -269,13 +269,13 @@ device configuration template:
 
   #if (BOARD_TYPE == 1)
     #define MODEL "ESP32"
-    #define ESP32_IS_CHEATING (325) // 310 head, 12 tail, 3ms delay between saved and save_ontime() function start
+    #define ESP32_IS_CHEATING (325) // +310 head, +12 tail, +3ms delay between saved and save_ontime() function start
     #ifdef PRINT_COMPILER_MESSAGES
       #pragma message "chosen BOARD_TYPE = ESP32"
     #endif
   #elif (BOARD_TYPE == 2)
     #define MODEL "ESP32S2"
-    #define ESP32_IS_CHEATING (0)
+    #define ESP32_IS_CHEATING (-228)  // -244 head, +12 tail, +4ms delay between saved and save_ontime() function start
     #ifdef PRINT_COMPILER_MESSAGES
       #pragma message "chosen BOARD_TYPE = ESP32S2"
     #endif
