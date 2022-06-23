@@ -98,7 +98,7 @@ To perform firmware update there are 3 possibilities - 2 are with web server in 
   <li>routine check for new firmware availability on the server: every 24h (configurable) sensor device connects to server and if new file found, performs upgrade
   <li>3rd: wire TX/RX to the FTDI programmer
 </ul>
-Sender during firmware update:<br>
+Sensor device during firmware update:<br>
 <br>
 <img width="540" alt="Screenshot 2022-06-22 at 18 55 39" src="https://user-images.githubusercontent.com/46562447/175105073-ad607c41-860e-4edd-8235-77bd8709eb10.png">
 <br>
