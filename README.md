@@ -93,7 +93,9 @@ And actually both are wrong as you can see below on the screens:
 <br>
 <br>
 I used PPK2 and estimated the time the ESP32 works measuring the power consumption. 
-Conclusions:
+<br>
+<br>
+<b>Conclusions:</b>
 <ul>
   <li>don't rely on millis() only
   <li>ESP32-S2 starts much faster (35ms) than ESP32S (310ms)
