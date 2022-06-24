@@ -1,8 +1,12 @@
 /*
 receiver.ino
 */
-#define VERSION "1.6.1"
+#define VERSION "1.6.2"
 /*
+2022-06-24:
+  1.6.2 - #define GND_GPIO_FOR_LED      13    // if not equipped comment out - GND for ACTIVITY_LED_GPIO
+        - testing esp_wifi_set_protocol(WIFI_IF_STA, WIFI_PROTOCOL_11B|WIFI_PROTOCOL_11G|WIFI_PROTOCOL_11N|WIFI_PROTOCOL_LR);
+          to extend the range of radio (no conclusion yet)
 2022-06-22:
   1.6.1 - pretty_ontime implemented as string
 
@@ -43,6 +47,8 @@ receiver.ino
 #include <HTTPClient.h>
 #include <Update.h>
 
+// macros
+#define GND_GPIO_FOR_LED    13    // if not equipped comment out - GND for ACTIVITY_LED_GPIO on some Lilygo boards
 
 // fuctions declarations
 // wifi.h
@@ -160,6 +166,11 @@ void setup()
   delay(100);
   Serial.println("\n\n=============================================================");
   Serial.println("GATEWAY started, version: "+String(VERSION));
+  #ifdef GND_GPIO_FOR_LED
+    Serial.println("Enabling GND for LED");
+    pinMode(GND_GPIO_FOR_LED, OUTPUT);
+    digitalWrite(GND_GPIO_FOR_LED, LOW);
+  #endif
   pinMode(STATUS_LED_GPIO,OUTPUT);
 
   setup_wifi();

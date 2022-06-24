@@ -34,7 +34,11 @@ void setup_wifi()
   primarydns.fromString(IP_DNS);
 
   WiFi.disconnect();
-  WiFi.mode(WIFI_MODE_APSTA);
+  WiFi.mode(WIFI_MODE_STA);
+  // check if WIFI_PROTOCOL_LR works
+  esp_wifi_set_protocol(WIFI_IF_STA, WIFI_PROTOCOL_11B|WIFI_PROTOCOL_11G|WIFI_PROTOCOL_11N|WIFI_PROTOCOL_LR);
+  // check if WIFI_PROTOCOL_LR works END
+
   WiFi.config(ipaddress, gateway, subnet, primarydns);
   WiFi.setHostname(HOSTNAME);
   Serial.print(" OLD MAC: "); Serial.println(WiFi.macAddress());
