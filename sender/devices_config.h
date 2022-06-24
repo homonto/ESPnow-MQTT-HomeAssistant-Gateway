@@ -69,7 +69,6 @@ test devices: esp32080 - 099
   #define SDA_GPIO              18
   #define SCL_GPIO              19
   #define GND_GPIO_FOR_LED      13
-  // #define GND_GPIO_FOR_LED      13
   #pragma message "compilation for: esp32086-Lilygo1a"
 
 // *************** "esp32091" - S,  test - S ********************************
@@ -278,6 +277,29 @@ test devices: esp32080 - 099
   #define SCL_GPIO              19
   // #define GND_GPIO_FOR_LED      13
   #pragma message "compilation for: esp32088-Lilygo2"
+
+// *************** "esp32089" - S2, test - Lilygo3a ***************************
+#elif DEVICE_ID == 12
+  #define HOSTNAME              "esp32089"
+  #define DEVICE_NAME           "Lilygo3a"
+  #define BOARD_TYPE            2
+  // #define ENABLE_3V_GPIO        32
+  #define ACTIVITY_LED_GPIO     14
+  // #define FW_UPGRADE_LED_GPIO   33
+  // #define CHARGING_GPIO         38
+  // #define POWER_GPIO            39
+  #define SLEEP_TIME            5
+  #define USE_MAX17048          0
+  #define USE_SHT31             0
+  #define USE_TSL2561           0
+  #define USE_TEPT4400          0
+  #define LUX_ADC_GPIO          36
+  #define LUX_MAX_RAW_READING   2900
+  #define USE_CUSTOM_I2C_GPIO   0
+  #define SDA_GPIO              18
+  #define SCL_GPIO              19
+  #define GND_GPIO_FOR_LED      13
+  #pragma message "compilation for: esp32089-Lilygo3a"
 
 #else
   #error "Wrong DEVICE_ID chosen"

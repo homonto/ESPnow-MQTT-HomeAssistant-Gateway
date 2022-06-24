@@ -22,7 +22,8 @@ sender.ino
 // #define DEVICE_ID  8           // "esp32090" - S2, test - S2
 // #define DEVICE_ID  9           // "esp32105" - S2, production - Garden
 // #define DEVICE_ID  10          // "esp32087" - S,  test - S
-#define DEVICE_ID  11          // "esp32088" - S2, test - Lilygo2
+// #define DEVICE_ID  11          // "esp32088" - S2, test - Lilygo2
+#define DEVICE_ID  12          // "esp32089" - S2, test - Lilygo3a
 
 // **** reset MAX17048 on first deployment only, then comment it out ***********
 // #define RESET_MAX17048
@@ -31,7 +32,7 @@ sender.ino
 #define FORMAT_FS   0
 
 // version description in changelog.txt
-#define VERSION "1.10.1"
+#define VERSION "1.10.3"
 
 // configure device in this file, choose which one you are compiling for on top of this script: #define DEVICE_ID x
 #include "devices_config.h"
@@ -679,7 +680,25 @@ void setup_wifi()
   WiFi.mode(WIFI_MODE_STA);
   wifi_start_time = millis();
   WiFi.begin(BT_SSID, BT_PASSWORD,WIFI_CHANNEL);
-  Serial.printf("\n[%s]: Connecting to %s ...\n",__func__,BT_SSID);
+
+  // convert MAC address to char array
+  uint8_t MAC_array[6];
+  char MAC_char[18];
+  WiFi.macAddress(MAC_array);
+  for (int i = 0; i < sizeof(MAC_array); ++i)
+  {
+    if (i<sizeof(MAC_array)-1)
+    {
+      sprintf(MAC_char,"%s%02x:",MAC_char,MAC_array[i]);
+    } else
+    {
+      sprintf(MAC_char,"%s%02x",MAC_char,MAC_array[i]);
+    }
+  }
+  // convert MAC address to char array END
+
+  Serial.printf("\n[%s]: ESP Mac Address: %s\n",__func__,MAC_char);
+  Serial.printf("[%s]: Connecting to %s ...\n",__func__,BT_SSID);
 
   while (WiFi.status() != WL_CONNECTED)
   {
