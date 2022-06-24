@@ -13,7 +13,7 @@ sender.ino
 // detailed config in the file devices_config.h
 
 // #define DEVICE_ID  1           // "esp32028" - S,  production - Garage
-#define DEVICE_ID  2           // "esp32086" - S2, Lilygo1a
+// #define DEVICE_ID  2           // "esp32086" - S2, test - Lilygo1a
 // #define DEVICE_ID  3           // "esp32091" - S,  test - S
 // #define DEVICE_ID  4           // "esp32100" - S2, production - Table
 // #define DEVICE_ID  5           // "esp32101" - S,  production - Dining

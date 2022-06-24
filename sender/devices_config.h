@@ -25,7 +25,7 @@ test devices: esp32080 - 099
 */
 
 
-// *************** esp32028 S garage ***************************
+// *************** "esp32028" - S,  production - Garage ***************************
 #if DEVICE_ID == 1
   #define HOSTNAME              "esp32028"
   #define DEVICE_NAME           "Garage"
@@ -47,7 +47,7 @@ test devices: esp32080 - 099
   #define SCL_GPIO              19
   #pragma message "compilation for: esp32028-Garage"
 
-// *************** esp32086 S2 Lilygo1a ***************************
+// *************** "esp32086" - S2, test - Lilygo1a ***************************
 #elif DEVICE_ID == 2
   #define HOSTNAME              "esp32086"
   #define DEVICE_NAME           "Lilygo1a"
@@ -69,7 +69,7 @@ test devices: esp32080 - 099
   #define SCL_GPIO              19
   #pragma message "compilation for: esp32086-Lilygo1a"
 
-// *************** esp32091 S test ********************************
+// *************** "esp32091" - S,  test - S ********************************
 #elif DEVICE_ID == 3
   #define HOSTNAME              "esp32091"
   #define DEVICE_NAME           "testS"
@@ -91,7 +91,7 @@ test devices: esp32080 - 099
   #define SCL_GPIO              19
   #pragma message "compilation for: esp32091-testS"
 
-// *************** esp32100 S2 papa/table ***************************
+// *************** "esp32100" - S2, production - Table ***************************
 #elif DEVICE_ID == 4
   #define HOSTNAME              "esp32100"
   #define DEVICE_NAME           "Table"
@@ -113,7 +113,7 @@ test devices: esp32080 - 099
   #define SCL_GPIO              19
   #pragma message "compilation for: esp32100-Table"
 
-// *************** esp32101 S dining ********************************
+// *************** "esp32101" - S,  production - Dining ********************************
 #elif DEVICE_ID == 5
   #define HOSTNAME              "esp32101"
   #define DEVICE_NAME           "Dining"
@@ -135,7 +135,7 @@ test devices: esp32080 - 099
   #define SCL_GPIO              19
   #pragma message "compilation for: esp32101-Dining"
 
-// *************** esp32102 S Toilet ********************************
+// *************** "esp32102" - S,  production - Toilet ********************************
 #elif DEVICE_ID == 6
   #define HOSTNAME              "esp32102"
   #define DEVICE_NAME           "ToiletUp"
@@ -157,7 +157,7 @@ test devices: esp32080 - 099
   #define SCL_GPIO              19
   #pragma message "compilation for: esp32102-ToiletUp"
 
-// *************** esp32104 S Milena ********************************
+// *************** "esp32104" - S,  production - Milena ********************************
 #elif DEVICE_ID == 7
   #define HOSTNAME              "esp32104"
   #define DEVICE_NAME           "Milena"
@@ -179,7 +179,7 @@ test devices: esp32080 - 099
   #define SCL_GPIO              19
   #pragma message "compilation for: esp32104-Milena"
 
-// *************** esp32090 S2 test ********************************
+// *************** "esp32090" - S2, test - S2 ********************************
 #elif DEVICE_ID == 8
   #define HOSTNAME              "esp32090"
   #define DEVICE_NAME           "testS2"
@@ -201,7 +201,7 @@ test devices: esp32080 - 099
   #define SCL_GPIO              19
   #pragma message "compilation for: esp32090-testS2"
 
-  // *************** esp32105 S2 Garden ********************************
+  // *************** "esp32105" - S2, production - Garden ********************************
 #elif DEVICE_ID == 9
   #define HOSTNAME              "esp32105"
   #define DEVICE_NAME           "Garden"
@@ -223,7 +223,7 @@ test devices: esp32080 - 099
   #define SCL_GPIO              19
   #pragma message "compilation for: esp32105-Garden"
 
-// *************** esp32087 S S ***************************
+// *************** "esp32087" - S,  test - S ***************************
 #elif DEVICE_ID == 10
   #define HOSTNAME              "esp32087"
   #define DEVICE_NAME           "S"
@@ -245,7 +245,7 @@ test devices: esp32080 - 099
   #define SCL_GPIO              19
   #pragma message "compilation for: esp32087-S"
 
-// *************** esp32088 S2 Lilygo2 ***************************
+// *************** "esp32088" - S2, test - Lilygo2 ***************************
 #elif DEVICE_ID == 11
   #define HOSTNAME              "esp32088"
   #define DEVICE_NAME           "Lilygo2"
