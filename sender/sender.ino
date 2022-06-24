@@ -22,7 +22,7 @@ sender.ino
 // #define DEVICE_ID  8           // "esp32090" - S2, test - S2
 // #define DEVICE_ID  9           // "esp32105" - S2, production - Garden
 // #define DEVICE_ID  10          // "esp32087" - S,  test - S
-// #define DEVICE_ID  11          // "esp32088" - S2, test - Lilygo2
+#define DEVICE_ID  11          // "esp32088" - S2, test - Lilygo2
 
 // **** reset MAX17048 on first deployment only, then comment it out ***********
 // #define RESET_MAX17048
@@ -37,12 +37,11 @@ sender.ino
 #include "devices_config.h"
 
 // ****************  ALL BELOW ALL IS COMMON FOR ANY ESP32 *********************
-#define HIBERNATE           // hibernate or deep sleep - for deep sleep just comment it out
-#define WIFI_CHANNEL  8     // in my house
-#define MINIMUM_VOLTS 3.0   // this might go to every device section
-#define WAIT_FOR_WIFI 5     // in seconds, for upgrade firmware
-#define PERIODIC_FW_CHECK   480 // ((24 * 60 * 60) / (SLEEP_TIME)) // how often to check for FW - for SLEEP_TIME=180s it would be around PERIODIC_FW_CHECK=480 for every 24 hours check
-
+#define HIBERNATE                 // hibernate or deep sleep - for deep sleep just comment it out
+#define WIFI_CHANNEL        8     // in my house
+#define MINIMUM_VOLTS       3.0   // this might go to every device section
+#define WAIT_FOR_WIFI       5     // in seconds, for upgrade firmware
+#define PERIODIC_FW_CHECK   480   // ((24 * 60 * 60) / (SLEEP_TIME)) // how often to check for FW - for SLEEP_TIME=180s it would be around PERIODIC_FW_CHECK=480 for every 24 hours check
 // ******************************  some consistency checks *************************
 #if ((USE_TSL2561 == 1) and (USE_TEPT4400 == 1))
   #error "use either USE_TSL2561 or USE_TEPT4400 for measuring lux - not both"
@@ -894,9 +893,12 @@ void setup()
 
 // turn on LED
   #ifdef ACTIVITY_LED_GPIO
-    #if (DEVICE_ID == 2) //on Lilygo1a LED cathode is not to GND but to GPIO13
-      pinMode(13, OUTPUT);
-      digitalWrite(13, LOW);
+    #ifdef GND_GPIO_FOR_LED
+      #ifdef DEBUG
+        Serial.printf("[%s]: Enabling GND for LED on GPIO=%d\n",__func__,GND_GPIO_FOR_LED);
+      #endif
+      pinMode(GND_GPIO_FOR_LED, OUTPUT);
+      digitalWrite(GND_GPIO_FOR_LED, LOW);
     #endif
     pinMode(ACTIVITY_LED_GPIO, OUTPUT);
     digitalWrite(ACTIVITY_LED_GPIO, HIGH);
@@ -1126,10 +1128,14 @@ void setup()
   start_espnow_time = millis();
 
   WiFi.mode(WIFI_MODE_STA);
+  // check if WIFI_PROTOCOL_LR works
+  esp_wifi_set_protocol(WIFI_IF_STA, WIFI_PROTOCOL_11B|WIFI_PROTOCOL_11G|WIFI_PROTOCOL_11N|WIFI_PROTOCOL_LR);
+  // check if WIFI_PROTOCOL_LR works END
+
   esp_wifi_set_channel(WIFI_CHANNEL, WIFI_SECOND_CHAN_NONE);
-  #ifdef DEBUG
-    // WiFi.printDiag(Serial); - it shows even password ;-)
-  #endif
+  // #ifdef DEBUG
+    // WiFi.printDiag(Serial); // - it shows even password ;-)
+  // #endif
   if (esp_now_init() != ESP_OK) {
     #ifdef DEBUG
       Serial.printf("[%s]: ESP NOW failed to initialize\n",__func__);

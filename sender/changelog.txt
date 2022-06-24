@@ -1,3 +1,8 @@
+2022-06-24:
+  1.10.2 - #define GND_GPIO_FOR_LED      13    // if not equipped comment out - GND for ACTIVITY_LED_GPIO
+         - testing esp_wifi_set_protocol(WIFI_IF_STA, WIFI_PROTOCOL_11B|WIFI_PROTOCOL_11G|WIFI_PROTOCOL_11N|WIFI_PROTOCOL_LR);
+           to extend the range of radio (no conclusion yet)
+
 2022-06-23:
   1.10.1 - ESP32_IS_CHEATING measured for ESP32-S2 to be -288ms (head, tail, last commands) - added and verified
 
