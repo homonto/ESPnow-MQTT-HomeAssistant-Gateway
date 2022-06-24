@@ -21,6 +21,7 @@ device configuration template:
 #define SDA_GPIO              18    // relevant only if USE_CUSTOM_I2C_GPIO=1
 #define SCL_GPIO              19    // relevant only if USE_CUSTOM_I2C_GPIO=1
 
+test devices: esp32080 - 099
 */
 
 
@@ -46,7 +47,7 @@ device configuration template:
   #define SCL_GPIO              19
   #pragma message "compilation for: esp32028-Garage"
 
-// *************** esp32086 S2 lilygo1 ***************************
+// *************** esp32086 S2 Lilygo1a ***************************
 #elif DEVICE_ID == 2
   #define HOSTNAME              "esp32086"
   #define DEVICE_NAME           "Lilygo1a"
@@ -200,7 +201,7 @@ device configuration template:
   #define SCL_GPIO              19
   #pragma message "compilation for: esp32090-testS2"
 
-  // *************** esp32090 S2 test ********************************
+  // *************** esp32105 S2 Garden ********************************
 #elif DEVICE_ID == 9
   #define HOSTNAME              "esp32105"
   #define DEVICE_NAME           "Garden"
@@ -244,6 +245,27 @@ device configuration template:
   #define SCL_GPIO              19
   #pragma message "compilation for: esp32087-S"
 
+// *************** esp32088 S2 Lilygo2 ***************************
+#elif DEVICE_ID == 11
+  #define HOSTNAME              "esp32088"
+  #define DEVICE_NAME           "Lilygo2"
+  #define BOARD_TYPE            2
+  // #define ENABLE_3V_GPIO        32
+  // #define ACTIVITY_LED_GPIO     14
+  // #define FW_UPGRADE_LED_GPIO   33
+  // #define CHARGING_GPIO         38
+  // #define POWER_GPIO            39
+  #define SLEEP_TIME            5
+  #define USE_MAX17048          0
+  #define USE_SHT31             0
+  #define USE_TSL2561           0
+  #define USE_TEPT4400          0
+  #define LUX_ADC_GPIO          36
+  #define LUX_MAX_RAW_READING   2900
+  #define USE_CUSTOM_I2C_GPIO   0
+  #define SDA_GPIO              18
+  #define SCL_GPIO              19
+  #pragma message "compilation for: esp32088-Lilygo2"
 
 #else
   #error "Wrong DEVICE_ID chosen"
