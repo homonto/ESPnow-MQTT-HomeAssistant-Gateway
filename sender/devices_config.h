@@ -49,10 +49,10 @@ device configuration template:
 // *************** esp32086 S2 lilygo1 ***************************
 #elif DEVICE_ID == 2
   #define HOSTNAME              "esp32086"
-  #define DEVICE_NAME           "Lilygo1"
+  #define DEVICE_NAME           "Lilygo1a"
   #define BOARD_TYPE            2
   // #define ENABLE_3V_GPIO        32
-  // #define ACTIVITY_LED_GPIO     14
+  #define ACTIVITY_LED_GPIO     14
   // #define FW_UPGRADE_LED_GPIO   33
   // #define CHARGING_GPIO         38
   // #define POWER_GPIO            39
@@ -66,7 +66,7 @@ device configuration template:
   #define USE_CUSTOM_I2C_GPIO   0
   #define SDA_GPIO              18
   #define SCL_GPIO              19
-  #pragma message "compilation for: esp32086-Lilygo1"
+  #pragma message "compilation for: esp32086-Lilygo1a"
 
 // *************** esp32091 S test ********************************
 #elif DEVICE_ID == 3
@@ -228,7 +228,7 @@ device configuration template:
   #define DEVICE_NAME           "S"
   #define BOARD_TYPE            1
   // #define ENABLE_3V_GPIO        32
-  #define ACTIVITY_LED_GPIO     33
+  // #define ACTIVITY_LED_GPIO     33
   #define FW_UPGRADE_LED_GPIO   32
   // #define CHARGING_GPIO         38
   // #define POWER_GPIO            39

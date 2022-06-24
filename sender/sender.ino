@@ -13,14 +13,14 @@ sender.ino
 // detailed config in the file devices_config.h
 
 // #define DEVICE_ID  1           // "esp32028" - S,  Garage
-// #define DEVICE_ID  2           // "esp32086" - S2, Lilygo1
+#define DEVICE_ID  2           // "esp32086" - S2, Lilygo1a
 // #define DEVICE_ID  3           // "esp32091" - S,  test
 // #define DEVICE_ID  4           // "esp32100" - S2, Table
 // #define DEVICE_ID  5           // "esp32101" - S,  Dining
 // #define DEVICE_ID  6           // "esp32102" - S,  Toilet
 // #define DEVICE_ID  7           // "esp32104" - S,  Milena
 // #define DEVICE_ID  8           // "esp32090" - S2,  test
-#define DEVICE_ID  9           // "esp32105" - S2,  Garden
+// #define DEVICE_ID  9           // "esp32105" - S2,  Garden
 // #define DEVICE_ID  10           // "esp32087" - S,  S
 
 // **** reset MAX17048 on first deployment only, then comment it out ***********
@@ -893,6 +893,10 @@ void setup()
 
 // turn on LED
   #ifdef ACTIVITY_LED_GPIO
+    #if (DEVICE_ID == 2) //on Lilygo1a LED cathode is not to GND but to GPIO13
+      pinMode(13, OUTPUT);
+      digitalWrite(13, LOW);
+    #endif
     pinMode(ACTIVITY_LED_GPIO, OUTPUT);
     digitalWrite(ACTIVITY_LED_GPIO, HIGH);
   #endif
