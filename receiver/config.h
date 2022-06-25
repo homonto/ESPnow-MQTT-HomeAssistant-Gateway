@@ -31,7 +31,7 @@ config
 #define JSON_PAYLOAD_SIZE 256 //256 // not optimized yet
 
 // loop update interval ms
-#define UPDATE_INTERVAL 10000 //10000
+#define UPDATE_INTERVAL (30 * 1000) //10000
 
 // mqtt - how many attempts to connect to MQTT broker before restarting
 #define MAX_MQTT_ERROR 10
