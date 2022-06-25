@@ -1,3 +1,6 @@
+2022-06-25:
+  1.10.4 - PERIODIC_FW_CHECK changed to PERIODIC_FW_CHECK_HRS
+
 2022-06-24:
   1.10.3 - print MAC address while connecting to AP
   1.10.2 - #define GND_GPIO_FOR_LED      13    // if not equipped comment out - GND for ACTIVITY_LED_GPIO

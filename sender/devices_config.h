@@ -21,6 +21,8 @@ device configuration template:
 #define SDA_GPIO              18    // relevant only if USE_CUSTOM_I2C_GPIO=1
 #define SCL_GPIO              19    // relevant only if USE_CUSTOM_I2C_GPIO=1
 #define GND_GPIO_FOR_LED      13    // if not equipped comment out - GND for ACTIVITY_LED_GPIO
+#define PERIODIC_FW_CHECK_HRS 24    // check FW update every hours
+
 test devices: esp32080 - 099
 */
 
@@ -46,6 +48,7 @@ test devices: esp32080 - 099
   #define SDA_GPIO              18
   #define SCL_GPIO              19
   // #define GND_GPIO_FOR_LED      13
+  // #define PERIODIC_FW_CHECK_HRS
   #pragma message "compilation for: esp32028-Garage"
 
 // *************** "esp32086" - S2, test - Lilygo1a ***************************
@@ -69,6 +72,7 @@ test devices: esp32080 - 099
   #define SDA_GPIO              18
   #define SCL_GPIO              19
   #define GND_GPIO_FOR_LED      13
+  // #define PERIODIC_FW_CHECK_HRS
   #pragma message "compilation for: esp32086-Lilygo1a"
 
 // *************** "esp32091" - S,  test - S ********************************
@@ -92,6 +96,7 @@ test devices: esp32080 - 099
   #define SDA_GPIO              18
   #define SCL_GPIO              19
   // #define GND_GPIO_FOR_LED      13
+  // #define PERIODIC_FW_CHECK_HRS
   #pragma message "compilation for: esp32091-testS"
 
 // *************** "esp32100" - S2, production - Table ***************************
@@ -115,6 +120,7 @@ test devices: esp32080 - 099
   #define SDA_GPIO              18
   #define SCL_GPIO              19
   // #define GND_GPIO_FOR_LED      13
+  // #define PERIODIC_FW_CHECK_HRS
   #pragma message "compilation for: esp32100-Table"
 
 // *************** "esp32101" - S,  production - Dining ********************************
@@ -138,6 +144,7 @@ test devices: esp32080 - 099
   #define SDA_GPIO              18
   #define SCL_GPIO              19
   // #define GND_GPIO_FOR_LED      13
+  // #define PERIODIC_FW_CHECK_HRS
   #pragma message "compilation for: esp32101-Dining"
 
 // *************** "esp32102" - S,  production - Toilet ********************************
@@ -161,6 +168,7 @@ test devices: esp32080 - 099
   #define SDA_GPIO              18
   #define SCL_GPIO              19
   // #define GND_GPIO_FOR_LED      13
+  // #define PERIODIC_FW_CHECK_HRS
   #pragma message "compilation for: esp32102-ToiletUp"
 
 // *************** "esp32104" - S,  production - Milena ********************************
@@ -184,6 +192,7 @@ test devices: esp32080 - 099
   #define SDA_GPIO              18
   #define SCL_GPIO              19
   // #define GND_GPIO_FOR_LED      13
+  // #define PERIODIC_FW_CHECK_HRS
   #pragma message "compilation for: esp32104-Milena"
 
 // *************** "esp32090" - S2, test - S2 ********************************
@@ -207,6 +216,7 @@ test devices: esp32080 - 099
   #define SDA_GPIO              18
   #define SCL_GPIO              19
   // #define GND_GPIO_FOR_LED      13
+  // #define PERIODIC_FW_CHECK_HRS
   #pragma message "compilation for: esp32090-testS2"
 
   // *************** "esp32105" - S2, production - Garden ********************************
@@ -230,6 +240,7 @@ test devices: esp32080 - 099
   #define SDA_GPIO              18
   #define SCL_GPIO              19
   // #define GND_GPIO_FOR_LED      13
+  // #define PERIODIC_FW_CHECK_HRS
   #pragma message "compilation for: esp32105-Garden"
 
 // *************** "esp32087" - S,  test - S ***************************
@@ -253,6 +264,7 @@ test devices: esp32080 - 099
   #define SDA_GPIO              18
   #define SCL_GPIO              19
   // #define GND_GPIO_FOR_LED      13
+  // #define PERIODIC_FW_CHECK_HRS
   #pragma message "compilation for: esp32087-S"
 
 // *************** "esp32088" - S2, test - Lilygo2 ***************************
@@ -265,7 +277,7 @@ test devices: esp32080 - 099
   // #define FW_UPGRADE_LED_GPIO   33
   // #define CHARGING_GPIO         38
   // #define POWER_GPIO            39
-  #define SLEEP_TIME            5
+  #define SLEEP_TIME            10
   #define USE_MAX17048          0
   #define USE_SHT31             0
   #define USE_TSL2561           0
@@ -276,6 +288,7 @@ test devices: esp32080 - 099
   #define SDA_GPIO              18
   #define SCL_GPIO              19
   // #define GND_GPIO_FOR_LED      13
+  #define PERIODIC_FW_CHECK_HRS 0.1
   #pragma message "compilation for: esp32088-Lilygo2"
 
 // *************** "esp32089" - S2, test - Lilygo3a ***************************
@@ -299,6 +312,7 @@ test devices: esp32080 - 099
   #define SDA_GPIO              18
   #define SCL_GPIO              19
   #define GND_GPIO_FOR_LED      13
+  // #define PERIODIC_FW_CHECK_HRS
   #pragma message "compilation for: esp32089-Lilygo3a"
 
 #else

@@ -22,8 +22,8 @@ sender.ino
 // #define DEVICE_ID  8           // "esp32090" - S2, test - S2
 // #define DEVICE_ID  9           // "esp32105" - S2, production - Garden
 // #define DEVICE_ID  10          // "esp32087" - S,  test - S
-// #define DEVICE_ID  11          // "esp32088" - S2, test - Lilygo2
-#define DEVICE_ID  12          // "esp32089" - S2, test - Lilygo3a
+#define DEVICE_ID  11          // "esp32088" - S2, test - Lilygo2
+// #define DEVICE_ID  12          // "esp32089" - S2, test - Lilygo3a
 
 // **** reset MAX17048 on first deployment only, then comment it out ***********
 // #define RESET_MAX17048
@@ -32,7 +32,7 @@ sender.ino
 #define FORMAT_FS   0
 
 // version description in changelog.txt
-#define VERSION "1.10.3"
+#define VERSION "1.10.4"
 
 // configure device in this file, choose which one you are compiling for on top of this script: #define DEVICE_ID x
 #include "devices_config.h"
@@ -40,9 +40,11 @@ sender.ino
 // ****************  ALL BELOW ALL IS COMMON FOR ANY ESP32 *********************
 #define HIBERNATE                 // hibernate or deep sleep - for deep sleep just comment it out
 #define WIFI_CHANNEL        8     // in my house
-#define MINIMUM_VOLTS       3.0   // this might go to every device section
+#define MINIMUM_VOLTS       3.1   // this might go to every device section
 #define WAIT_FOR_WIFI       5     // in seconds, for upgrade firmware
-#define PERIODIC_FW_CHECK   480   // ((24 * 60 * 60) / (SLEEP_TIME)) // how often to check for FW - for SLEEP_TIME=180s it would be around PERIODIC_FW_CHECK=480 for every 24 hours check
+#ifndef PERIODIC_FW_CHECK_HRS     // if not found custom PERIODIC_FW_CHECK_HRS in devices_config.h (per device custom)
+  #define PERIODIC_FW_CHECK_HRS   24
+#endif
 // ******************************  some consistency checks *************************
 #if ((USE_TSL2561 == 1) and (USE_TEPT4400 == 1))
   #error "use either USE_TSL2561 or USE_TEPT4400 for measuring lux - not both"
@@ -1025,7 +1027,7 @@ void setup()
       #ifdef DEBUG
         Serial.printf("[%s]: bootCount=%d\n",__func__,bootCount);
       #endif
-      if (bootCount >= PERIODIC_FW_CHECK)
+      if (bootCount >= (3600 / (SLEEP_TIME)) * (PERIODIC_FW_CHECK_HRS))
       {
         Serial.printf("[%s]: time to check FW\n",__func__);
         // cheating here: reusing DRD_Detected to initiate the FW upgrade
