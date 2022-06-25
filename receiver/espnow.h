@@ -58,9 +58,12 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len)
 {
   // data_to_send has to be protected while being changed by this function and read during publish to HA
   portENTER_CRITICAL(&receive_cb_mutex);
-  data_to_send = true;
-  memcpy(&myData, incomingData, sizeof(myData));
-  snprintf(macStr, sizeof(macStr), "%02x:%02x:%02x:%02x:%02x:%02x",mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+  if (!data_to_send)
+  {
+    memcpy(&myData, incomingData, sizeof(myData));
+    snprintf(macStr, sizeof(macStr), "%02x:%02x:%02x:%02x:%02x:%02x",mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+    data_to_send = true;
+  }
   portEXIT_CRITICAL(&receive_cb_mutex);
 }
 // OnDataRecv callback END
