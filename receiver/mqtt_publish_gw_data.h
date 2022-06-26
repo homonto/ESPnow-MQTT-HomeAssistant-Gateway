@@ -162,7 +162,7 @@ bool mqtt_publish_gw_status_values(const char* status)
 }
 
 
-// gw last_updated_sensor config - once sensor data is sent to HA, show on HA which sensor was last updated
+// gw last_updated_sensor config - once sensor data is sent to HA, show on HA which sensor was last updated or queue full
 bool mqtt_publish_gw_last_updated_sensor_config()
 {
   char status_conf_topic[60];
@@ -377,6 +377,7 @@ bool mqtt_publish_button_restart_config()
 
   return publish_status;
 }
+
 
 // stop/start updating HA with sensors data - switch on HA
 bool mqtt_publish_switch_publish_config()

@@ -1,8 +1,11 @@
 /*
 receiver.ino
 */
-#define VERSION "1.6.2"
+#define VERSION "1.7.0"
 /*
+2022-06-26:
+  1.7.0 - incoming messages in the queue to avoid losing data
+
 2022-06-24:
   1.6.2 - #define GND_GPIO_FOR_LED      13    // if not equipped comment out - GND for ACTIVITY_LED_GPIO
         - testing esp_wifi_set_protocol(WIFI_IF_STA, WIFI_PROTOCOL_11B|WIFI_PROTOCOL_11G|WIFI_PROTOCOL_11N|WIFI_PROTOCOL_LR);
@@ -59,7 +62,7 @@ void promiscuous_rx_cb(void *buf, wifi_promiscuous_pkt_type_t type);
 void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len);
 // mqtt.h
 void mqtt_reconnect();
-bool mqtt_publish_data();
+// bool mqtt_publish_data();
 void mqtt_callback(char* topic, byte* message, unsigned int length);
 bool mqtt_publish_button_update_config();
 
@@ -72,8 +75,8 @@ bool mqtt_publish_gw_last_updated_sensor_config();
 bool mqtt_publish_gw_last_updated_sensor_values(const char* status);
 
 // mqtt_publish_sensors_data.h - all at once
-bool mqtt_publish_sensors_config(const char* hostname);
-bool mqtt_publish_sensors_values(const char* hostname);
+bool mqtt_publish_sensors_config(const char* hostname, const char* name, const char* mac, const char* fw);
+bool mqtt_publish_sensors_values();
 bool mqtt_publish_button_restart_config();
 bool mqtt_publish_button_update_config();
 bool mqtt_publish_switch_publish_config();
@@ -132,7 +135,8 @@ void ConvertSectoDay(unsigned long n, char *pretty_ontime)
       }
     }
   }
-  if (debug_mode) Serial.printf("\n\nontime for %s=%s\n\n",myData.host,pretty_ontime);
+  if (debug_mode)
+    Serial.printf("\n\npretty_ontime=%s\n\n",pretty_ontime);
 }
 
 
@@ -140,6 +144,7 @@ void hearbeat()
 {
   bool publish_status = true;
   digitalWrite(STATUS_LED_GPIO,HIGH);
+  publish_status = publish_status && mqtt_publish_gw_status_config();
   Serial.print("[heartbeat] - sending to HA "+String((millis()-aux_update_interval)/1000)+"s later......");
 
   publish_status = publish_status && mqtt_publish_gw_status_values("online");
@@ -148,6 +153,12 @@ void hearbeat()
   publish_status = publish_status && mqtt_publish_gw_last_updated_sensor_config();
   publish_status = publish_status && mqtt_publish_switch_publish_values();
 
+  int queue_count = uxQueueMessagesWaiting(queue);
+  if (queue_count == MAX_QUEUE_COUNT)
+  {
+    publish_status = publish_status && mqtt_publish_gw_last_updated_sensor_values("queue FULL");
+  }
+
   if (publish_status)
   {
     Serial.println("SUCCESSFULL");
@@ -155,6 +166,12 @@ void hearbeat()
   {
     Serial.println("FAILED");
   }
+
+  if (queue_count == MAX_QUEUE_COUNT)
+  {
+    Serial.println("ERROR: queue is full!");
+  }
+
   digitalWrite(STATUS_LED_GPIO,LOW);
 }
 
@@ -172,6 +189,26 @@ void setup()
     digitalWrite(GND_GPIO_FOR_LED, LOW);
   #endif
   pinMode(STATUS_LED_GPIO,OUTPUT);
+
+  queue = xQueueCreate( MAX_QUEUE_COUNT, sizeof( struct struct_message ) );
+  if(queue == NULL)
+  {
+    Serial.println("Error creating the queue");
+    delay(10000000);
+  } else
+  {
+    Serial.println("Created the queue");
+  }
+
+  queue_aux = xQueueCreate( MAX_QUEUE_COUNT, sizeof( struct struct_message_aux ) );
+  if(queue_aux == NULL)
+  {
+    Serial.println("Error creating the queue_aux");
+    delay(10000000);
+  } else
+  {
+    Serial.println("Created the queue_aux");
+  }
 
   setup_wifi();
   if (!wifi_connected)
@@ -213,17 +250,9 @@ void loop()
 {
   long start_loop_time = millis();
 
-  if (WiFi.status() != WL_CONNECTED)
-  {
-    setup_wifi();
-  }
-
-  if (!mqttc.connected())
-  {
-    mqtt_reconnect();
-  }
+  if (WiFi.status() != WL_CONNECTED) setup_wifi();
+  if (!mqttc.connected()) mqtt_reconnect();
   mqttc.loop();
-
   do_update();
 
   if (start_loop_time > (aux_update_interval + UPDATE_INTERVAL))
@@ -232,18 +261,13 @@ void loop()
     aux_update_interval = start_loop_time;
   }
 
-  if (data_to_send)
+  int queue_count = uxQueueMessagesWaiting(queue);
+  if (queue_count > 0)
   {
+    if (debug_mode) Serial.printf("queue size=%d\n",queue_count);
     if (publish_sensors_to_ha)
     {
-      mqtt_publish_data();
-    } else
-    {
-      Serial.print("Not publishing to HA as publish_sensors_to_ha=");Serial.println(publish_sensors_to_ha);
+      mqtt_publish_sensors_values();
     }
-    // protect the vunerable ones ;-)
-    portENTER_CRITICAL(&receive_cb_mutex);
-    data_to_send = false;
-    portEXIT_CRITICAL(&receive_cb_mutex);
   }
 }

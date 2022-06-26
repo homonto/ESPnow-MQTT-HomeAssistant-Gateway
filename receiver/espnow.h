@@ -7,7 +7,7 @@ espnow functions
 #include "variables.h"
 
 
-// rssi thingis - to see the rssi of the sender - gateway measures it
+// rssi thingis - to see the rssi of the sender - gateway measures always the last rssi: being from GW to AP or GW to sender
 typedef struct {
   unsigned frame_ctrl: 16;
   unsigned duration_id: 16;
@@ -29,10 +29,13 @@ void promiscuous_rx_cb(void *buf, wifi_promiscuous_pkt_type_t type) {
   if (type != WIFI_PKT_MGMT)
     return;
   const wifi_promiscuous_pkt_t *ppkt = (wifi_promiscuous_pkt_t *)buf;
-  const wifi_ieee80211_packet_t *ipkt = (wifi_ieee80211_packet_t *)ppkt->payload;
-  const wifi_ieee80211_mac_hdr_t *hdr = &ipkt->hdr;
+  // const wifi_ieee80211_packet_t *ipkt = (wifi_ieee80211_packet_t *)ppkt->payload;
+  // const wifi_ieee80211_mac_hdr_t *hdr = &ipkt->hdr;
 
-  rssi = ppkt->rx_ctrl.rssi;
+  // push rssi into myData_aux.rssi
+  myData_aux.rssi = ppkt->rx_ctrl.rssi;
+  if (debug_mode)
+    Serial.printf("-->[%s]: RSSI: %ddBm\n",__func__,ppkt->rx_ctrl.rssi);
 }
 // rssi thingis END
 
@@ -56,14 +59,24 @@ void espnow_start()
 // OnDataRecv callback
 void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len)
 {
-  // data_to_send has to be protected while being changed by this function and read during publish to HA
-  portENTER_CRITICAL(&receive_cb_mutex);
-  if (!data_to_send)
+  int queue_count = uxQueueMessagesWaiting(queue);
+  int queue_aux_count = uxQueueMessagesWaiting(queue_aux);
+  if ((queue_count >= MAX_QUEUE_COUNT) or (queue_aux_count >= MAX_QUEUE_COUNT))
   {
-    memcpy(&myData, incomingData, sizeof(myData));
-    snprintf(macStr, sizeof(macStr), "%02x:%02x:%02x:%02x:%02x:%02x",mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-    data_to_send = true;
+    Serial.println("max queue capacity reached, not queuing");
+    return;
   }
+
+  portENTER_CRITICAL(&receive_cb_mutex);
+    // push incoming data to myData
+    memcpy(&myData, incomingData, sizeof(myData));
+    xQueueSendToFront(queue, &myData, portMAX_DELAY);
+    // push MAC to myData_aux (rssi, MAC)
+    snprintf(myData_aux.macStr, sizeof(myData_aux.macStr), "%02x:%02x:%02x:%02x:%02x:%02x",mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+    if (debug_mode) Serial.printf("-->[%s]: macStr: %s\n",__func__,myData_aux.macStr);
+    xQueueSendToFront(queue_aux, &myData_aux, portMAX_DELAY);
   portEXIT_CRITICAL(&receive_cb_mutex);
+
+  if (debug_mode) Serial.printf("queued data for %s\n",myData.host);
 }
 // OnDataRecv callback END

@@ -28,13 +28,16 @@ config
 #define MQTT_PAYLOAD_MAX_SIZE 1024
 // for ArduinoJson
 #define JSON_CONFIG_SIZE 1024 // config is bigger than payload due to device information
-#define JSON_PAYLOAD_SIZE 256 //256 // not optimized yet
+#define JSON_PAYLOAD_SIZE 512 //256 // not optimized yet
 
 // loop update interval ms
-#define UPDATE_INTERVAL (30 * 1000) //10000
+#define UPDATE_INTERVAL (10 * 1000) //10000
 
 // mqtt - how many attempts to connect to MQTT broker before restarting
 #define MAX_MQTT_ERROR 10
+
+// queue size
+#define MAX_QUEUE_COUNT 25
 
 // fixed MAC address - [currently as lilygo3], to be able to use any ESP32
 // chose any free one [i.e. from broken ESP] and change also sender.ino

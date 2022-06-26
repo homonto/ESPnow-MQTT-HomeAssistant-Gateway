@@ -6,18 +6,19 @@ mqtt functions for sensors
 #include "config.h"
 #include "variables.h"
 
-// sensor device definition
-  #define CREATE_SENSOR_MQTT_DEVICE \
-  dev = config.createNestedObject("device"); \
-  dev["ids"]=macStr;  \
-  dev["name"]="ESPnow_" + String(myData.name) + "_" + String(myData.host); \
-  dev["mdl"]="ESPnow sensor"; \
-  dev["mf"]="ZH"; \
-  dev["sw"]= myData.ver;
-// sensor device definition END
 
-bool mqtt_publish_sensors_config(const char* hostname)
+bool mqtt_publish_sensors_config(const char* hostname, const char* name, const char* mac, const char* fw)
 {
+  // sensor device definition
+    #define CREATE_SENSOR_MQTT_DEVICE \
+    dev = config.createNestedObject("device"); \
+    dev["ids"]=mac;  \
+    dev["name"]="ESPnow_" + String(name) + "_" + String(hostname); \
+    dev["mdl"]="ESPnow_sensor_"+String(mac); \
+    dev["mf"]="ZH"; \
+    dev["sw"]= fw;
+  // sensor device definition END
+
 // config topics
   char temp_conf_topic[60];
   snprintf(temp_conf_topic,sizeof(temp_conf_topic),"homeassistant/sensor/%s/temperature/config",hostname);
@@ -67,6 +68,10 @@ bool mqtt_publish_sensors_config(const char* hostname)
   snprintf(pretty_ontime_conf_topic,sizeof(pretty_ontime_conf_topic),"homeassistant/sensor/%s/pretty_ontime/config",hostname);
   if (debug_mode) Serial.println("pretty_ontime_conf_topic="+String(pretty_ontime_conf_topic));
 
+  char mac_conf_topic[60];
+  snprintf(mac_conf_topic,sizeof(mac_conf_topic),"homeassistant/sensor/%s/mac/config",hostname);
+  if (debug_mode) Serial.println("mac_conf_topic="+String(mac_conf_topic));
+
 // sensors/entities names
   char temp_name[30];
   snprintf(temp_name,sizeof(temp_name),"%s_temperature",hostname);
@@ -115,6 +120,10 @@ bool mqtt_publish_sensors_config(const char* hostname)
   char pretty_ontime_name[30];
   snprintf(pretty_ontime_name,sizeof(pretty_ontime_name),"%s_pretty_ontime",hostname);
   if (debug_mode) Serial.println("pretty_ontime_name="+String(pretty_ontime_name));
+
+  char mac_name[30];
+  snprintf(mac_name,sizeof(mac_name),"%s_mac",hostname);
+  if (debug_mode) Serial.println("mac_name="+String(mac_name));
 
 // values/state topic
   char sensors_topic_state[60];
@@ -505,37 +514,98 @@ bool mqtt_publish_sensors_config(const char* hostname)
     Serial.println("============ DEBUG CONFIG PRETTY ONTIME END ========\n");
   }
 
+// sensor mac config
+  config.clear();
+  config["name"] = mac_name;
+  config["stat_t"] = sensors_topic_state;
+  config["val_tpl"] = "{{value_json.mac}}";
+  config["uniq_id"] = mac_name;
+  config["frc_upd"] = "true";
+  config["entity_category"] = "diagnostic";
+  config["exp_aft"] = 600;
+
+  CREATE_SENSOR_MQTT_DEVICE
+
+  size_c = serializeJson(config, config_json);
+  if (mqtt_connected){ if (!mqttc.publish(mac_conf_topic,(uint8_t*)config_json,strlen(config_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}}
+  if (debug_mode) {
+    Serial.println("\n============ DEBUG CONFIG MAC ONTIME ============");
+    Serial.println("Size of mac config="+String(size_c)+" bytes");
+    Serial.println("Serialised config_json:");
+    Serial.println(config_json);
+    Serial.println("serializeJsonPretty");
+    serializeJsonPretty(config, Serial);
+    if (publish_status) {
+      Serial.println("\n MAC CONFIG OK");
+    } else
+    {
+      Serial.println("\n PRETTYONTIME CONFIG UNSUCCESSFULL");
+    }
+    Serial.println("============ DEBUG CONFIG MAC END ========\n");
+  }
+
   return publish_status;
 }
 
 
-bool mqtt_publish_sensors_values(const char* hostname)
+bool mqtt_publish_sensors_values()
 {
+  struct_message myLocalData;
+  struct_message_aux myLocalData_aux;
+
+  portENTER_CRITICAL(&receive_cb_mutex);
+    xQueueReceive(queue, &myLocalData, portMAX_DELAY);
+    xQueueReceive(queue_aux, &myLocalData_aux, portMAX_DELAY);
+  portEXIT_CRITICAL(&receive_cb_mutex);
+
 // values topic
   char sensors_topic_state[60];
-  snprintf(sensors_topic_state,sizeof(sensors_topic_state),"%s/sensor/state",hostname);
+  snprintf(sensors_topic_state,sizeof(sensors_topic_state),"%s/sensor/state",myLocalData.host);
   if (debug_mode)Serial.println("sensors_topic_state="+String(sensors_topic_state));
 
+  char pretty_ontime[17]; // "999d 24h 60m 60s" = 16 characters
+  ConvertSectoDay(myLocalData.ontime,pretty_ontime);
+
+  Serial.println("\nESPnow Message received from:");
+  Serial.print("\tname=");Serial.println(myLocalData.name);
+  Serial.print("\thostname=");Serial.println(myLocalData.host);
+  Serial.print("\tMAC=");Serial.println(myLocalData_aux.macStr);
+  Serial.print("\tSize of message=");Serial.print(sizeof(myLocalData));Serial.println(" bytes");
+  Serial.print("\ttemp=");Serial.println(myLocalData.temp);
+  Serial.print("\thum=");Serial.println(myLocalData.hum);
+  Serial.print("\tlux=");Serial.println(myLocalData.lux);
+  Serial.print("\tbat=");Serial.println(myLocalData.bat);
+  Serial.print("\tbatpct=");Serial.println(myLocalData.batpct);
+  Serial.print("\tcharg=");Serial.println(myLocalData.charg);
+  Serial.print("\tver=");Serial.println(myLocalData.ver);
+  Serial.print("\trssi=");Serial.println(myLocalData_aux.rssi);
+  Serial.print("\tboot=");Serial.println(myLocalData.boot);
+  Serial.print("\tontime=");Serial.println(myLocalData.ontime);
+  Serial.print("\tpretty_ontime=");Serial.println(pretty_ontime);
+  Serial.println();
+
+
   bool publish_status = true;
-  if (!mqtt_publish_sensors_config(hostname)){
+  if (!mqtt_publish_sensors_config(myData.host,myData.name,myData_aux.macStr,myLocalData.ver)){
     Serial.println("\n SENSORS CONFIG NOT published");
     return false;
   }
 
   StaticJsonDocument<JSON_PAYLOAD_SIZE> payload;
 
-  payload["temperature"]        = myData.temp;
-  payload["humidity"]           = myData.hum;
-  payload["lux"]                = myData.lux;
-  payload["battery"]            = myData.bat;
-  payload["batterypercent"]     = myData.batpct;
-  payload["rssi"]               = rssi;
-  payload["version"]            = myData.ver;
-  payload["charging"]           = myData.charg;
-  payload["name"]               = myData.name;
-  payload["boot"]               = myData.boot;
-  payload["ontime"]             = myData.ontime;
+  payload["temperature"]        = myLocalData.temp;
+  payload["humidity"]           = myLocalData.hum;
+  payload["lux"]                = myLocalData.lux;
+  payload["battery"]            = myLocalData.bat;
+  payload["batterypercent"]     = myLocalData.batpct;
+  payload["rssi"]               = myLocalData_aux.rssi;
+  payload["version"]            = myLocalData.ver;
+  payload["charging"]           = myLocalData.charg;
+  payload["name"]               = myLocalData.name;
+  payload["boot"]               = myLocalData.boot;
+  payload["ontime"]             = myLocalData.ontime;
   payload["pretty_ontime"]      = pretty_ontime;
+  payload["mac"]                = myLocalData_aux.macStr;
 
   char payload_json[JSON_PAYLOAD_SIZE];
   int size_pl = serializeJson(payload, payload_json);
@@ -558,6 +628,17 @@ bool mqtt_publish_sensors_values(const char* hostname)
     Serial.println("============ DEBUG PAYLOAD SENSORS END ========\n");
   }
   if (!publish_status) {Serial.println("\n SENSORS VALUES NOT published");}
+
+
+  publish_status = mqtt_publish_gw_last_updated_sensor_values(myLocalData.host);
+  Serial.print("[last_updated_sensor] updating GW on HA...");
+  if (publish_status)
+  {
+    Serial.println(".SUCCESSFULL");
+  } else
+  {
+    Serial.println(".FAILED");
+  }
 
   return publish_status;
 }

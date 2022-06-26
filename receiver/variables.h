@@ -20,8 +20,18 @@ typedef struct struct_message {
 } struct_message;
 // espnow data structure END
 
-// MAC of the sender
-char macStr[18];
+// data structure for sensors - auxiliary with RSSI and MAC (of sender)
+typedef struct struct_message_aux {
+  int rssi;
+  char macStr[18];
+} struct_message_aux;
+// espnow data structure END
+
+// queue for messages comming - buffer
+QueueHandle_t queue;
+
+// queue_aux for aux messages comming - buffer
+QueueHandle_t queue_aux;
 
 // wifi
 bool wifi_connected = false;
@@ -34,13 +44,11 @@ PubSubClient mqttc(espClient);
 // data from sensors
 struct_message myData;
 
+// aux_data from/for sensors: rssi and MAC
+struct_message_aux myData_aux;
+
 // critical for OnDataRecv
 portMUX_TYPE receive_cb_mutex    = portMUX_INITIALIZER_UNLOCKED;
-volatile bool data_to_send  = false;
-// critical for OnDataRecv END
-
-// measured rssi level by receiver between receiver and sender (not from router!)
-int rssi;
 
 // firmware update
 HTTPClient firmware_update_client;
@@ -56,5 +64,4 @@ bool debug_mode = false;  // change to true to see tones of messages
 long aux_update_interval = 0;
 bool publish_sensors_to_ha = true;
 long tt, program_start_time;
-char pretty_ontime[17]; // "999d 24h 60m 60s" = 16 characters
 // global others END
