@@ -20,9 +20,9 @@ sender.ino
 // #define DEVICE_ID  6           // "esp32102" - S,  production - Toilet
 // #define DEVICE_ID  7           // "esp32104" - S,  production - Milena
 // #define DEVICE_ID  8           // "esp32090" - S2, test - S2
-// #define DEVICE_ID  9           // "esp32105" - S2, production - Garden
+#define DEVICE_ID  9           // "esp32105" - S2, production - Garden
 // #define DEVICE_ID  10          // "esp32087" - S,  test - S
-#define DEVICE_ID  11          // "esp32088" - S2, test - Lilygo2
+// #define DEVICE_ID  11          // "esp32088" - S2, test - Lilygo2
 // #define DEVICE_ID  12          // "esp32089" - S2, test - Lilygo3a
 
 // **** reset MAX17048 on first deployment only, then comment it out ***********
@@ -32,7 +32,7 @@ sender.ino
 #define FORMAT_FS   0
 
 // version description in changelog.txt
-#define VERSION "1.10.4"
+#define VERSION "1.10.5"
 
 // configure device in this file, choose which one you are compiling for on top of this script: #define DEVICE_ID x
 #include "devices_config.h"
@@ -474,6 +474,9 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
       Serial.printf("[%s]: ESPnow SUCCESSFULL\n",__func__);
     } else
     {
+      #ifdef FW_UPGRADE_LED_GPIO
+        digitalWrite(FW_UPGRADE_LED_GPIO,HIGH);
+      #endif
       Serial.printf("[%s]: ESPnow FAILED\n",__func__);
     }
     tt=millis() - start_espnow_time;
@@ -1007,12 +1010,14 @@ void setup()
     // format FS on first deployment
     #if (FORMAT_FS == 1)
       Serial.printf("[%s]: formatting FS...",__func__);
-      // Serial.println(LittleFS.format() ? "SUCCESSFULL" : "FAILED");
       if (LittleFS.format())
       {
         Serial.printf("[%s]: SUCCESSFULL\n",__func__);
       } else
       {
+        #ifdef FW_UPGRADE_LED_GPIO
+          digitalWrite(FW_UPGRADE_LED_GPIO,HIGH);
+        #endif
         Serial.printf("[%s]: FAILED\n",__func__);
       }
     #endif
@@ -1127,6 +1132,9 @@ void setup()
 // gather data
   if (!gather_data())
   {
+    #ifdef FW_UPGRADE_LED_GPIO
+      digitalWrite(FW_UPGRADE_LED_GPIO,HIGH);
+    #endif
     #ifdef DEBUG
       Serial.printf("[%s]: NOT sending ANY data - gethering data FAILED!\n",__func__);
     #endif
