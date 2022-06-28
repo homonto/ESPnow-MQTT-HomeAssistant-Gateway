@@ -1,4 +1,5 @@
 2022-06-28:
+  1.11.1 - boot_reason added to reset bootCount on button reset
   1.11.0 - major rework on charging_state()
          - cosmetics
 

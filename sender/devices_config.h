@@ -59,8 +59,8 @@ test devices: esp32080 - 099
   #define ENABLE_3V_GPIO        19
   #define ACTIVITY_LED_GPIO     25
   #define FW_UPGRADE_LED_GPIO   26
-  #define CHARGING_GPIO         17
-  #define POWER_GPIO            16
+  #define CHARGING_GPIO         16
+  #define POWER_GPIO            17
   #define SLEEP_TIME            180
   #define USE_MAX17048          1
   #define USE_SHT31             1

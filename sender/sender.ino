@@ -3,7 +3,7 @@ sender.ino
 */
 
 // ******************************* DEBUG ***************************************
-#define DEBUG
+// #define DEBUG
 // #define PPK2_GPIO 35          // comment out if not used - GPIO to test power and timings using PPK2
 
 // to see which board is being compiled
@@ -32,7 +32,7 @@ sender.ino
 #define FORMAT_FS   0
 
 // version description in changelog.txt
-#define VERSION "1.11.0"
+#define VERSION "1.11.1"
 
 // configure device in this file, choose which one you are compiling for on top of this script: #define DEVICE_ID x
 #include "devices_config.h"
@@ -390,7 +390,7 @@ void save_ontime()
     } else
     {
       #ifdef DEBUG
-        Serial.printf("[%s]: Device is NOT CHARGING, new saved_ontime_l=%lums\n",__func__,saved_ontime_l);
+        Serial.printf("[%s]: Device is NOT CHARGING, new ontime (cummulative)=%lums\n",__func__,saved_ontime_l);
       #endif
     }
   #endif
@@ -977,7 +977,7 @@ void setup()
   {
     drd->stop(); //needed here? I did not figure it out yet
     // #ifdef DEBUG
-      Serial.printf("\n[%s]: SETUP: Double Reset Detected\n",__func__);
+      Serial.printf("[%s]: Double Reset Detected\n",__func__);
     // #endif
     DRD_Detected = true;
     #ifdef FW_UPGRADE_LED_GPIO
@@ -1033,8 +1033,13 @@ void setup()
         bootCount = 1;
       }
     }
-    // reset bootCount on DRD_Detected
-    if (DRD_Detected) bootCount = 1;
+    // reset bootCount on DRD_Detected or on button reset
+    byte boot_reason = esp_reset_reason();
+    if ((DRD_Detected) or (boot_reason == 1)) bootCount = 1;
+    #ifdef DEBUG
+      Serial.printf("[%s]: boot_reason=%d\n",__func__,boot_reason);
+    #endif
+
     // convert int to char array
     int nbytes = snprintf(NULL,0,"%d",bootCount) + 1;
     snprintf(data,nbytes,"%d",bootCount);
