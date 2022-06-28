@@ -4,12 +4,12 @@ device configuration template:
 
 #define HOSTNAME              "esp32028"   // obligatory, max 9 characters
 #define DEVICE_NAME           "Garage"     // obligatory, max 10 characters
-#define BOARD_TYPE            1   // obligatory, 1=ESP32/WROOM,WROVER 2=ESP32S2 3=ESP32S3 4=ESP32C3
-#define ENABLE_3V_GPIO        21  // if not equipped comment out - power for sensors from Vcc
-#define ACTIVITY_LED_GPIO     25  // if not equipped comment out - it blinks when sensor is ON/ if not defined FW_UPGRADE_LED_GPIO then it blinks when upgrade firmware is ongoing
-#define FW_UPGRADE_LED_GPIO   26  // if not equipped comment out - blinks when upgrade firmware is ongoing
-#define CHARGING_GPIO         32  // if not equipped comment out - green/blue LED on charger TP4056
-#define POWER_GPIO            35  // if not equipped comment out - red LED on on charger TP4056
+#define BOARD_TYPE            1     // obligatory, 1=ESP32/WROOM,WROVER 2=ESP32S2 3=ESP32S3 4=ESP32C3
+#define ENABLE_3V_GPIO        21    // if not equipped comment out - power for sensors from Vcc
+#define ACTIVITY_LED_GPIO     25    // if not equipped comment out - it blinks when sensor is ON/ if not defined FW_UPGRADE_LED_GPIO then it blinks when upgrade firmware is ongoing
+#define FW_UPGRADE_LED_GPIO   26    // if not equipped comment out - blinks when upgrade firmware is ongoing
+#define POWER_GPIO            39    // pin 6, green LED on charger TP4056, HIGH on charging, LOW on full
+#define CHARGING_GPIO         38    // pin 7, red   LED on charger TP4056, HIGH on full, LOW on charging
 #define SLEEP_TIME            180   // seconds
 #define USE_MAX17048          1     // fuel gauge - optional, 0 if not in use
 #define USE_SHT31             1     // temp/hum - optional, 0 if not in use
@@ -250,15 +250,15 @@ test devices: esp32080 - 099
   #define HOSTNAME              "esp32090"
   #define DEVICE_NAME           "testS2"
   #define BOARD_TYPE            2
-  // #define ENABLE_3V_GPIO        3
+  #define ENABLE_3V_GPIO        3
   // #define ACTIVITY_LED_GPIO     33
   // #define FW_UPGRADE_LED_GPIO   33
-  // #define CHARGING_GPIO         38
-  // #define POWER_GPIO            39
-  #define SLEEP_TIME            5
+  #define CHARGING_GPIO         38
+  #define POWER_GPIO            39
+  #define SLEEP_TIME            6
   #define USE_MAX17048          1
-  #define USE_SHT31             0
-  #define USE_TSL2561           0
+  #define USE_SHT31             1
+  #define USE_TSL2561           1
   #define USE_TEPT4400          0
   #define LUX_ADC_GPIO          36
   #define LUX_MAX_RAW_READING   2900

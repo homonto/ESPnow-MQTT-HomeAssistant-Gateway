@@ -3,8 +3,8 @@ sender.ino
 */
 
 // ******************************* DEBUG ***************************************
-// #define DEBUG
-// #define PPK2_GPIO 35          // comment out if not used - GPIO to test power and timings on PPK2
+#define DEBUG
+// #define PPK2_GPIO 35          // comment out if not used - GPIO to test power and timings using PPK2
 
 // to see which board is being compiled
 #define PRINT_COMPILER_MESSAGES
@@ -16,13 +16,13 @@ sender.ino
 // #define DEVICE_ID  101          // "esp32101" - S,  production - Dining
 // #define DEVICE_ID  102          // "esp32102" - S,  production - Toilet
 // #define DEVICE_ID  104          // "esp32104" - S,  production - Milena
-#define DEVICE_ID  105          // "esp32105" - S2, production - Garden
+// #define DEVICE_ID  105          // "esp32105" - S2, production - Garden
 
 // #define DEVICE_ID  86           // "esp32086" - S2, test - Lilygo1a
 // #define DEVICE_ID  87           // "esp32087" - S,  test - S
 // #define DEVICE_ID  88           // "esp32088" - S2, test - Lilygo2
 // #define DEVICE_ID  89           // "esp32089" - S2, test - Lilygo3a
-// #define DEVICE_ID  90           // "esp32090" - S2, test - S2
+#define DEVICE_ID  90           // "esp32090" - S2, test - S2
 // #define DEVICE_ID  91           // "esp32091" - S,  test - S
 
 // **** reset MAX17048 on first deployment only, then comment it out ***********
@@ -32,7 +32,7 @@ sender.ino
 #define FORMAT_FS   0
 
 // version description in changelog.txt
-#define VERSION "1.10.5a"
+#define VERSION "1.11.0"
 
 // configure device in this file, choose which one you are compiling for on top of this script: #define DEVICE_ID x
 #include "devices_config.h"
@@ -81,9 +81,9 @@ bool DRD_Detected = false;
 #include <HTTPClient.h>
 #include <Update.h>
 #if (BOARD_TYPE == 1)
-  #define FW_BIN_FILE "/sender.ino.esp32.bin"
+  #define FW_BIN_FILE "sender.ino.esp32.bin"
 #elif (BOARD_TYPE == 2)
-  #define FW_BIN_FILE "/sender.ino.esp32s2.bin"
+  #define FW_BIN_FILE "sender.ino.esp32s2.bin"
 #else
   #error "FW update defined only for ESP32 and ESP32-S2 boards"
 #endif
@@ -188,12 +188,14 @@ unsigned long current_ontime_l = 0;
 #define CHARGING_ON   "ON"
 #define CHARGING_FULL "FULL"
 #define CHARGING_OFF  "OFF"
+// global as assigned in setup() - to avoid calling again
+char charging[5];
 
 // ****************  FUNCTIONS *************************
 
 // declaration
 void lux_with_tept(char* lux);
-void charging_state(char *ch_state);
+void charging_state();
 void listDir(fs::FS &fs, const char * dirname, uint8_t levels);
 bool readFile(fs::FS &fs, const char * path, char * data);
 bool writeFile(fs::FS &fs, const char * path, const char * message);
@@ -249,25 +251,20 @@ void do_esp_restart();
 
 // check charging
 #if defined(CHARGING_GPIO) and defined(POWER_GPIO)
-  void charging_state(char *ch_state)
+  void charging_state()
   {
-    /*
-    TP4056, connect 2 GPIOs to the pins on the chip:
-    POWER_GPIO = RED
-    CHARGING_GPIO = GREEN
-    states are reversed:
-    POWER_GPIO = 0 -> RED LED is ON
-    CHARGING_GPIO = 0 -> GREEN/BLUE LED is ON
-    // truth table:
-    no power: L,L
-    charging: L,H
-    charged: H,L
-    existing LEDs on TP4506 must be still connected to pins of TP4506 otherwise pins are floating, or rewire them to new LEDs on the box
-    */
-    if ((digitalRead(POWER_GPIO) == 0) and (digitalRead(CHARGING_GPIO) == 0)) {snprintf(ch_state,sizeof(CHARGING_NC), "%s", CHARGING_NC);}
-    if ((digitalRead(POWER_GPIO) == 0) and (digitalRead(CHARGING_GPIO) == 1)) {snprintf(ch_state,sizeof(CHARGING_ON), "%s", CHARGING_ON);}
-    if ((digitalRead(POWER_GPIO) == 1) and (digitalRead(CHARGING_GPIO) == 0)) {snprintf(ch_state,sizeof(CHARGING_FULL), "%s", CHARGING_FULL);}
-    if ((digitalRead(POWER_GPIO) == 1) and (digitalRead(CHARGING_GPIO) == 1)) {snprintf(ch_state,sizeof(CHARGING_OFF), "%s", CHARGING_OFF);}
+  /*
+  POWER_GPIO      pin 6, green LED on charger TP4056, HIGH on charging, LOW on full
+  CHARGING_GPIO   pin 7, red   LED on charger TP4056, HIGH on full, LOW on charging
+  existing LEDs on TP4506 must be still connected to pins of TP4506 otherwise pins are floating, or rewire them to new LEDs on the box
+  */
+    if ((digitalRead(POWER_GPIO) == 0) and (digitalRead(CHARGING_GPIO) == 0)) {snprintf(charging,sizeof(CHARGING_NC), "%s", CHARGING_NC);}
+    if ((digitalRead(POWER_GPIO) == 0) and (digitalRead(CHARGING_GPIO) == 1)) {snprintf(charging,sizeof(CHARGING_FULL), "%s", CHARGING_FULL);}
+    if ((digitalRead(POWER_GPIO) == 1) and (digitalRead(CHARGING_GPIO) == 0)) {snprintf(charging,sizeof(CHARGING_ON), "%s", CHARGING_ON);}
+    if ((digitalRead(POWER_GPIO) == 1) and (digitalRead(CHARGING_GPIO) == 1)) {snprintf(charging,sizeof(CHARGING_OFF), "%s", CHARGING_OFF);}
+    #ifdef DEBUG
+      Serial.printf("[%s]: charging=%s\n",__func__,charging);
+    #endif
   }
 #endif
 
@@ -359,7 +356,7 @@ void load_ontime()
   {
     saved_ontime_l = atol(saved_ontime_ch);
     #ifdef DEBUG
-      Serial.printf("[%s]: saved_ontime_l=%lums\n",__func__,saved_ontime_l);
+      Serial.printf("[%s]: loaded ontime from file=%lums\n",__func__,saved_ontime_l);
       #endif
   } else
   {
@@ -380,12 +377,8 @@ void save_ontime()
 
   // reset saved_ontime_l if device is charging
   #if defined(CHARGING_GPIO) and defined(POWER_GPIO)
-    char charging[5];
-    charging_state(charging);
-    // testing charging
-    // snprintf(charging,sizeof(charging),"%s",CHARGING_FULL);
     #ifdef DEBUG
-      // Serial.printf("charging=%s\n",charging);
+      Serial.printf("charging=%s\n",charging);
     #endif
     // strcmp = 0 when strings ARE equal
     if ( (strcmp(charging, CHARGING_ON) == 0) or (strcmp(charging, CHARGING_FULL) == 0) )
@@ -460,7 +453,7 @@ void hibernate()
     #endif
   #endif
   save_ontime();
-  Serial.printf("[%s]: Bye...\n",__func__,current_ontime_l);
+  Serial.printf("[%s]: Bye...\n========= E N D =========\n",__func__,current_ontime_l);
   esp_deep_sleep_start();
 }
 
@@ -578,18 +571,19 @@ bool gather_data()
       snprintf(myData.bat,sizeof(myData.bat),"%0.2f",bat_volts);
       snprintf(myData.batpct,sizeof(myData.batpct),"%0.2f",bat_pct);
 
+      // EMERGENCY - LOW BATTERY!
       if (bat_volts < MINIMUM_VOLTS)
       {
-        #ifdef DEBUG
+        // #ifdef DEBUG
           Serial.printf("[%s]: battery volts=%0.2fV, that is below minimum [%0.2fV]\n",__func__,bat_volts,MINIMUM_VOLTS);
-        #endif
+        // #endif
 
         if (DRD_Detected)
         {
-          #ifdef DEBUG
+          // #ifdef DEBUG
             tt = millis() - program_start_time;
             Serial.printf("[%s]: NOT hibernating as DRD detected %dms after boot\n",__func__,tt);
-          #endif
+          // #endif
         } else
         {
           #ifdef DEBUG
@@ -598,7 +592,8 @@ bool gather_data()
           #endif
           return false;
         }
-      } else {
+      } else
+      {
         #ifdef DEBUG
           Serial.printf("[%s]: battery level OK\n",__func__);
         #endif
@@ -627,12 +622,8 @@ bool gather_data()
     Serial.printf("\tver=%s\n",myData.ver);
   #endif
 
-  // charging
-  #if defined(CHARGING_GPIO) and defined(POWER_GPIO)
-    charging_state(myData.charg);
-  #else
-    snprintf(myData.charg,4,"%s","N/A");
-  #endif
+  // charging - already gathered in setup()
+  snprintf(myData.charg,5,"%s",charging);
   #ifdef DEBUG
     Serial.printf("\tcharg=%s\n",myData.charg);
   #endif
@@ -665,7 +656,7 @@ void send_data()
   } else
   {
     #ifdef DEBUG
-      Serial.printf("[%s]: data sent\n",__func__);
+      Serial.printf("[%s]: data sent over ESPnow\n",__func__);
     #endif
   }
 }
@@ -836,7 +827,7 @@ void updateFirmware(uint8_t *data, size_t len)
   // if current length of written firmware is not equal to total firmware size, repeat
   if(fw_currentLength != fw_totalLength) return;
   Update.end(true);
-  Serial.printf("\n[%s]: Update Success, Total Size: %d\n",__func__,fw_currentLength);
+  Serial.printf("\n[%s]: Update Success, Total Size: %d bytes\n",__func__,fw_currentLength);
 }
 
 
@@ -860,7 +851,7 @@ int update_firmware_prepare()
     int len = fw_totalLength;
     // this is required to start firmware update process
     Update.begin(UPDATE_SIZE_UNKNOWN);
-    Serial.printf("[%s]: FW Size: %lubytes\n",__func__,fw_totalLength);
+    Serial.printf("[%s]: FW Size: %lu bytes\n",__func__,fw_totalLength);
 
     // create buffer for read
     uint8_t buff[128] = { 0 };
@@ -908,7 +899,8 @@ void setup()
   #endif
 
   Serial.begin(115200);
-  Serial.printf("\n[%s]: Device: %s (%s)\n",__func__,DEVICE_NAME,HOSTNAME);
+  Serial.printf("\n======= S T A R T =======\n");
+  Serial.printf("[%s]: Device: %s (%s)\n",__func__,DEVICE_NAME,HOSTNAME);
   esp_sleep_enable_timer_wakeup(SLEEP_TIME * uS_TO_S_FACTOR);
 
 // custom SDA & SCL
@@ -1002,7 +994,7 @@ void setup()
 // DRD END
 
 // read/increase/save bootCount
-  char data[5];
+  char data[12];
   if(!LittleFS.begin(true))
   {
     Serial.printf("[%s]: LittleFS Mount Failed\n",__func__);
@@ -1013,13 +1005,13 @@ void setup()
       Serial.printf("[%s]: formatting FS...",__func__);
       if (LittleFS.format())
       {
-        Serial.printf("[%s]: SUCCESSFULL\n",__func__);
+        Serial.printf("SUCCESSFULL\n",__func__);
       } else
       {
         #ifdef FW_UPGRADE_LED_GPIO
           digitalWrite(FW_UPGRADE_LED_GPIO,HIGH);
         #endif
-        Serial.printf("[%s]: FAILED\n",__func__);
+        Serial.printf("FAILED\n",__func__);
       }
     #endif
     // list files in DEBUT mode only
@@ -1065,16 +1057,19 @@ void setup()
 // load saved ontime
   load_ontime();
 
-// check if charging
+// check if device is charging
   #if (defined(CHARGING_GPIO) and defined(POWER_GPIO))
     #ifdef DEBUG
       Serial.printf("[%s]: CHARGING_GPIO and POWER_GPIO enabled\n",__func__);
     #endif
     pinMode(CHARGING_GPIO, INPUT_PULLDOWN);  //both down: NC initially, will be changed when checked
     pinMode(POWER_GPIO, INPUT_PULLDOWN);
+    // checking charging in setup already
+    charging_state();
   #else
+    snprintf(charging,4,"%s","N/A");
     #ifdef DEBUG
-      Serial.printf("[%s]: CHARGING_GPIO and POWER_GPIO DISABLED\n",__func__);
+      Serial.printf("[%s]: checking CHARGING DISABLED\n",__func__);
     #endif
   #endif
 
@@ -1144,7 +1139,7 @@ void setup()
   {
     #ifdef DEBUG
       em = millis(); tt = em - program_start_time;
-      Serial.printf("[%s]: took: %dms\n",__func__,tt);
+      Serial.printf("[%s]: gathering data took: %dms\n",__func__,tt);
     #endif
   }
 // gather data END
@@ -1181,9 +1176,6 @@ void setup()
     #endif
   } else
   {
-    #ifdef DEBUG
-      Serial.printf("[%s]: over ESPnow...",__func__);
-    #endif
     send_data();
   }
 }
