@@ -6,24 +6,24 @@ sender.ino
 // #define DEBUG
 // #define PPK2_GPIO 35          // comment out if not used - GPIO to test power and timings on PPK2
 
-// to see which board is compiled
+// to see which board is being compiled
 #define PRINT_COMPILER_MESSAGES
 
 // ********************* choose device - ONLY ONE! *****************************
 // detailed config in the file devices_config.h
 
-// #define DEVICE_ID  1           // "esp32028" - S,  production - Garage
-// #define DEVICE_ID  2           // "esp32086" - S2, test - Lilygo1a
-// #define DEVICE_ID  3           // "esp32091" - S,  test - S
-// #define DEVICE_ID  4           // "esp32100" - S2, production - Table
-// #define DEVICE_ID  5           // "esp32101" - S,  production - Dining
-// #define DEVICE_ID  6           // "esp32102" - S,  production - Toilet
-// #define DEVICE_ID  7           // "esp32104" - S,  production - Milena
-// #define DEVICE_ID  8           // "esp32090" - S2, test - S2
-#define DEVICE_ID  9           // "esp32105" - S2, production - Garden
-// #define DEVICE_ID  10          // "esp32087" - S,  test - S
-// #define DEVICE_ID  11          // "esp32088" - S2, test - Lilygo2
-// #define DEVICE_ID  12          // "esp32089" - S2, test - Lilygo3a
+// #define DEVICE_ID  28           // "esp32028" - S,  production - Garage
+// #define DEVICE_ID  101          // "esp32101" - S,  production - Dining
+// #define DEVICE_ID  102          // "esp32102" - S,  production - Toilet
+// #define DEVICE_ID  104          // "esp32104" - S,  production - Milena
+#define DEVICE_ID  105          // "esp32105" - S2, production - Garden
+
+// #define DEVICE_ID  86           // "esp32086" - S2, test - Lilygo1a
+// #define DEVICE_ID  87           // "esp32087" - S,  test - S
+// #define DEVICE_ID  88           // "esp32088" - S2, test - Lilygo2
+// #define DEVICE_ID  89           // "esp32089" - S2, test - Lilygo3a
+// #define DEVICE_ID  90           // "esp32090" - S2, test - S2
+// #define DEVICE_ID  91           // "esp32091" - S,  test - S
 
 // **** reset MAX17048 on first deployment only, then comment it out ***********
 // #define RESET_MAX17048
@@ -32,7 +32,7 @@ sender.ino
 #define FORMAT_FS   0
 
 // version description in changelog.txt
-#define VERSION "1.10.5"
+#define VERSION "1.10.5a"
 
 // configure device in this file, choose which one you are compiling for on top of this script: #define DEVICE_ID x
 #include "devices_config.h"
@@ -139,8 +139,7 @@ bool blink_led_status=false;
 // it will try to retransmit few times (10?) before giving status = 0
 // REPLACE WITH YOUR RECEIVER MAC Address
 // receiver might also use arbitrary MAC
-// lilygo 3: (BROKEN chip so can be reused as arbitrary): 7c:df:a1:0b:d9:7c
-uint8_t broadcastAddress[] = {0x7c, 0xdF, 0xa1, 0x0b, 0xd9, 0x7c};
+uint8_t broadcastAddress[] = {0x7c, 0xdF, 0xa1, 0x0b, 0xd9, 0xff};
 
 // BROADCAST:
 // uint8_t broadcastAddress[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
@@ -423,7 +422,7 @@ void save_ontime()
     digitalWrite(PPK2_GPIO,LOW);
   #endif
 
-  Serial.printf("[%s]: Program finished after %lums. Bye...\n",__func__,current_ontime_l);
+  Serial.printf("[%s]: Program finished after %lums.\n",__func__,current_ontime_l);
 }
 
 
@@ -461,6 +460,7 @@ void hibernate()
     #endif
   #endif
   save_ontime();
+  Serial.printf("[%s]: Bye...\n",__func__,current_ontime_l);
   esp_deep_sleep_start();
 }
 
@@ -657,6 +657,7 @@ bool gather_data()
 void send_data()
 {
   esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
+  // the next code seems never to work as it goes to sleep after OnDataSent()
   if (result != ESP_OK) {
     #ifdef DEBUG
       Serial.printf("[%s]: Error sending the data\n",__func__);
@@ -1195,6 +1196,7 @@ void loop()
   if (!DRD_Detected)
   {
     drd->stop();
+    Serial.printf("[%s]: Going to sleep\n",__func__);
     hibernate();
   }
   else

@@ -27,8 +27,8 @@ test devices: esp32080 - 099
 */
 
 
-// *************** "esp32028" - S,  production - Garage ***************************
-#if DEVICE_ID == 1
+// *************** "esp32028" - S,  production - Garage ************************
+#if DEVICE_ID == 28
   #define HOSTNAME              "esp32028"
   #define DEVICE_NAME           "Garage"
   #define BOARD_TYPE            1
@@ -51,80 +51,8 @@ test devices: esp32080 - 099
   // #define PERIODIC_FW_CHECK_HRS
   #pragma message "compilation for: esp32028-Garage"
 
-// *************** "esp32086" - S2, test - Lilygo1a ***************************
-#elif DEVICE_ID == 2
-  #define HOSTNAME              "esp32086"
-  #define DEVICE_NAME           "Lilygo1a"
-  #define BOARD_TYPE            2
-  // #define ENABLE_3V_GPIO        32
-  #define ACTIVITY_LED_GPIO     14
-  // #define FW_UPGRADE_LED_GPIO   33
-  // #define CHARGING_GPIO         38
-  // #define POWER_GPIO            39
-  #define SLEEP_TIME            5
-  #define USE_MAX17048          0
-  #define USE_SHT31             0
-  #define USE_TSL2561           0
-  #define USE_TEPT4400          0
-  #define LUX_ADC_GPIO          36
-  #define LUX_MAX_RAW_READING   2900
-  #define USE_CUSTOM_I2C_GPIO   0
-  #define SDA_GPIO              18
-  #define SCL_GPIO              19
-  #define GND_GPIO_FOR_LED      13
-  // #define PERIODIC_FW_CHECK_HRS
-  #pragma message "compilation for: esp32086-Lilygo1a"
-
-// *************** "esp32091" - S,  test - S ********************************
-#elif DEVICE_ID == 3
-  #define HOSTNAME              "esp32091"
-  #define DEVICE_NAME           "testS"
-  #define BOARD_TYPE            1
-  #define ENABLE_3V_GPIO        32
-  // #define ACTIVITY_LED_GPIO     33
-  // #define FW_UPGRADE_LED_GPIO   33
-  // #define CHARGING_GPIO         38
-  // #define POWER_GPIO            39
-  #define SLEEP_TIME            5
-  #define USE_MAX17048          1
-  #define USE_SHT31             1
-  #define USE_TSL2561           1
-  #define USE_TEPT4400          0
-  #define LUX_ADC_GPIO          36
-  #define LUX_MAX_RAW_READING   2900
-  #define USE_CUSTOM_I2C_GPIO   0
-  #define SDA_GPIO              18
-  #define SCL_GPIO              19
-  // #define GND_GPIO_FOR_LED      13
-  // #define PERIODIC_FW_CHECK_HRS
-  #pragma message "compilation for: esp32091-testS"
-
-// *************** "esp32100" - S2, production - Table ***************************
-#elif DEVICE_ID == 4
-  #define HOSTNAME              "esp32100"
-  #define DEVICE_NAME           "Table"
-  #define BOARD_TYPE            2
-  #define ENABLE_3V_GPIO        5
-  #define ACTIVITY_LED_GPIO     1
-  // #define FW_UPGRADE_LED_GPIO   26
-  #define CHARGING_GPIO         39
-  #define POWER_GPIO            38
-  #define SLEEP_TIME            180
-  #define USE_MAX17048          1
-  #define USE_SHT31             1
-  #define USE_TSL2561           0
-  #define USE_TEPT4400          1
-  #define LUX_ADC_GPIO          4
-  #define LUX_MAX_RAW_READING   6767
-  #define USE_CUSTOM_I2C_GPIO   0
-  #define SDA_GPIO              18
-  #define SCL_GPIO              19
-  // #define GND_GPIO_FOR_LED      13
-  // #define PERIODIC_FW_CHECK_HRS
-  #pragma message "compilation for: esp32100-Table"
-
-// *************** "esp32101" - S,  production - Dining ********************************
-#elif DEVICE_ID == 5
+// *************** "esp32101" - S,  production - Dining ************************
+#elif DEVICE_ID == 101
   #define HOSTNAME              "esp32101"
   #define DEVICE_NAME           "Dining"
   #define BOARD_TYPE            1
@@ -147,8 +75,8 @@ test devices: esp32080 - 099
   // #define PERIODIC_FW_CHECK_HRS
   #pragma message "compilation for: esp32101-Dining"
 
-// *************** "esp32102" - S,  production - Toilet ********************************
-#elif DEVICE_ID == 6
+// *************** "esp32102" - S,  production - Toilet ************************
+#elif DEVICE_ID == 102
   #define HOSTNAME              "esp32102"
   #define DEVICE_NAME           "ToiletUp"
   #define BOARD_TYPE            1
@@ -171,8 +99,8 @@ test devices: esp32080 - 099
   // #define PERIODIC_FW_CHECK_HRS
   #pragma message "compilation for: esp32102-ToiletUp"
 
-// *************** "esp32104" - S,  production - Milena ********************************
-#elif DEVICE_ID == 7
+// *************** "esp32104" - S,  production - Milena ************************
+#elif DEVICE_ID == 104
   #define HOSTNAME              "esp32104"
   #define DEVICE_NAME           "Milena"
   #define BOARD_TYPE            1
@@ -195,56 +123,58 @@ test devices: esp32080 - 099
   // #define PERIODIC_FW_CHECK_HRS
   #pragma message "compilation for: esp32104-Milena"
 
-// *************** "esp32090" - S2, test - S2 ********************************
-#elif DEVICE_ID == 8
-  #define HOSTNAME              "esp32090"
-  #define DEVICE_NAME           "testS2"
-  #define BOARD_TYPE            2
-  #define ENABLE_3V_GPIO        3
-  // #define ACTIVITY_LED_GPIO     33
-  // #define FW_UPGRADE_LED_GPIO   33
-  // #define CHARGING_GPIO         38
-  // #define POWER_GPIO            39
-  #define SLEEP_TIME            10
-  #define USE_MAX17048          0
-  #define USE_SHT31             1
-  #define USE_TSL2561           1
-  #define USE_TEPT4400          0
-  #define LUX_ADC_GPIO          36
-  #define LUX_MAX_RAW_READING   2900
-  #define USE_CUSTOM_I2C_GPIO   0
-  #define SDA_GPIO              18
-  #define SCL_GPIO              19
-  // #define GND_GPIO_FOR_LED      13
-  // #define PERIODIC_FW_CHECK_HRS
-  #pragma message "compilation for: esp32090-testS2"
-
-  // *************** "esp32105" - S2, production - Garden ********************************
-#elif DEVICE_ID == 9
+// *************** "esp32105" - S2, production - Garden ************************
+#elif DEVICE_ID == 105
   #define HOSTNAME              "esp32105"
   #define DEVICE_NAME           "Garden"
   #define BOARD_TYPE            2
-  #define ENABLE_3V_GPIO        6
-  #define ACTIVITY_LED_GPIO     3
-  #define FW_UPGRADE_LED_GPIO   4
-  #define CHARGING_GPIO         38
-  #define POWER_GPIO            39
+  #define ENABLE_3V_GPIO        5
+  #define ACTIVITY_LED_GPIO     1
+  // #define FW_UPGRADE_LED_GPIO   26
+  #define CHARGING_GPIO         39
+  #define POWER_GPIO            38
   #define SLEEP_TIME            180
   #define USE_MAX17048          1
   #define USE_SHT31             1
-  #define USE_TSL2561           1
+  #define USE_TSL2561           0
+  #define USE_TEPT4400          1
+  #define LUX_ADC_GPIO          4
+  #define LUX_MAX_RAW_READING   6767
+  #define USE_CUSTOM_I2C_GPIO   0
+  #define SDA_GPIO              18
+  #define SCL_GPIO              19
+  // #define GND_GPIO_FOR_LED      13
+  // #define PERIODIC_FW_CHECK_HRS
+  // #pragma message "compilation for: esp32100-Table"
+  #pragma message "compilation for: esp32105-Garden"
+// =======================================================================================================
+
+// *************** "esp32086" - S2, test - Lilygo1a ****************************
+#elif DEVICE_ID == 86
+  #define HOSTNAME              "esp32086"
+  #define DEVICE_NAME           "Lilygo1a"
+  #define BOARD_TYPE            2
+  // #define ENABLE_3V_GPIO        32
+  #define ACTIVITY_LED_GPIO     14
+  // #define FW_UPGRADE_LED_GPIO   33
+  // #define CHARGING_GPIO         38
+  // #define POWER_GPIO            39
+  #define SLEEP_TIME            5
+  #define USE_MAX17048          0
+  #define USE_SHT31             0
+  #define USE_TSL2561           0
   #define USE_TEPT4400          0
   #define LUX_ADC_GPIO          36
   #define LUX_MAX_RAW_READING   2900
   #define USE_CUSTOM_I2C_GPIO   0
   #define SDA_GPIO              18
   #define SCL_GPIO              19
-  // #define GND_GPIO_FOR_LED      13
+  #define GND_GPIO_FOR_LED      13
   // #define PERIODIC_FW_CHECK_HRS
-  #pragma message "compilation for: esp32105-Garden"
+  #pragma message "compilation for: esp32086-Lilygo1a"
 
-// *************** "esp32087" - S,  test - S ***************************
-#elif DEVICE_ID == 10
+// *************** "esp32087" - S,  test - S ***********************************
+#elif DEVICE_ID == 87
   #define HOSTNAME              "esp32087"
   #define DEVICE_NAME           "S"
   #define BOARD_TYPE            1
@@ -267,8 +197,8 @@ test devices: esp32080 - 099
   // #define PERIODIC_FW_CHECK_HRS
   #pragma message "compilation for: esp32087-S"
 
-// *************** "esp32088" - S2, test - Lilygo2 ***************************
-#elif DEVICE_ID == 11
+// *************** "esp32088" - S2, test - Lilygo2 *****************************
+#elif DEVICE_ID == 88
   #define HOSTNAME              "esp32088"
   #define DEVICE_NAME           "Lilygo2"
   #define BOARD_TYPE            2
@@ -277,7 +207,7 @@ test devices: esp32080 - 099
   // #define FW_UPGRADE_LED_GPIO   33
   // #define CHARGING_GPIO         38
   // #define POWER_GPIO            39
-  #define SLEEP_TIME            10
+  #define SLEEP_TIME            5
   #define USE_MAX17048          0
   #define USE_SHT31             0
   #define USE_TSL2561           0
@@ -288,11 +218,11 @@ test devices: esp32080 - 099
   #define SDA_GPIO              18
   #define SCL_GPIO              19
   // #define GND_GPIO_FOR_LED      13
-  #define PERIODIC_FW_CHECK_HRS 0.1
+  #define PERIODIC_FW_CHECK_HRS 1
   #pragma message "compilation for: esp32088-Lilygo2"
 
-// *************** "esp32089" - S2, test - Lilygo3a ***************************
-#elif DEVICE_ID == 12
+// *************** "esp32089" - S2, test - Lilygo3a ****************************
+#elif DEVICE_ID == 89
   #define HOSTNAME              "esp32089"
   #define DEVICE_NAME           "Lilygo3a"
   #define BOARD_TYPE            2
@@ -314,6 +244,56 @@ test devices: esp32080 - 099
   #define GND_GPIO_FOR_LED      13
   // #define PERIODIC_FW_CHECK_HRS
   #pragma message "compilation for: esp32089-Lilygo3a"
+
+// *************** "esp32090" - S2, test - S2 **********************************
+#elif DEVICE_ID == 90
+  #define HOSTNAME              "esp32090"
+  #define DEVICE_NAME           "testS2"
+  #define BOARD_TYPE            2
+  // #define ENABLE_3V_GPIO        3
+  // #define ACTIVITY_LED_GPIO     33
+  // #define FW_UPGRADE_LED_GPIO   33
+  // #define CHARGING_GPIO         38
+  // #define POWER_GPIO            39
+  #define SLEEP_TIME            5
+  #define USE_MAX17048          1
+  #define USE_SHT31             0
+  #define USE_TSL2561           0
+  #define USE_TEPT4400          0
+  #define LUX_ADC_GPIO          36
+  #define LUX_MAX_RAW_READING   2900
+  #define USE_CUSTOM_I2C_GPIO   0
+  #define SDA_GPIO              18
+  #define SCL_GPIO              19
+  // #define GND_GPIO_FOR_LED      13
+  // #define PERIODIC_FW_CHECK_HRS
+  #pragma message "compilation for: esp32090-testS2"
+
+// *************** "esp32091" - S,  test - S ***********************************
+#elif DEVICE_ID == 91
+  #define HOSTNAME              "esp32091"
+  #define DEVICE_NAME           "testS"
+  #define BOARD_TYPE            1
+  // #define ENABLE_3V_GPIO        32
+  // #define ACTIVITY_LED_GPIO     33
+  // #define FW_UPGRADE_LED_GPIO   33
+  // #define CHARGING_GPIO         38
+  // #define POWER_GPIO            39
+  #define SLEEP_TIME            5
+  #define USE_MAX17048          1
+  #define USE_SHT31             0
+  #define USE_TSL2561           0
+  #define USE_TEPT4400          0
+  #define LUX_ADC_GPIO          36
+  #define LUX_MAX_RAW_READING   2900
+  #define USE_CUSTOM_I2C_GPIO   0
+  #define SDA_GPIO              18
+  #define SCL_GPIO              19
+  // #define GND_GPIO_FOR_LED      13
+  // #define PERIODIC_FW_CHECK_HRS
+  #pragma message "compilation for: esp32091-testS"
+
+// ---------------------------------------------------------------------------------------------------
 
 #else
   #error "Wrong DEVICE_ID chosen"
