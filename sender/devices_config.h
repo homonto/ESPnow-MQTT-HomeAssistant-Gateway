@@ -35,8 +35,8 @@ test devices: esp32080 - 099
   #define ENABLE_3V_GPIO        21
   #define ACTIVITY_LED_GPIO     25
   #define FW_UPGRADE_LED_GPIO   26
-  #define CHARGING_GPIO         32
-  #define POWER_GPIO            35
+  #define CHARGING_GPIO         35
+  #define POWER_GPIO            32
   #define SLEEP_TIME            180
   #define USE_MAX17048          1
   #define USE_SHT31             1
@@ -50,6 +50,30 @@ test devices: esp32080 - 099
   // #define GND_GPIO_FOR_LED      13
   // #define PERIODIC_FW_CHECK_HRS
   #pragma message "compilation for: esp32028-Garage"
+
+// *************** "esp32100" - S2, production - Papa ************************
+#elif DEVICE_ID == 100
+  #define HOSTNAME              "esp32100"
+  #define DEVICE_NAME           "Papa"
+  #define BOARD_TYPE            2
+  #define ENABLE_3V_GPIO        5
+  #define ACTIVITY_LED_GPIO     1
+  // #define FW_UPGRADE_LED_GPIO   26
+  #define CHARGING_GPIO         38
+  #define POWER_GPIO            39
+  #define SLEEP_TIME            180
+  #define USE_MAX17048          1
+  #define USE_SHT31             1
+  #define USE_TSL2561           0
+  #define USE_TEPT4400          1
+  #define LUX_ADC_GPIO          4
+  #define LUX_MAX_RAW_READING   6767
+  #define USE_CUSTOM_I2C_GPIO   0
+  #define SDA_GPIO              18
+  #define SCL_GPIO              19
+  // #define GND_GPIO_FOR_LED      13
+  // #define PERIODIC_FW_CHECK_HRS
+  #pragma message "compilation for: esp32100-Papa"
 
 // *************** "esp32101" - S,  production - Dining ************************
 #elif DEVICE_ID == 101
@@ -83,8 +107,8 @@ test devices: esp32080 - 099
   #define ENABLE_3V_GPIO        32
   #define ACTIVITY_LED_GPIO     25
   #define FW_UPGRADE_LED_GPIO   26
-  #define CHARGING_GPIO         17
-  #define POWER_GPIO            16
+  #define CHARGING_GPIO         16
+  #define POWER_GPIO            17
   #define SLEEP_TIME            180
   #define USE_MAX17048          1
   #define USE_SHT31             1
@@ -107,8 +131,8 @@ test devices: esp32080 - 099
   #define ENABLE_3V_GPIO        33
   #define ACTIVITY_LED_GPIO     25
   #define FW_UPGRADE_LED_GPIO   26
-  #define CHARGING_GPIO         17
-  #define POWER_GPIO            16
+  #define CHARGING_GPIO         16
+  #define POWER_GPIO            17
   #define SLEEP_TIME            180
   #define USE_MAX17048          1
   #define USE_SHT31             1
@@ -128,25 +152,25 @@ test devices: esp32080 - 099
   #define HOSTNAME              "esp32105"
   #define DEVICE_NAME           "Garden"
   #define BOARD_TYPE            2
-  #define ENABLE_3V_GPIO        5
-  #define ACTIVITY_LED_GPIO     1
-  // #define FW_UPGRADE_LED_GPIO   26
-  #define CHARGING_GPIO         39
-  #define POWER_GPIO            38
+  #define ENABLE_3V_GPIO        3
+  #define ACTIVITY_LED_GPIO     6
+  #define FW_UPGRADE_LED_GPIO   5
+  #define CHARGING_GPIO         38
+  #define POWER_GPIO            39
   #define SLEEP_TIME            180
   #define USE_MAX17048          1
   #define USE_SHT31             1
-  #define USE_TSL2561           0
-  #define USE_TEPT4400          1
-  #define LUX_ADC_GPIO          4
-  #define LUX_MAX_RAW_READING   6767
+  #define USE_TSL2561           1
+  #define USE_TEPT4400          0
+  #define LUX_ADC_GPIO          36
+  #define LUX_MAX_RAW_READING   2900
   #define USE_CUSTOM_I2C_GPIO   0
   #define SDA_GPIO              18
   #define SCL_GPIO              19
   // #define GND_GPIO_FOR_LED      13
   // #define PERIODIC_FW_CHECK_HRS
-  // #pragma message "compilation for: esp32100-Table"
   #pragma message "compilation for: esp32105-Garden"
+
 // =======================================================================================================
 
 // *************** "esp32086" - S2, test - Lilygo1a ****************************
@@ -245,30 +269,6 @@ test devices: esp32080 - 099
   // #define PERIODIC_FW_CHECK_HRS
   #pragma message "compilation for: esp32089-Lilygo3a"
 
-// *************** "esp32090" - S2, test - S2 **********************************
-#elif DEVICE_ID == 90
-  #define HOSTNAME              "esp32090"
-  #define DEVICE_NAME           "testS2"
-  #define BOARD_TYPE            2
-  #define ENABLE_3V_GPIO        3
-  // #define ACTIVITY_LED_GPIO     33
-  // #define FW_UPGRADE_LED_GPIO   33
-  #define CHARGING_GPIO         38
-  #define POWER_GPIO            39
-  #define SLEEP_TIME            6
-  #define USE_MAX17048          1
-  #define USE_SHT31             1
-  #define USE_TSL2561           1
-  #define USE_TEPT4400          0
-  #define LUX_ADC_GPIO          36
-  #define LUX_MAX_RAW_READING   2900
-  #define USE_CUSTOM_I2C_GPIO   0
-  #define SDA_GPIO              18
-  #define SCL_GPIO              19
-  // #define GND_GPIO_FOR_LED      13
-  // #define PERIODIC_FW_CHECK_HRS
-  #pragma message "compilation for: esp32090-testS2"
-
 // *************** "esp32091" - S,  test - S ***********************************
 #elif DEVICE_ID == 91
   #define HOSTNAME              "esp32091"
@@ -292,6 +292,30 @@ test devices: esp32080 - 099
   // #define GND_GPIO_FOR_LED      13
   // #define PERIODIC_FW_CHECK_HRS
   #pragma message "compilation for: esp32091-testS"
+
+// *************** "esp32092" - S#,  test - S3 ***********************************
+#elif DEVICE_ID == 92
+  #define HOSTNAME              "esp32092"
+  #define DEVICE_NAME           "testS3"
+  #define BOARD_TYPE            3
+  // #define ENABLE_3V_GPIO        32
+  // #define ACTIVITY_LED_GPIO     33
+  // #define FW_UPGRADE_LED_GPIO   33
+  // #define CHARGING_GPIO         38
+  // #define POWER_GPIO            39
+  #define SLEEP_TIME            5
+  #define USE_MAX17048          0
+  #define USE_SHT31             0
+  #define USE_TSL2561           0
+  #define USE_TEPT4400          0
+  #define LUX_ADC_GPIO          36
+  #define LUX_MAX_RAW_READING   2900
+  #define USE_CUSTOM_I2C_GPIO   0
+  #define SDA_GPIO              18
+  #define SCL_GPIO              19
+  // #define GND_GPIO_FOR_LED      13
+  // #define PERIODIC_FW_CHECK_HRS
+  #pragma message "compilation for: esp32092-testS3"
 
 // ---------------------------------------------------------------------------------------------------
 

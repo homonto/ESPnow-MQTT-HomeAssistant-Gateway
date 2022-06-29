@@ -12,7 +12,8 @@ sender.ino
 // ********************* choose device - ONLY ONE! *****************************
 // detailed config in the file devices_config.h
 
-// #define DEVICE_ID  28           // "esp32028" - S,  production - Garage
+#define DEVICE_ID  28           // "esp32028" - S,  production - Garage
+// #define DEVICE_ID  100          // "esp32101" - S2, production - Papa
 // #define DEVICE_ID  101          // "esp32101" - S,  production - Dining
 // #define DEVICE_ID  102          // "esp32102" - S,  production - Toilet
 // #define DEVICE_ID  104          // "esp32104" - S,  production - Milena
@@ -22,8 +23,9 @@ sender.ino
 // #define DEVICE_ID  87           // "esp32087" - S,  test - S
 // #define DEVICE_ID  88           // "esp32088" - S2, test - Lilygo2
 // #define DEVICE_ID  89           // "esp32089" - S2, test - Lilygo3a
-#define DEVICE_ID  90           // "esp32090" - S2, test - S2
+// #define DEVICE_ID  90           // "esp32090" - S2, test - S2
 // #define DEVICE_ID  91           // "esp32091" - S,  test - S
+// #define DEVICE_ID  92           // "esp32092" - S3, test - S3 Ai-Thinker
 
 // **** reset MAX17048 on first deployment only, then comment it out ***********
 // #define RESET_MAX17048
@@ -80,12 +82,14 @@ bool DRD_Detected = false;
 // Firmware update
 #include <HTTPClient.h>
 #include <Update.h>
-#if (BOARD_TYPE == 1)
+#if   (BOARD_TYPE == 1)
   #define FW_BIN_FILE "sender.ino.esp32.bin"
 #elif (BOARD_TYPE == 2)
   #define FW_BIN_FILE "sender.ino.esp32s2.bin"
+#elif (BOARD_TYPE == 3)
+  #define FW_BIN_FILE "sender.ino.esp32s3.bin"
 #else
-  #error "FW update defined only for ESP32 and ESP32-S2 boards"
+  #error "FW update defined only for ESP32, ESP32-S2 and ESP32-S3 boards"
 #endif
 HTTPClient firmware_update_client;
 int fw_totalLength = 0;
