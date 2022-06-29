@@ -555,6 +555,9 @@ bool mqtt_publish_sensors_values()
     // Serial.printf(" | NOT sending to HA\n");
     return false;
   }
+  #ifdef STATUS_LED_GPIO
+    digitalWrite(STATUS_LED_GPIO,HIGH);
+  #endif
 
   struct_message myLocalData;
   struct_message_aux myLocalData_aux;
@@ -599,6 +602,9 @@ bool mqtt_publish_sensors_values()
   if (!mqtt_publish_sensors_config(myData.host,myData.name,myData_aux.macStr,myLocalData.ver))
   {
     Serial.printf("[%s]: SENSORS CONFIG NOT published\n",__func__);
+    #ifdef STATUS_LED_GPIO
+      digitalWrite(STATUS_LED_GPIO,LOW);
+    #endif
     return false;
   }
 
@@ -669,5 +675,8 @@ bool mqtt_publish_sensors_values()
     }
   #endif
 
+  #ifdef STATUS_LED_GPIO
+    digitalWrite(STATUS_LED_GPIO,LOW);
+  #endif
   return publish_status;
 }

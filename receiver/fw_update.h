@@ -6,15 +6,15 @@ firmware update functions
 #include "variables.h"
 
 // preparation
-#if (BOARD_TYPE == 1)
+#if   (BOARD_TYPE == 1)
   #define FW_BIN_FILE "receiver.ino.esp32.bin"
 #elif (BOARD_TYPE == 2)
   #define FW_BIN_FILE "receiver.ino.esp32s2.bin"
+#elif (BOARD_TYPE == 3)
+  #define FW_BIN_FILE "receiver.ino.esp32s3.bin"
 #else
-  #error "FW update defined only for ESP32 and ESP32-S2 boards"
+  #error "FW update defined only for ESP32, ESP32-S2 and ESP32-S3 boards"
 #endif
-// #define UPDATE_FIRMWARE_FILE (String(UPDATE_FIRMWARE_HOST) + "/01-Production/0-ESPnow/" + String(HOSTNAME) + String(FW_BIN_FILE))
-
 
 // functions
 void do_update()

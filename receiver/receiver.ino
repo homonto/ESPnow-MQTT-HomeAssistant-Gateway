@@ -2,8 +2,12 @@
 /*
 receiver.ino
 */
-#define VERSION "1.7.1"
+#define VERSION "1.7.2"
 /*
+2022-06-29:
+  1.7.2 - added support for ESP32-S3 board
+        - 2x LED: 1 for gateway device (STATUS_GW_LED_GPIO) and 1 for sensor device (STATUS_LED_GPIO)
+
 2022-06-26:
   1.7.1 - change name of the device on HA (all devices) to: ESPnow_hostname_name
 
@@ -53,9 +57,6 @@ receiver.ino
 // Firmware update
 #include <HTTPClient.h>
 #include <Update.h>
-
-// macros
-#define GND_GPIO_FOR_LED    13    // if not equipped comment out - GND for ACTIVITY_LED_GPIO on some Lilygo boards
 
 // fuctions declarations
 // wifi.h
@@ -147,11 +148,13 @@ void ConvertSectoDay(unsigned long n, char *pretty_ontime)
 void hearbeat()
 {
   bool publish_status = true;
-  digitalWrite(STATUS_LED_GPIO,HIGH);
-  publish_status = publish_status && mqtt_publish_gw_status_config();
-  #ifdef DEBUG
-    Serial.printf("\n[%s]: talking to HA %ds later...",__func__,((millis()-aux_update_interval)/1000));
+  #ifdef STATUS_GW_LED_GPIO
+    digitalWrite(STATUS_GW_LED_GPIO,HIGH);
   #endif
+  publish_status = publish_status && mqtt_publish_gw_status_config();
+  // #ifdef DEBUG
+    Serial.printf("[%s]: talking to HA %ds later...",__func__,((millis()-aux_update_interval)/1000));
+  // #endif
 
   publish_status = publish_status && mqtt_publish_gw_status_values("online");
   publish_status = publish_status && mqtt_publish_button_update_config();
@@ -165,7 +168,7 @@ void hearbeat()
     publish_status = publish_status && mqtt_publish_gw_last_updated_sensor_values("queue FULL");
   }
 
-  #ifdef DEBUG
+  // #ifdef DEBUG
     if (publish_status)
     {
       Serial.printf("SUCCESSFULL\n");
@@ -173,13 +176,15 @@ void hearbeat()
     {
       Serial.printf("FAILED\n");
     }
-  #endif
+  // #endif
   if (queue_count == MAX_QUEUE_COUNT)
   {
     Serial.printf("[%s]: ERROR: queue is full!\n",__func__);
   }
 
-  digitalWrite(STATUS_LED_GPIO,LOW);
+  #ifdef STATUS_GW_LED_GPIO
+    digitalWrite(STATUS_GW_LED_GPIO,LOW);
+  #endif
 }
 
 
@@ -195,7 +200,15 @@ void setup()
     pinMode(GND_GPIO_FOR_LED, OUTPUT);
     digitalWrite(GND_GPIO_FOR_LED, LOW);
   #endif
-  pinMode(STATUS_LED_GPIO,OUTPUT);
+
+  #ifdef STATUS_GW_LED_GPIO
+    pinMode(STATUS_GW_LED_GPIO, OUTPUT);
+  #endif
+
+  #ifdef STATUS_LED_GPIO
+    pinMode(STATUS_LED_GPIO, OUTPUT);
+  #endif
+
 
   queue = xQueueCreate( MAX_QUEUE_COUNT, sizeof( struct struct_message ) );
   if(queue == NULL)
