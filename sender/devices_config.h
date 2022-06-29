@@ -299,8 +299,8 @@ test devices: esp32080 - 099
   #define DEVICE_NAME           "testS3"
   #define BOARD_TYPE            3
   // #define ENABLE_3V_GPIO        32
-  // #define ACTIVITY_LED_GPIO     33
-  // #define FW_UPGRADE_LED_GPIO   33
+  #define ACTIVITY_LED_GPIO     7
+  #define FW_UPGRADE_LED_GPIO   5
   // #define CHARGING_GPIO         38
   // #define POWER_GPIO            39
   #define SLEEP_TIME            5

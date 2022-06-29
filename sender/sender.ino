@@ -12,7 +12,7 @@ sender.ino
 // ********************* choose device - ONLY ONE! *****************************
 // detailed config in the file devices_config.h
 
-#define DEVICE_ID  28           // "esp32028" - S,  production - Garage
+// #define DEVICE_ID  28           // "esp32028" - S,  production - Garage
 // #define DEVICE_ID  100          // "esp32101" - S2, production - Papa
 // #define DEVICE_ID  101          // "esp32101" - S,  production - Dining
 // #define DEVICE_ID  102          // "esp32102" - S,  production - Toilet
@@ -25,7 +25,7 @@ sender.ino
 // #define DEVICE_ID  89           // "esp32089" - S2, test - Lilygo3a
 // #define DEVICE_ID  90           // "esp32090" - S2, test - S2
 // #define DEVICE_ID  91           // "esp32091" - S,  test - S
-// #define DEVICE_ID  92           // "esp32092" - S3, test - S3 Ai-Thinker
+#define DEVICE_ID  92           // "esp32092" - S3, test - S3 Ai-Thinker
 
 // **** reset MAX17048 on first deployment only, then comment it out ***********
 // #define RESET_MAX17048
