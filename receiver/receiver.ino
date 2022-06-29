@@ -1,8 +1,12 @@
+// #define DEBUG
 /*
 receiver.ino
 */
-#define VERSION "1.7.0"
+#define VERSION "1.7.1"
 /*
+2022-06-26:
+  1.7.1 - change name of the device on HA (all devices) to: ESPnow_hostname_name
+
 2022-06-26:
   1.7.0 - incoming messages in the queue to avoid losing data
 
@@ -145,7 +149,9 @@ void hearbeat()
   bool publish_status = true;
   digitalWrite(STATUS_LED_GPIO,HIGH);
   publish_status = publish_status && mqtt_publish_gw_status_config();
-  Serial.print("[heartbeat] - sending to HA "+String((millis()-aux_update_interval)/1000)+"s later......");
+  #ifdef DEBUG
+    Serial.printf("\n[%s]: talking to HA %ds later...",__func__,((millis()-aux_update_interval)/1000));
+  #endif
 
   publish_status = publish_status && mqtt_publish_gw_status_values("online");
   publish_status = publish_status && mqtt_publish_button_update_config();
@@ -159,17 +165,18 @@ void hearbeat()
     publish_status = publish_status && mqtt_publish_gw_last_updated_sensor_values("queue FULL");
   }
 
-  if (publish_status)
-  {
-    Serial.println("SUCCESSFULL");
-  } else
-  {
-    Serial.println("FAILED");
-  }
-
+  #ifdef DEBUG
+    if (publish_status)
+    {
+      Serial.printf("SUCCESSFULL\n");
+    } else
+    {
+      Serial.printf("FAILED\n");
+    }
+  #endif
   if (queue_count == MAX_QUEUE_COUNT)
   {
-    Serial.println("ERROR: queue is full!");
+    Serial.printf("[%s]: ERROR: queue is full!\n",__func__);
   }
 
   digitalWrite(STATUS_LED_GPIO,LOW);
@@ -265,9 +272,9 @@ void loop()
   if (queue_count > 0)
   {
     if (debug_mode) Serial.printf("queue size=%d\n",queue_count);
-    if (publish_sensors_to_ha)
-    {
+    // if (publish_sensors_to_ha)
+    // {
       mqtt_publish_sensors_values();
-    }
+    // }
   }
 }

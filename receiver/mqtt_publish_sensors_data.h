@@ -13,8 +13,8 @@ bool mqtt_publish_sensors_config(const char* hostname, const char* name, const c
     #define CREATE_SENSOR_MQTT_DEVICE \
     dev = config.createNestedObject("device"); \
     dev["ids"]=mac;  \
-    dev["name"]="ESPnow_" + String(name) + "_" + String(hostname); \
-    dev["mdl"]="ESPnow_sensor_"+String(mac); \
+    dev["name"]="ESPnow_" + String(hostname) + "_" + String(name); \
+    dev["mdl"]="model"; \
     dev["mf"]="ZH"; \
     dev["sw"]= fw;
   // sensor device definition END
@@ -146,7 +146,7 @@ bool mqtt_publish_sensors_config(const char* hostname, const char* name, const c
   config["val_tpl"] = "{{value_json.temperature}}";
   config["uniq_id"] = temp_name;
   config["frc_upd"] = "true";
-  config["exp_aft"] = 600;
+  config["exp_aft"] = 900;
 
   CREATE_SENSOR_MQTT_DEVICE
 
@@ -178,7 +178,7 @@ bool mqtt_publish_sensors_config(const char* hostname, const char* name, const c
   config["val_tpl"] = "{{value_json.humidity}}";
   config["uniq_id"] = hum_name;
   config["frc_upd"] = "true";
-  config["exp_aft"] = 600;
+  config["exp_aft"] = 900;
 
   CREATE_SENSOR_MQTT_DEVICE
 
@@ -210,7 +210,7 @@ bool mqtt_publish_sensors_config(const char* hostname, const char* name, const c
   config["unit_of_meas"] = "lx";
   config["val_tpl"] = "{{value_json.lux}}";
   config["frc_upd"] = "true";
-  config["exp_aft"] = 600;
+  config["exp_aft"] = 900;
 
   CREATE_SENSOR_MQTT_DEVICE
 
@@ -244,7 +244,7 @@ bool mqtt_publish_sensors_config(const char* hostname, const char* name, const c
   config["uniq_id"] = bat_name;
   config["frc_upd"] = "true";
   config["entity_category"] = "diagnostic";
-  config["exp_aft"] = 600;
+  config["exp_aft"] = 900;
 
   CREATE_SENSOR_MQTT_DEVICE
 
@@ -277,7 +277,7 @@ bool mqtt_publish_sensors_config(const char* hostname, const char* name, const c
   config["uniq_id"] = batpct_name;
   config["frc_upd"] = "true";
   config["entity_category"] = "diagnostic";
-  config["exp_aft"] = 600;
+  config["exp_aft"] = 900;
 
   CREATE_SENSOR_MQTT_DEVICE
 
@@ -310,7 +310,7 @@ bool mqtt_publish_sensors_config(const char* hostname, const char* name, const c
   config["uniq_id"] = rssi_name;
   config["frc_upd"] = "true";
   config["entity_category"] = "diagnostic";
-  config["exp_aft"] = 600;
+  config["exp_aft"] = 900;
 
   CREATE_SENSOR_MQTT_DEVICE
 
@@ -340,7 +340,7 @@ bool mqtt_publish_sensors_config(const char* hostname, const char* name, const c
   config["uniq_id"] = version_name;
   config["frc_upd"] = "true";
   config["entity_category"] = "diagnostic";
-  config["exp_aft"] = 600;
+  config["exp_aft"] = 900;
 
   CREATE_SENSOR_MQTT_DEVICE
 
@@ -370,7 +370,7 @@ bool mqtt_publish_sensors_config(const char* hostname, const char* name, const c
   config["uniq_id"] = charging_name;
   config["frc_upd"] = "true";
   config["entity_category"] = "diagnostic";
-  config["exp_aft"] = 600;
+  config["exp_aft"] = 900;
 
   CREATE_SENSOR_MQTT_DEVICE
 
@@ -400,7 +400,7 @@ bool mqtt_publish_sensors_config(const char* hostname, const char* name, const c
   config["uniq_id"] = name_name;
   config["frc_upd"] = "true";
   config["entity_category"] = "diagnostic";
-  config["exp_aft"] = 600;
+  config["exp_aft"] = 900;
 
   CREATE_SENSOR_MQTT_DEVICE
 
@@ -431,7 +431,7 @@ bool mqtt_publish_sensors_config(const char* hostname, const char* name, const c
   config["uniq_id"] = boot_name;
   config["frc_upd"] = "true";
   config["entity_category"] = "diagnostic";
-  config["exp_aft"] = 600;
+  config["exp_aft"] = 900;
 
   CREATE_SENSOR_MQTT_DEVICE
 
@@ -462,7 +462,7 @@ bool mqtt_publish_sensors_config(const char* hostname, const char* name, const c
   config["unit_of_meas"] = "s";
   config["frc_upd"] = "true";
   config["entity_category"] = "diagnostic";
-  config["exp_aft"] = 600;
+  config["exp_aft"] = 900;
 
   CREATE_SENSOR_MQTT_DEVICE
 
@@ -492,7 +492,7 @@ bool mqtt_publish_sensors_config(const char* hostname, const char* name, const c
   config["uniq_id"] = pretty_ontime_name;
   config["frc_upd"] = "true";
   config["entity_category"] = "diagnostic";
-  config["exp_aft"] = 600;
+  config["exp_aft"] = 900;
 
   CREATE_SENSOR_MQTT_DEVICE
 
@@ -522,7 +522,7 @@ bool mqtt_publish_sensors_config(const char* hostname, const char* name, const c
   config["uniq_id"] = mac_name;
   config["frc_upd"] = "true";
   config["entity_category"] = "diagnostic";
-  config["exp_aft"] = 600;
+  config["exp_aft"] = 900;
 
   CREATE_SENSOR_MQTT_DEVICE
 
@@ -550,9 +550,16 @@ bool mqtt_publish_sensors_config(const char* hostname, const char* name, const c
 
 bool mqtt_publish_sensors_values()
 {
+  if (!publish_sensors_to_ha)
+  {
+    // Serial.printf(" | NOT sending to HA\n");
+    return false;
+  }
+
   struct_message myLocalData;
   struct_message_aux myLocalData_aux;
 
+  // protect the vulnerable ones... ;-)
   portENTER_CRITICAL(&receive_cb_mutex);
     xQueueReceive(queue, &myLocalData, portMAX_DELAY);
     xQueueReceive(queue_aux, &myLocalData_aux, portMAX_DELAY);
@@ -566,28 +573,32 @@ bool mqtt_publish_sensors_values()
   char pretty_ontime[17]; // "999d 24h 60m 60s" = 16 characters
   ConvertSectoDay(myLocalData.ontime,pretty_ontime);
 
-  Serial.println("\nESPnow Message received from:");
-  Serial.print("\tname=");Serial.println(myLocalData.name);
-  Serial.print("\thostname=");Serial.println(myLocalData.host);
-  Serial.print("\tMAC=");Serial.println(myLocalData_aux.macStr);
-  Serial.print("\tSize of message=");Serial.print(sizeof(myLocalData));Serial.println(" bytes");
-  Serial.print("\ttemp=");Serial.println(myLocalData.temp);
-  Serial.print("\thum=");Serial.println(myLocalData.hum);
-  Serial.print("\tlux=");Serial.println(myLocalData.lux);
-  Serial.print("\tbat=");Serial.println(myLocalData.bat);
-  Serial.print("\tbatpct=");Serial.println(myLocalData.batpct);
-  Serial.print("\tcharg=");Serial.println(myLocalData.charg);
-  Serial.print("\tver=");Serial.println(myLocalData.ver);
-  Serial.print("\trssi=");Serial.println(myLocalData_aux.rssi);
-  Serial.print("\tboot=");Serial.println(myLocalData.boot);
-  Serial.print("\tontime=");Serial.println(myLocalData.ontime);
-  Serial.print("\tpretty_ontime=");Serial.println(pretty_ontime);
-  Serial.println();
+  // #ifdef DEBUG
+    Serial.printf("[%s]: -> %dB from: %s, boot=%s",__func__,sizeof(myLocalData), myLocalData.host,myLocalData.boot);
+  // #endif
+  // Serial.println("\nESPnow Message received from:");
+  // Serial.print("\tname=");Serial.println(myLocalData.name);
+  // Serial.print("\thostname=");Serial.println(myLocalData.host);
+  // Serial.print("\tMAC=");Serial.println(myLocalData_aux.macStr);
+  // Serial.print("\tSize of message=");Serial.print(sizeof(myLocalData));Serial.println(" bytes");
+  // Serial.print("\ttemp=");Serial.println(myLocalData.temp);
+  // Serial.print("\thum=");Serial.println(myLocalData.hum);
+  // Serial.print("\tlux=");Serial.println(myLocalData.lux);
+  // Serial.print("\tbat=");Serial.println(myLocalData.bat);
+  // Serial.print("\tbatpct=");Serial.println(myLocalData.batpct);
+  // Serial.print("\tcharg=");Serial.println(myLocalData.charg);
+  // Serial.print("\tver=");Serial.println(myLocalData.ver);
+  // Serial.print("\trssi=");Serial.println(myLocalData_aux.rssi);
+  // Serial.print("\tboot=");Serial.println(myLocalData.boot);
+  // Serial.print("\tontime=");Serial.println(myLocalData.ontime);
+  // Serial.print("\tpretty_ontime=");Serial.println(pretty_ontime);
+  // Serial.println();
 
 
   bool publish_status = true;
-  if (!mqtt_publish_sensors_config(myData.host,myData.name,myData_aux.macStr,myLocalData.ver)){
-    Serial.println("\n SENSORS CONFIG NOT published");
+  if (!mqtt_publish_sensors_config(myData.host,myData.name,myData_aux.macStr,myLocalData.ver))
+  {
+    Serial.printf("[%s]: SENSORS CONFIG NOT published\n",__func__);
     return false;
   }
 
@@ -610,8 +621,23 @@ bool mqtt_publish_sensors_values()
   char payload_json[JSON_PAYLOAD_SIZE];
   int size_pl = serializeJson(payload, payload_json);
 
-  if (mqtt_connected){ if (!mqttc.publish(sensors_topic_state,(uint8_t*)payload_json,strlen(payload_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}}
+  // if (!publish_sensors_to_ha)
+  // {
+  //   Serial.printf(" | NOT sending to HA\n");
+  //   return false;
+  // }
 
+  if (mqtt_connected){ if (!mqttc.publish(sensors_topic_state,(uint8_t*)payload_json,strlen(payload_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}}
+  // #ifdef DEBUG
+    Serial.printf(" -> sending to HA...",__func__);
+    if (publish_status)
+    {
+      Serial.printf("OK\n");
+    } else
+    {
+      Serial.println("FAILED");
+    }
+  // #endif
   if (debug_mode) {
     Serial.println("\n============ DEBUG PAYLOAD SENSORS============");
     Serial.println("Size of sensors payload="+String(size_pl)+" bytes");
@@ -631,14 +657,17 @@ bool mqtt_publish_sensors_values()
 
 
   publish_status = mqtt_publish_gw_last_updated_sensor_values(myLocalData.host);
-  Serial.print("[last_updated_sensor] updating GW on HA...");
-  if (publish_status)
-  {
-    Serial.println(".SUCCESSFULL");
-  } else
-  {
-    Serial.println(".FAILED");
-  }
+  // Serial.print("[last_updated_sensor] updating GW on HA...");
+  #ifdef DEBUG
+    Serial.printf("[%s]: updating GW on HA...",__func__);
+    if (publish_status)
+    {
+      Serial.printf("SUCCESSFULL\n");
+    } else
+    {
+      Serial.println("FAILED");
+    }
+  #endif
 
   return publish_status;
 }

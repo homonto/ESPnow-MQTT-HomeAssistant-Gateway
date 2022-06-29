@@ -7,13 +7,13 @@ firmware update functions
 
 // preparation
 #if (BOARD_TYPE == 1)
-  #define FW_BIN_FILE "/receiver.ino.esp32.bin"
+  #define FW_BIN_FILE "receiver.ino.esp32.bin"
 #elif (BOARD_TYPE == 2)
-  #define FW_BIN_FILE "/receiver.ino.esp32s2.bin"
+  #define FW_BIN_FILE "receiver.ino.esp32s2.bin"
 #else
   #error "FW update defined only for ESP32 and ESP32-S2 boards"
 #endif
-#define UPDATE_FIRMWARE_FILE (String(UPDATE_FIRMWARE_HOST) + "/01-Production/0-ESPnow/" + String(HOSTNAME) + String(FW_BIN_FILE))
+// #define UPDATE_FIRMWARE_FILE (String(UPDATE_FIRMWARE_HOST) + "/01-Production/0-ESPnow/" + String(HOSTNAME) + String(FW_BIN_FILE))
 
 
 // functions
@@ -23,19 +23,23 @@ void do_update()
   int update_firmware_status = -1;
   if (perform_update_firmware)
   {
+    Serial.printf("[%s]: unregistering callback (esp_now_unregister_recv_cb) during FW update\n",__func__);
+    esp_now_unregister_recv_cb();
     perform_update_firmware=false;
     publish_status_update_firmware=mqtt_publish_gw_status_values("Updating FW");
     long sm2 = millis(); while(millis() < sm2 + 1000) {};
     if (publish_status_update_firmware)
     {
       update_firmware_status=update_firmware_prepare();
-      if (update_firmware_status == 0) {
-        Serial.println("FW updated - RESTARTING");
+      if (update_firmware_status == 0)
+      {
+        Serial.printf("[%s]: FW updated - RESTARTING\n",__func__);
         mqtt_publish_gw_status_values("FW updated");
         sm2 = millis(); while(millis() < sm2 + 1000) {};
         espnow_start();
-      } else {
-        Serial.println("FW update failed - reason: " + String(update_firmware_status));
+      } else
+      {
+        Serial.printf("[%s]: FW update failed - reason: %d\n",__func__,update_firmware_status);
         mqtt_publish_gw_status_values("FW update failed");
         sm2 = millis(); while(millis() < sm2 + 1000) {};
         digitalWrite(STATUS_LED_GPIO,LOW);
@@ -70,7 +74,7 @@ void updateFirmware(uint8_t *data, size_t len)
     mqtt_publish_gw_status_values(update_progress_char);
     if (update_progress % 5 == 0)
     {
-      Serial.printf("FW update: %d%%\n",update_progress);
+      Serial.printf("[%s]: FW update: %d%%\n",__func__,update_progress);
     }
   }
 
@@ -80,22 +84,23 @@ void updateFirmware(uint8_t *data, size_t len)
     return;
   }
   Update.end(true);
-  Serial.printf("\nUpdate Success, Total Size: %d\n", fw_currentLength);
+  Serial.printf("\n[%s]: Update Success, Total Size: %dbytes\n",__func__,fw_currentLength);
 }
 
 
 int update_firmware_prepare()
 {
   long start_upgrade_time = millis();
-  String firmware_file = UPDATE_FIRMWARE_FILE;
+
+  char firmware_file[255];
+  snprintf(firmware_file,sizeof(firmware_file),"%s/01-Production/0-ESPnow/%s/%s",UPDATE_FIRMWARE_HOST,HOSTNAME,FW_BIN_FILE);
+
   fw_totalLength=0;
   fw_currentLength=0;
-
-  Serial.println("uploading file: "+firmware_file);
+  Serial.printf("[%s]: uploading file: %s\n",__func__,firmware_file);
   firmware_update_client.begin(firmware_file);
   int resp = firmware_update_client.GET();
-  Serial.print("Response: ");
-  Serial.println(resp);
+  Serial.printf("[%s]: Response: %d\n",__func__,resp);
   // If file is reachable, start downloading
   if(resp == 200)
   {
@@ -105,13 +110,14 @@ int update_firmware_prepare()
     int len = fw_totalLength;
     // this is required to start firmware update process
     Update.begin(UPDATE_SIZE_UNKNOWN);
-    Serial.printf("FW Size: %u\n",fw_totalLength);
+    Serial.printf("[%s]: FW Size: %dbytes\n",__func__,fw_totalLength);
     // create buffer for read
     uint8_t buff[128] = { 0 };
     // get tcp stream
     WiFiClient * stream = firmware_update_client.getStreamPtr();
     // read all data from server
-    Serial.println("Updating firmware progress:");
+    // Serial.println("Updating firmware progress:");
+    Serial.printf("[%s]: Updating firmware progress:\n",__func__);
     while(firmware_update_client.connected() && (len > 0 || len == -1))
     {
        // get available data size
@@ -131,11 +137,11 @@ int update_firmware_prepare()
     }
   } else
   {
-    Serial.println("Cannot download firmware file. Only HTTP response 200: OK is supported. Double check firmware location #defined in UPDATE_FIRMWARE_FILE.");
-    Serial.println("update_firmware_prepare UNSUCESSFUL - time: "+String(millis()-start_upgrade_time)+"ms");
+    Serial.printf("[%s]: Cannot download firmware file. Only HTTP response 200: OK is supported. Double check firmware location #defined in UPDATE_FIRMWARE_FILE.\n",__func__);
+    Serial.printf("[%s]: UNSUCESSFUL - time: %llums\n",__func__,millis()-start_upgrade_time);
     return resp;
   }
   firmware_update_client.end();
-  Serial.println("update_firmware_prepare SUCESSFUL - time: "+String(millis()-start_upgrade_time)+"ms");
+  Serial.printf("[%s]: SUCESSFUL - time: %llums\n",__func__,millis()-start_upgrade_time);
   return 0;
 }

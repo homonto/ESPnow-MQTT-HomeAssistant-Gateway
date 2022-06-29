@@ -12,7 +12,7 @@ mqtt functions for gateway
 #define CREATE_GW_MQTT_DEVICE \
 dev = config.createNestedObject("device"); \
 dev["ids"]=MQTT_DEVICE_IDENTIFIER;  \
-dev["name"]="ESPnow2MQTT_GW_" + String(HOSTNAME); \
+dev["name"]="ESPnow_" + String(HOSTNAME) + "_gateway"; \
 dev["mdl"]=MODEL; \
 dev["mf"]="ZH"; \
 dev["sw"]= String(VERSION)+ "," + String(__DATE__) + "_" + String(__TIME__);
