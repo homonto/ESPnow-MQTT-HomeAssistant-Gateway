@@ -103,9 +103,10 @@ I used PPK2 and estimated the time the ESP32 works measuring the power consumpti
 </ul> 
 <br>
 <br>
-<b>ESP32S and ESP32-S2 ontime after 1.5 days with 180s sleep - almost 3x more "ontime" for ESP32S:</b>
+<b>ESP32S and ESP32-S2 ontime after 1.5 days with 180s sleep - almost 2.5-3x more "ontime" for ESP32S:</b>
 <br>
-<img width="1544" alt="Screenshot 2022-07-01 at 09 50 16" src="https://user-images.githubusercontent.com/46562447/176860690-a43394a6-da30-4560-8dad-8874b7ad1a21.png">
+<img width="1556" alt="Screenshot 2022-07-01 at 09 51 50" src="https://user-images.githubusercontent.com/46562447/176860918-338ccdcc-a744-4832-8502-c4c54a152008.png">
+
 
 <br>
 
