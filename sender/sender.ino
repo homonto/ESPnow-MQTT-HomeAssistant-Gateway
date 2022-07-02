@@ -13,7 +13,7 @@ sender.ino
 // detailed config in the file devices_config.h
 
 // #define DEVICE_ID  28           // "esp32028" - S,  production - Garage
-// #define DEVICE_ID  100          // "esp32101" - S2, production - Papa
+#define DEVICE_ID  100          // "esp32101" - S2, production - Papa
 // #define DEVICE_ID  101          // "esp32101" - S,  production - Dining
 // #define DEVICE_ID  102          // "esp32102" - S,  production - Toilet
 // #define DEVICE_ID  104          // "esp32104" - S,  production - Milena
@@ -25,7 +25,8 @@ sender.ino
 // #define DEVICE_ID  89           // "esp32089" - S2, test - Lilygo3a
 // #define DEVICE_ID  90           // "esp32090" - S2, test - S2
 // #define DEVICE_ID  91           // "esp32091" - S,  test - S
-#define DEVICE_ID  92           // "esp32092" - S3, test - S3 Ai-Thinker
+// #define DEVICE_ID  92           // "esp32092" - S3, test - S3 Ai-Thinker
+// #define DEVICE_ID  93           // "esp32093" - S2, test - S2
 
 // **** reset MAX17048 on first deployment only, then comment it out ***********
 // #define RESET_MAX17048
@@ -34,7 +35,7 @@ sender.ino
 #define FORMAT_FS   0
 
 // version description in changelog.txt
-#define VERSION "1.11.1"
+#define VERSION "1.12.0"
 
 // configure device in this file, choose which one you are compiling for on top of this script: #define DEVICE_ID x
 #include "devices_config.h"
@@ -143,14 +144,21 @@ bool blink_led_status=false;
 // it will try to retransmit few times (10?) before giving status = 0
 // REPLACE WITH YOUR RECEIVER MAC Address
 // receiver might also use arbitrary MAC
-uint8_t broadcastAddress[] = {0x7c, 0xdF, 0xa1, 0x0b, 0xd9, 0xff};
+// below: first and second receivers - no difference in any task
+// first receiver
+uint8_t broadcastAddress1[]     = {0x7c, 0xdF, 0xa1, 0x0b, 0xd9, 0xff};
+// second receiver
+uint8_t broadcastAddress2[]     = {0x7c, 0xdF, 0xa1, 0x0b, 0xd9, 0xee};
 
-// BROADCAST:
-// uint8_t broadcastAddress[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+// BROADCAST - any receiver
+// uint8_t broadcastAddress_all[]  = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 // sends to all devices - it works!
 // but if broadcast used esp_now_send_status_t status is not received, however communication is faster (no ack needed)
 // status = 1 when sent, without waiting for received
 // no retransmission for broadcast
+
+// final receiver MAC address, changeable in the code depends on bootCount
+uint8_t broadcastAddress[]      = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
 
 typedef struct struct_message
@@ -1157,6 +1165,26 @@ void setup()
   #ifdef ENABLE_3V_GPIO
     digitalWrite(ENABLE_3V_GPIO, LOW);
   #endif
+
+  // sender choses the receiver based on bootCount
+  char receiver_mac[18];
+  if (bootCount % 2 == 0)
+  {
+    memcpy(broadcastAddress, broadcastAddress1, sizeof(broadcastAddress));
+    snprintf(receiver_mac, sizeof(receiver_mac), "%02x:%02x:%02x:%02x:%02x:%02x",broadcastAddress[0], broadcastAddress[1], broadcastAddress[2], broadcastAddress[3], broadcastAddress[4], broadcastAddress[5]);
+    Serial.printf("[%s]: bootCount=%d, receiver 1 MAC=%s\n",__func__,bootCount,receiver_mac);
+  } else
+  {
+    memcpy(broadcastAddress, broadcastAddress2, sizeof(broadcastAddress));
+    snprintf(receiver_mac, sizeof(receiver_mac), "%02x:%02x:%02x:%02x:%02x:%02x",broadcastAddress[0], broadcastAddress[1], broadcastAddress[2], broadcastAddress[3], broadcastAddress[4], broadcastAddress[5]);
+    Serial.printf("[%s]: bootCount=%d, receiver 2 MAC=%s\n",__func__,bootCount,receiver_mac);
+  }
+
+  // uncomment for broadcast
+  // memcpy(broadcastAddress, broadcastAddress_all, sizeof(broadcastAddress));
+  // snprintf(receiver_mac, sizeof(receiver_mac), "%02x:%02x:%02x:%02x:%02x:%02x",broadcastAddress[0], broadcastAddress[1], broadcastAddress[2], broadcastAddress[3], broadcastAddress[4], broadcastAddress[5]);
+  // Serial.printf("[%s]: bootCount=%d, receiver B MAC=%s\n",__func__,bootCount,receiver_mac);
+
 
 // ESPNow preparation
   start_espnow_time = millis();

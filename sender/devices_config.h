@@ -61,7 +61,7 @@ test devices: esp32080 - 099
   // #define FW_UPGRADE_LED_GPIO   26
   #define CHARGING_GPIO         38
   #define POWER_GPIO            39
-  #define SLEEP_TIME            180
+  #define SLEEP_TIME            3
   #define USE_MAX17048          1
   #define USE_SHT31             1
   #define USE_TSL2561           0
@@ -274,15 +274,15 @@ test devices: esp32080 - 099
   #define HOSTNAME              "esp32091"
   #define DEVICE_NAME           "testS"
   #define BOARD_TYPE            1
-  // #define ENABLE_3V_GPIO        32
+  #define ENABLE_3V_GPIO        32
   // #define ACTIVITY_LED_GPIO     33
   // #define FW_UPGRADE_LED_GPIO   33
   // #define CHARGING_GPIO         38
   // #define POWER_GPIO            39
   #define SLEEP_TIME            5
-  #define USE_MAX17048          1
-  #define USE_SHT31             0
-  #define USE_TSL2561           0
+  #define USE_MAX17048          0
+  #define USE_SHT31             1
+  #define USE_TSL2561           1
   #define USE_TEPT4400          0
   #define LUX_ADC_GPIO          36
   #define LUX_MAX_RAW_READING   2900
@@ -293,7 +293,7 @@ test devices: esp32080 - 099
   // #define PERIODIC_FW_CHECK_HRS
   #pragma message "compilation for: esp32091-testS"
 
-// *************** "esp32092" - S#,  test - S3 ***********************************
+// *************** "esp32092" - S3,  test - S3 ***********************************
 #elif DEVICE_ID == 92
   #define HOSTNAME              "esp32092"
   #define DEVICE_NAME           "testS3"
@@ -316,6 +316,30 @@ test devices: esp32080 - 099
   // #define GND_GPIO_FOR_LED      13
   // #define PERIODIC_FW_CHECK_HRS
   #pragma message "compilation for: esp32092-testS3"
+
+// *************** "esp32093" - S2,  test - S2 ***********************************
+#elif DEVICE_ID == 93
+  #define HOSTNAME              "esp32093"
+  #define DEVICE_NAME           "testS2"
+  #define BOARD_TYPE            2
+  // #define ENABLE_3V_GPIO        32
+  // #define ACTIVITY_LED_GPIO     7
+  // #define FW_UPGRADE_LED_GPIO   5
+  // #define CHARGING_GPIO         38
+  // #define POWER_GPIO            39
+  #define SLEEP_TIME            2
+  #define USE_MAX17048          0
+  #define USE_SHT31             0
+  #define USE_TSL2561           0
+  #define USE_TEPT4400          0
+  #define LUX_ADC_GPIO          36
+  #define LUX_MAX_RAW_READING   2900
+  #define USE_CUSTOM_I2C_GPIO   0
+  #define SDA_GPIO              18
+  #define SCL_GPIO              19
+  // #define GND_GPIO_FOR_LED      13
+  // #define PERIODIC_FW_CHECK_HRS
+  #pragma message "compilation for: esp32093-testS2"
 
 // ---------------------------------------------------------------------------------------------------
 
@@ -355,13 +379,13 @@ test devices: esp32080 - 099
     #endif
   #elif (BOARD_TYPE == 3)
     #define MODEL "ESP32S3"
-    #define ESP32_IS_CHEATING 0
+    #define ESP32_IS_CHEATING 0       // not tested yet
     #ifdef PRINT_COMPILER_MESSAGES
       #pragma message "chosen BOARD_TYPE = ESP32S3"
     #endif
   #elif (BOARD_TYPE == 4)
     #define MODEL "ESP32C3"
-    #define ESP32_IS_CHEATING 0
+    #define ESP32_IS_CHEATING 0       // not tested yet
     #ifdef PRINT_COMPILER_MESSAGES
       #pragma message "chosen BOARD_TYPE = ESP32C3"
     #endif
