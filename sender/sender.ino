@@ -156,7 +156,7 @@ uint8_t broadcastAddress2[]     = {0x7c, 0xdF, 0xa1, 0x0b, 0xd9, 0xee};
 uint8_t broadcastAddress_all[]  = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 // sends to all devices - it works!
 // but if broadcast used esp_now_send_status_t status is not received, however communication is faster (no ack needed)
-// status = 1 when sent, without waiting for received
+// status = 1 when sent, without waiting for confirmation
 // no retransmission for broadcast
 
 // final receiver MAC address, changeable in the code depends on bootCount
