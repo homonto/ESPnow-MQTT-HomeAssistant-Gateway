@@ -1,12 +1,23 @@
 // #define DEBUG
+
+// #define DEVICE_ID  29           // "esp32029" - S2, MAC: FF, odd bootCount or all if BROADCAST
+#define DEVICE_ID  30           // "esp32030" - S2, MAC: EE, even bootCount or all if BROADCAST
+// #define DEVICE_ID  91           // "esp32091" - S, MAC: FE, even bootCount or all if BROADCAST
+
 /*
 receiver.ino
 */
-#define VERSION "1.7.2"
+#define VERSION "1.8.1"
 /*
+2022-07-02:
+  1.8.1 - 3 LEDs, POWER_ON_LED_GPIO_GREEN with PWM
+
+2022-07-02:
+  1.8.0 - common script for multiple receivers (DEVICE_ID and config.h)
+
 2022-06-29:
   1.7.2 - added support for ESP32-S3 board
-        - 2x LED: 1 for gateway device (STATUS_GW_LED_GPIO) and 1 for sensor device (STATUS_LED_GPIO)
+        - 2x LED: 1 for gateway device (STATUS_GW_LED_GPIO_RED) and 1 for sensor device (SENSORS_LED_GPIO_BLUE)
 
 2022-06-26:
   1.7.1 - change name of the device on HA (all devices) to: ESPnow_hostname_name
@@ -148,12 +159,12 @@ void ConvertSectoDay(unsigned long n, char *pretty_ontime)
 void hearbeat()
 {
   bool publish_status = true;
-  #ifdef STATUS_GW_LED_GPIO
-    digitalWrite(STATUS_GW_LED_GPIO,HIGH);
+  #ifdef STATUS_GW_LED_GPIO_RED
+    digitalWrite(STATUS_GW_LED_GPIO_RED,HIGH);
   #endif
   publish_status = publish_status && mqtt_publish_gw_status_config();
   // #ifdef DEBUG
-    Serial.printf("[%s]: talking to HA %ds later...",__func__,((millis()-aux_update_interval)/1000));
+    Serial.printf("[%s]: updating GW status %ds later...",__func__,((millis()-aux_update_interval)/1000));
   // #endif
 
   publish_status = publish_status && mqtt_publish_gw_status_values("online");
@@ -182,8 +193,8 @@ void hearbeat()
     Serial.printf("[%s]: ERROR: queue is full!\n",__func__);
   }
 
-  #ifdef STATUS_GW_LED_GPIO
-    digitalWrite(STATUS_GW_LED_GPIO,LOW);
+  #ifdef STATUS_GW_LED_GPIO_RED
+    digitalWrite(STATUS_GW_LED_GPIO_RED,LOW);
   #endif
 }
 
@@ -201,13 +212,29 @@ void setup()
     digitalWrite(GND_GPIO_FOR_LED, LOW);
   #endif
 
-  #ifdef STATUS_GW_LED_GPIO
-    pinMode(STATUS_GW_LED_GPIO, OUTPUT);
+  #ifdef STATUS_GW_LED_GPIO_RED
+    pinMode(STATUS_GW_LED_GPIO_RED, OUTPUT);
   #endif
 
-  #ifdef STATUS_LED_GPIO
-    pinMode(STATUS_LED_GPIO, OUTPUT);
+  #ifdef SENSORS_LED_GPIO_BLUE
+    pinMode(SENSORS_LED_GPIO_BLUE, OUTPUT);
   #endif
+
+  #ifdef POWER_ON_LED_GPIO_GREEN
+    // PWM
+    #if (POWER_ON_LED_USE_PWM == 1)
+      ledcSetup(POWER_ON_LED_PWM_CHANNEL, POWER_ON_LED_PWM_FREQ, POWER_ON_LED_PWM_RESOLUTION);
+      ledcAttachPin(POWER_ON_LED_GPIO_GREEN, POWER_ON_LED_PWM_CHANNEL);
+      // set brightness of GREEN LED (0-255)
+      ledcWrite(POWER_ON_LED_PWM_CHANNEL, 20);
+    // or fixed
+    #else
+      fixed LED setup...
+      pinMode(POWER_ON_LED_GPIO_GREEN, OUTPUT);
+      digitalWrite(POWER_ON_LED_GPIO_GREEN, HIGH);
+    #endif
+  #endif
+
 
 
   queue = xQueueCreate( MAX_QUEUE_COUNT, sizeof( struct struct_message ) );

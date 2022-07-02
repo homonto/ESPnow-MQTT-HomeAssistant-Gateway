@@ -555,9 +555,6 @@ bool mqtt_publish_sensors_values()
     // Serial.printf(" | NOT sending to HA\n");
     return false;
   }
-  #ifdef STATUS_LED_GPIO
-    digitalWrite(STATUS_LED_GPIO,HIGH);
-  #endif
 
   struct_message myLocalData;
   struct_message_aux myLocalData_aux;
@@ -577,7 +574,12 @@ bool mqtt_publish_sensors_values()
   ConvertSectoDay(myLocalData.ontime,pretty_ontime);
 
   // #ifdef DEBUG
-    Serial.printf("[%s]: -> %dB from: %s, boot=%s",__func__,sizeof(myLocalData), myLocalData.host,myLocalData.boot);
+    Serial.printf("[%s]: -> %dB,rssi=%ddBm, from: %s, boot=%s",__func__,sizeof(myLocalData),myLocalData_aux.rssi, myLocalData.host,myLocalData.boot);
+    // if  (atoi(myLocalData.boot) % 2 == 0)
+    // {
+    //   Serial.printf(" boot is EVEN -> not my duty to send to HA\n",__func__);
+    //   return false;
+    // }
   // #endif
   // Serial.println("\nESPnow Message received from:");
   // Serial.print("\tname=");Serial.println(myLocalData.name);
@@ -597,13 +599,16 @@ bool mqtt_publish_sensors_values()
   // Serial.print("\tpretty_ontime=");Serial.println(pretty_ontime);
   // Serial.println();
 
+  #ifdef SENSORS_LED_GPIO_BLUE
+    digitalWrite(SENSORS_LED_GPIO_BLUE,HIGH);
+  #endif
 
   bool publish_status = true;
   if (!mqtt_publish_sensors_config(myData.host,myData.name,myData_aux.macStr,myLocalData.ver))
   {
     Serial.printf("[%s]: SENSORS CONFIG NOT published\n",__func__);
-    #ifdef STATUS_LED_GPIO
-      digitalWrite(STATUS_LED_GPIO,LOW);
+    #ifdef SENSORS_LED_GPIO_BLUE
+      digitalWrite(SENSORS_LED_GPIO_BLUE,LOW);
     #endif
     return false;
   }
@@ -675,8 +680,8 @@ bool mqtt_publish_sensors_values()
     }
   #endif
 
-  #ifdef STATUS_LED_GPIO
-    digitalWrite(STATUS_LED_GPIO,LOW);
+  #ifdef SENSORS_LED_GPIO_BLUE
+    digitalWrite(SENSORS_LED_GPIO_BLUE,LOW);
   #endif
   return publish_status;
 }

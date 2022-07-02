@@ -36,16 +36,16 @@ void do_update()
         Serial.printf("[%s]: FW updated - RESTARTING\n",__func__);
         mqtt_publish_gw_status_values("FW updated");
         sm2 = millis(); while(millis() < sm2 + 1000) {};
-        espnow_start();
+        ESP.restart();
       } else
       {
         Serial.printf("[%s]: FW update failed - reason: %d\n",__func__,update_firmware_status);
         mqtt_publish_gw_status_values("FW update failed");
         sm2 = millis(); while(millis() < sm2 + 1000) {};
-        digitalWrite(STATUS_LED_GPIO,LOW);
+        digitalWrite(STATUS_GW_LED_GPIO_RED,LOW);
         mqtt_publish_gw_status_values("online");
         sm2 = millis(); while(millis() < sm2 + 1000) {};
-        espnow_start();
+        ESP.restart();
       }
     }
   }
@@ -56,10 +56,10 @@ void updateFirmware(uint8_t *data, size_t len)
 {
   if (blink_led_status) {
     blink_led_status=LOW;
-    digitalWrite(STATUS_LED_GPIO,blink_led_status);
+    digitalWrite(STATUS_GW_LED_GPIO_RED,blink_led_status);
   } else {
     blink_led_status=HIGH;
-    digitalWrite(STATUS_LED_GPIO,blink_led_status);
+    digitalWrite(STATUS_GW_LED_GPIO_RED,blink_led_status);
   }
 
   char update_progress_char[20];
