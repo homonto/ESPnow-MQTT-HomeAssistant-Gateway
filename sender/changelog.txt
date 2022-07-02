@@ -1,5 +1,8 @@
 2022-07-02:
-  1.12.0 - send to either of 2 receivers depending on bootCount (even/odd) 
+  1.13.0 - define MAC_BROADCAST for sending to all (receivers)
+  
+2022-07-02:
+  1.12.0 - send to either of 2 receivers depending on bootCount (even/odd)
 
 2022-06-28:
   1.11.1 - boot_reason added to reset bootCount on button reset

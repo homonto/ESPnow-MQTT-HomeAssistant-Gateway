@@ -61,7 +61,7 @@ test devices: esp32080 - 099
   // #define FW_UPGRADE_LED_GPIO   26
   #define CHARGING_GPIO         38
   #define POWER_GPIO            39
-  #define SLEEP_TIME            3
+  #define SLEEP_TIME            180
   #define USE_MAX17048          1
   #define USE_SHT31             1
   #define USE_TSL2561           0
