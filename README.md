@@ -4,7 +4,7 @@
 <ul>
   <li>Build universal sensor device (ESP32 based) equipped with temperature, humidity and light sensors, that can live long on 1 battery charge</li>
   <li>Clone/deploy it to as many sensors as needed (indoor, outdoor etc.) without changing the software or reconfiguration (beyond what is specific to the device i.e. GPIO connection etc.)
-  <li>Build gateway device (that is always powered ON) that transfers data from sensor devices to Home Assistant and automatically creates devices/entities on Home Assistant (no configuration needed) - <b>EDIT:</b> gateway device is now "devices" and every sensor device sends ESPnow message to BROADCAST address. By building multiple gateway devices (and locating them in various places) allows widening the range, without loosing the data when RSSI is very low (extending the range).
+  <li>Build gateway device (that is always powered ON) that transfers data from sensor devices to Home Assistant and automatically creates devices/entities on Home Assistant (no configuration needed) - <b>EDIT:</b> gateway device is now "devices" and every sensor device sends ESPnow message to BROADCAST address. Building multiple gateway devices (and locating them in various places) allows widening the range, without loosing the data when RSSI is very low (extending the range).
 </ul>
 <br>
 <h3>Tasks for the devices:</h3>
@@ -99,7 +99,7 @@ I used PPK2 and estimated the time the ESP32 works measuring the power consumpti
 <ul>
   <li>don't rely on millis() only
   <li>ESP32-S2 starts much faster (35ms) than ESP32S (310ms)
-  <li>ESP32-S2 works much faster (2-3 times) so the total power consumption with S2 is much lower accordingly (battery life)
+  <li>ESP32-S2 total working time is much shorter so the total power consumption with S2 is much lower accordingly - battery life is extended
 </ul> 
 <br>
 <br>
@@ -141,7 +141,7 @@ Sensor device during firmware update:<br>
 <br>
 <h3>Gateway device</h3>
 To perform firmware update you simply click the button "Update" on Home Assistant (in the device section of gateway) - gateway will connect to the server where the binary is stored and if file is found, it will perform firmware update and restart gateway.
-I am using Apache minimal add on Home Assistant - since all sensors are in the same network where Home Assistant is, <b>there is no need for internet access for sensors (and gateway) but sensor device needs to be in the accessible range of the AP/router.</b>
+I am using Apache minimal add on Home Assistant - since all sensors are in the same network where Home Assistant is, <b>there is no need for internet access for sensors (and gateway).</b>
 <br>
 
 <h2>Configuration</h2>
