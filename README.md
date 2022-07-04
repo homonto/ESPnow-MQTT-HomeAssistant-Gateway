@@ -141,7 +141,7 @@ Sensor device during firmware update:<br>
 <br>
 <h3>Gateway device</h3>
 To perform firmware update you simply click the button "Update" on Home Assistant (in the device section of gateway) - gateway will connect to the server where the binary is stored and if file is found, it will perform firmware update and restart gateway.
-I am using Apache minimal add on Home Assistant - since all sensors are in the same network where Home Assistant is, <b>there is no need for internet access for sensors (and gateway) but sensor device needs to be in the accessible range of the AP/router.</b>
+I am using Apache minimal add on Home Assistant - since all sensors are in the same network where Home Assistant is, <b>there is no need for internet access for sensors (and gateway).</b>
 <br>
 
 <h2>Configuration</h2>
