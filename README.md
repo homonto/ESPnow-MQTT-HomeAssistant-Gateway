@@ -232,7 +232,7 @@ Ontime is also reduced by turning off the bootloader logo during wake up from sl
 <h4>Gateway device (with its entities) as well as all sensor devices (with their entities) are automatically configured in Home Assistant using MQTT discovery</h4>
 <br>
 <br>
-<b>Gateway device as discovered by MQTT:<br>
+<b>Gateway device as discovered by Home Assistant:<br>
 <br>
 
 <img width="532" alt="Screenshot 2022-07-04 at 09 11 38" src="https://user-images.githubusercontent.com/46562447/177111787-2e294347-cb40-4041-80e7-a02f0d6d7af2.png">
@@ -244,7 +244,7 @@ Ontime is also reduced by turning off the bootloader logo during wake up from sl
 <img width="390" alt="Screenshot 2022-07-04 at 09 10 54" src="https://user-images.githubusercontent.com/46562447/177111873-b1d236dd-abfc-4cbf-91e7-c3a316369cee.png">
 
 <br><br>
-<b>Sensor device as discovered by MQTT:<br>
+<b>Sensor device as discovered by Home Assistant:<br>
 <br>
 
 <img width="531" alt="Screenshot 2022-07-04 at 09 11 52" src="https://user-images.githubusercontent.com/46562447/177111944-b11afa4f-93ac-4319-966b-8fcfd8772ad1.png">
