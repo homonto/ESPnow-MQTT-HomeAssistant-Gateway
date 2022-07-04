@@ -99,7 +99,7 @@ I used PPK2 and estimated the time the ESP32 works measuring the power consumpti
 <ul>
   <li>don't rely on millis() only
   <li>ESP32-S2 starts much faster (35ms) than ESP32S (310ms)
-  <li>ESP32-S2 works much faster (2-3 times) so the total power consumption with S2 is much lower accordingly (battery life)
+  <li>ESP32-S2 total working time is much shorter so the total power consumption with S2 is much lower accordingly - battery life is extended
 </ul> 
 <br>
 <br>
