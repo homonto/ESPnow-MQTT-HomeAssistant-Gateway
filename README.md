@@ -234,22 +234,26 @@ Ontime is also reduced by turning off the bootloader logo during wake up from sl
 <br>
 <b>Gateway device as discovered by MQTT:<br>
 <br>
-<img width="540" alt="Screenshot 2022-06-19 at 18 48 53" src="https://user-images.githubusercontent.com/46562447/174493967-357bdf70-0b84-4d87-8edd-88b8b83fb447.png">
+
+<img width="532" alt="Screenshot 2022-07-04 at 09 11 38" src="https://user-images.githubusercontent.com/46562447/177111787-2e294347-cb40-4041-80e7-a02f0d6d7af2.png">
 
 <br><br>
 <b>Gateway device on lovelace dashboard:<br>
 <br>
-<img width="402" alt="Screenshot 2022-06-19 at 18 48 35" src="https://user-images.githubusercontent.com/46562447/174493970-9901a285-e271-4ceb-a5f3-530999bfc31e.png">
+
+<img width="390" alt="Screenshot 2022-07-04 at 09 10 54" src="https://user-images.githubusercontent.com/46562447/177111873-b1d236dd-abfc-4cbf-91e7-c3a316369cee.png">
 
 <br><br>
 <b>Sensor device as discovered by MQTT:<br>
 <br>
-<img width="536" alt="Screenshot 2022-06-22 at 19 12 06" src="https://user-images.githubusercontent.com/46562447/175107889-da291f5f-ed44-462e-b29a-bca389bfd934.png">
+
+<img width="531" alt="Screenshot 2022-07-04 at 09 11 52" src="https://user-images.githubusercontent.com/46562447/177111944-b11afa4f-93ac-4319-966b-8fcfd8772ad1.png">
 
 <br>
 <b>Sensor Device on lovelace dashboard:<br>
 <br>
-<img width="359" alt="Screenshot 2022-06-22 at 19 21 57" src="https://user-images.githubusercontent.com/46562447/175109198-72bdbb4a-d14e-4ea6-bb15-cc64a2b748db.png">
+
+<img width="390" alt="Screenshot 2022-07-04 at 09 11 21" src="https://user-images.githubusercontent.com/46562447/177112009-923aa439-4b00-4d8e-9aac-3a878f2b3087.png">
 
 <br>
 <h3>MQTT structure</h3>
