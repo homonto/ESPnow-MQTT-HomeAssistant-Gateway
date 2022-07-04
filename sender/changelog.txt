@@ -1,6 +1,9 @@
+2022-07-04:
+  1.14.b1 - battery change rate, redo myData structure, fake receiver, lipo.quickStart abandoned
+
 2022-07-02:
   1.13.0 - define MAC_BROADCAST for sending to all (receivers)
-  
+
 2022-07-02:
   1.12.0 - send to either of 2 receivers depending on bootCount (even/odd)
 

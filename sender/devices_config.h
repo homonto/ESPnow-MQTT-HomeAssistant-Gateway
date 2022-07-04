@@ -280,7 +280,7 @@ test devices: esp32080 - 099
   // #define CHARGING_GPIO         38
   // #define POWER_GPIO            39
   #define SLEEP_TIME            5
-  #define USE_MAX17048          0
+  #define USE_MAX17048          1
   #define USE_SHT31             1
   #define USE_TSL2561           1
   #define USE_TEPT4400          0

@@ -4,10 +4,11 @@ sender.ino
 
 // ******************************* DEBUG ***************************************
 // #define DEBUG
-// #define PPK2_GPIO 35          // comment out if not used - GPIO to test power and timings using PPK2
+// #define PPK2_GPIO 35           // comment out if not used - GPIO to test power and timings using PPK2
+#define USE_FAKE_RECEIVER   0     // 1=use this to avoid flooding receiver/HA, any other proper receivers
 
 // sending data to all ESP (broadcast) or to specific only (unicast)
-#define MAC_BROADCAST  1        // 1=broadcast, any other for unicast
+#define MAC_BROADCAST       1     // 1=broadcast, any other for unicast - irrelevant if USE_FAKE_RECEIVER = 1
 // to see which board is being compiled
 #define PRINT_COMPILER_MESSAGES
 
@@ -18,7 +19,7 @@ sender.ino
 // #define DEVICE_ID  100          // "esp32101" - S2, production - Papa
 // #define DEVICE_ID  101          // "esp32101" - S,  production - Dining
 // #define DEVICE_ID  102          // "esp32102" - S,  production - Toilet
-#define DEVICE_ID  104          // "esp32104" - S,  production - Milena
+// #define DEVICE_ID  104          // "esp32104" - S,  production - Milena
 // #define DEVICE_ID  105          // "esp32105" - S2, production - Garden
 
 // #define DEVICE_ID  86           // "esp32086" - S2, test - Lilygo1a
@@ -30,22 +31,22 @@ sender.ino
 // #define DEVICE_ID  92           // "esp32092" - S3, test - S3 Ai-Thinker
 // #define DEVICE_ID  93           // "esp32093" - S2, test - S2
 
-// **** reset MAX17048 on first deployment only, then comment it out ***********
-// #define RESET_MAX17048
+// **** reset MAX17048 on first deployment only, then change to 0 **************
+#define RESET_MAX17048  0
 
 // **** format FS on first deployment only, then change to 0 or comment out ****
 #define FORMAT_FS   0
 
-// version description in changelog.txt
-#define VERSION "1.13.0"
+// version < 10 chars, description in changelog.txt
+#define VERSION "1.14.b1"
 
 // configure device in this file, choose which one you are compiling for on top of this script: #define DEVICE_ID x
 #include "devices_config.h"
 
 // ****************  ALL BELOW ALL IS COMMON FOR ANY ESP32 *********************
-#define HIBERNATE                 // hibernate or deep sleep - for deep sleep just comment it out
+#define HIBERNATE           1     // 1=hibernate, 0=deep sleep
 #define WIFI_CHANNEL        8     // in my house
-#define MINIMUM_VOLTS       3.1   // this might go to every device section
+#define MINIMUM_VOLTS       3.3   // this might go to every device section
 #define WAIT_FOR_WIFI       5     // in seconds, for upgrade firmware
 #ifndef PERIODIC_FW_CHECK_HRS     // if not found custom PERIODIC_FW_CHECK_HRS in devices_config.h (per device custom)
   #define PERIODIC_FW_CHECK_HRS   24
@@ -147,10 +148,15 @@ bool blink_led_status=false;
 // REPLACE WITH YOUR RECEIVER MAC Address
 // receiver might also use arbitrary MAC
 // below: first and second receivers - no difference in any task
-// first receiver - odd bootCount
+// first receiver - gw1 - odd bootCount
 uint8_t broadcastAddress1[]     = {0x7c, 0xdF, 0xa1, 0x0b, 0xd9, 0xff};
-// second receiver - even bootCount
+// second receiver - gw2 - even bootCount
 uint8_t broadcastAddress2[]     = {0x7c, 0xdF, 0xa1, 0x0b, 0xd9, 0xee};
+
+#if (USE_FAKE_RECEIVER == 1)
+  // fake receiver
+  uint8_t broadcastAddress3[]     = {0x7c, 0xdF, 0xa1, 0x0b, 0xd9, 0x00};
+#endif
 
 // BROADCAST - any receiver
 uint8_t broadcastAddress_all[]  = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
@@ -165,20 +171,22 @@ uint8_t broadcastAddress[]      = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
 typedef struct struct_message
 {
-  char host[10];
-  char temp[6];
-  char hum[6];
-  char lux[6];
-  char bat[6];
-  char batpct[6];
-  char ver[10];
-  char charg[5];
-  char name[11];
-  char boot[5];
+  char host[10];        // esp32123 [9]
+  char temp[7];         // 123.56   [7]
+  char hum[7];          // 123.56   [7]
+  char lux[6];          // 12345    [6]
+  char bat[5];          // 1.34     [5]
+  char batpct[8];       // 123.56   [7]
+  char ver[10];         // 123.56.89[10]
+  char charg[5];        // FULL     [5]
+  char name[11];        //          [11]
+  char boot[6];         // 12345    [6]
   unsigned long ontime;
+  char batchr[10];       // -234.6789 [10]
 } struct_message;
 
 struct_message myData;
+
 esp_now_peer_info_t peerInfo;
 
 // auxuliary variables
@@ -450,7 +458,7 @@ void hibernate()
   // it does not display welcome message
   esp_deep_sleep_disable_rom_logging();
 
-  #ifdef HIBERNATE
+  #if (HIBERNATE == 1)
     esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH,   ESP_PD_OPTION_OFF);
     esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_SLOW_MEM, ESP_PD_OPTION_OFF);
     esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_FAST_MEM, ESP_PD_OPTION_OFF);
@@ -521,8 +529,8 @@ bool gather_data()
     }
   #endif
   #ifdef DEBUG
-    Serial.printf("\ttemp=%s\n",myData.temp);
-    Serial.printf("\thum=%s\n",myData.hum);
+    Serial.printf("\ttemp=%sC\n",myData.temp);
+    Serial.printf("\thum=%s%%\n",myData.hum);
   #endif
 
   // lux
@@ -569,21 +577,37 @@ bool gather_data()
     }
   #endif
   #ifdef DEBUG
-    Serial.printf("\tlux=%s\n",myData.lux);
+    Serial.printf("\tlux=%slx\n",myData.lux);
   #endif
 
   // battery
   snprintf(myData.bat,sizeof(myData.bat),"%s","N/A");
   snprintf(myData.batpct,sizeof(myData.batpct),"%s","N/A");
+  snprintf(myData.batchr,sizeof(myData.batchr),"%s","N/A");
+
   #if (USE_MAX17048 == 1)
     if (max17ok)
     {
+      // testing delay 195ms as per MAX17048 datasheet - needed only on battery change - disabling it
+        // long wait_ms = 195 - (millis()-program_start_time);
+        // if (wait_ms > 0)
+        // {
+        //   Serial.printf("\n\n\ndelaying for %dms\n\n\n",wait_ms);
+        //   delay(wait_ms);
+        // }
+      // testing delay 195ms END
+
       float bat_volts = 0.0f;
       float bat_pct = 0.0f;
+      float bat_chr = 0.0f;
+
       bat_volts = lipo.getVoltage();
       bat_pct = lipo.getSOC();
+      bat_chr = lipo.getChangeRate();
+
       snprintf(myData.bat,sizeof(myData.bat),"%0.2f",bat_volts);
       snprintf(myData.batpct,sizeof(myData.batpct),"%0.2f",bat_pct);
+      snprintf(myData.batchr,sizeof(myData.batchr),"%0.4f",bat_chr);
 
       // EMERGENCY - LOW BATTERY!
       if (bat_volts < MINIMUM_VOLTS)
@@ -609,7 +633,7 @@ bool gather_data()
       } else
       {
         #ifdef DEBUG
-          Serial.printf("[%s]: battery level OK\n",__func__);
+          Serial.printf("\tbattery level=OK\n");
         #endif
       }
     }
@@ -619,8 +643,9 @@ bool gather_data()
     // lipo.sleep();
   #endif
   #ifdef DEBUG
-    Serial.printf("\tbat=%s\n",myData.bat);
-    Serial.printf("\tbatpct=%s\n",myData.batpct);
+    Serial.printf("\tbat=%sV\n",myData.bat);
+    Serial.printf("\tbatpct=%s%%\n",myData.batpct);
+    Serial.printf("\tbatchr=%s%%\n",myData.batchr);
   #endif
 
   // version
@@ -651,7 +676,8 @@ bool gather_data()
   // ontime in seconds rather than ms
   myData.ontime = saved_ontime_l/1000;
   #ifdef DEBUG
-    Serial.printf("\tontime=%lu\n",myData.ontime);
+    Serial.printf("\tontime=%lus\n",myData.ontime);
+    Serial.printf(" Total struct size=%d bytes\n",sizeof(myData));
   #endif
 
   return true;
@@ -966,9 +992,11 @@ void setup()
       #ifdef DEBUG
         Serial.printf("[%s]: start MAX17048 OK\n",__func__);
       #endif
-      lipo.quickStart();
+      // quickStart restarts measuring change rate - disabling it - test it!
+      // lipo.quickStart();
       delay(10);
-      #ifdef RESET_MAX17048
+      #if (RESET_MAX17048 == 1)
+        Serial.printf("[%s]: !!! Resetting MAX17048 - MAKE SURE TO DISABLE IT ON NEXT COMPILATION !!!\n",__func__);
         lipo.reset();
       #endif
     }
@@ -1170,24 +1198,39 @@ void setup()
 
   // sender choses the receiver based on bootCount or broadcast
   char receiver_mac[18];
-  #if (MAC_BROADCAST == 1)
-    #pragma message "sending data to all ESP - BROADCAST"
-    memcpy(broadcastAddress, broadcastAddress_all, sizeof(broadcastAddress));
+  #if (USE_FAKE_RECEIVER == 1)
+    #pragma message "NOT sending data to any receiver - FAKE MAC ADDRESS USED"
+    memcpy(broadcastAddress, broadcastAddress3, sizeof(broadcastAddress));
+    // #ifdef DEBUG
     snprintf(receiver_mac, sizeof(receiver_mac), "%02x:%02x:%02x:%02x:%02x:%02x",broadcastAddress[0], broadcastAddress[1], broadcastAddress[2], broadcastAddress[3], broadcastAddress[4], broadcastAddress[5]);
-    Serial.printf("[%s]: bootCount=%d, receiver B MAC=%s\n",__func__,bootCount,receiver_mac);
+    Serial.printf("[%s]: bootCount=%d, receiver Fake, MAC=%s\n",__func__,bootCount,receiver_mac);
+    // #endif
   #else
-    #pragma message "sending data to specific ESP - UNICAST"
-    if (bootCount % 2 == 0)
-    {
-      memcpy(broadcastAddress, broadcastAddress1, sizeof(broadcastAddress));
-      snprintf(receiver_mac, sizeof(receiver_mac), "%02x:%02x:%02x:%02x:%02x:%02x",broadcastAddress[0], broadcastAddress[1], broadcastAddress[2], broadcastAddress[3], broadcastAddress[4], broadcastAddress[5]);
-      Serial.printf("[%s]: bootCount=%d, receiver 1 MAC=%s\n",__func__,bootCount,receiver_mac);
-    } else
-    {
-      memcpy(broadcastAddress, broadcastAddress2, sizeof(broadcastAddress));
-      snprintf(receiver_mac, sizeof(receiver_mac), "%02x:%02x:%02x:%02x:%02x:%02x",broadcastAddress[0], broadcastAddress[1], broadcastAddress[2], broadcastAddress[3], broadcastAddress[4], broadcastAddress[5]);
-      Serial.printf("[%s]: bootCount=%d, receiver 2 MAC=%s\n",__func__,bootCount,receiver_mac);
-    }
+    #if (MAC_BROADCAST == 1)
+      #pragma message "sending data to all ESP - BROADCAST"
+      memcpy(broadcastAddress, broadcastAddress_all, sizeof(broadcastAddress));
+      #ifdef DEBUG
+        snprintf(receiver_mac, sizeof(receiver_mac), "%02x:%02x:%02x:%02x:%02x:%02x",broadcastAddress[0], broadcastAddress[1], broadcastAddress[2], broadcastAddress[3], broadcastAddress[4], broadcastAddress[5]);
+        Serial.printf("[%s]: bootCount=%d, receiver Broadcast, MAC=%s\n",__func__,bootCount,receiver_mac);
+      #endif
+    #else
+      #pragma message "sending data to specific ESP - UNICAST"
+      if (bootCount % 2 == 0)
+      {
+        memcpy(broadcastAddress, broadcastAddress1, sizeof(broadcastAddress));
+        #ifdef DEBUG
+          snprintf(receiver_mac, sizeof(receiver_mac), "%02x:%02x:%02x:%02x:%02x:%02x",broadcastAddress[0], broadcastAddress[1], broadcastAddress[2], broadcastAddress[3], broadcastAddress[4], broadcastAddress[5]);
+          Serial.printf("[%s]: bootCount=%d, receiver 1st, MAC=%s\n",__func__,bootCount,receiver_mac);
+        #endif
+      } else
+      {
+        memcpy(broadcastAddress, broadcastAddress2, sizeof(broadcastAddress));
+        #ifdef DEBUG
+          snprintf(receiver_mac, sizeof(receiver_mac), "%02x:%02x:%02x:%02x:%02x:%02x",broadcastAddress[0], broadcastAddress[1], broadcastAddress[2], broadcastAddress[3], broadcastAddress[4], broadcastAddress[5]);
+          Serial.printf("[%s]: bootCount=%d, receiver 2nd, MAC=%s\n",__func__,bootCount,receiver_mac);
+        #endif
+      }
+    #endif
   #endif
 
 // ESPNow preparation
