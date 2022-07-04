@@ -5,18 +5,33 @@ variables
 #include "config.h"
 
 // data structure for sensors
-typedef struct struct_message {
-  char host[10];
-  char temp[6];
-  char hum[6];
-  char lux[6];
-  char bat[6];
-  char batpct[6];
-  char ver[10];
-  char charg[5];
-  char name[11];
-  char boot[5];
+// typedef struct struct_message {
+//   char host[10];
+//   char temp[6];
+//   char hum[6];
+//   char lux[6];
+//   char bat[6];
+//   char batpct[6];
+//   char ver[10];
+//   char charg[5];
+//   char name[11];
+//   char boot[5];
+//   unsigned long ontime;
+// } struct_message;
+typedef struct struct_message
+{
+  char host[10];        // esp32123 [9]
+  char temp[7];         // 123.56   [7]
+  char hum[7];          // 123.56   [7]
+  char lux[6];          // 12345    [6]
+  char bat[5];          // 1.34     [5]
+  char batpct[8];       // 123.56   [7]
+  char ver[10];         // 123.56.89[10]
+  char charg[5];        // FULL     [5]
+  char name[11];        //          [11]
+  char boot[6];         // 12345    [6]
   unsigned long ontime;
+  char batchr[10];       // -234.6789 [10]
 } struct_message;
 // espnow data structure END
 

@@ -1,12 +1,13 @@
 // #define DEBUG
 
-// #define DEVICE_ID  29           // "esp32029" - S2, MAC: FF, odd bootCount or all if BROADCAST
-#define DEVICE_ID  30           // "esp32030" - S2, MAC: EE, even bootCount or all if BROADCAST
+#define DEVICE_ID  29           // "esp32029" - S2, MAC: FF, odd bootCount or all if BROADCAST
+// #define DEVICE_ID  30           // "esp32030" - S2, MAC: EE, even bootCount or all if BROADCAST
+// #define DEVICE_ID  91           // "esp32031" - S,  MAC: FE, even bootCount or all if BROADCAST
 
 /*
 receiver.ino
 */
-#define VERSION "1.8.2"
+#define VERSION "1.9.b1"
 
 
 // libraries

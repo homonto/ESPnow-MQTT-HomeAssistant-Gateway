@@ -1,4 +1,7 @@
 2022-07-04:
+  1.9.b1 - battery change rate, redo myData structure
+
+2022-07-04:
   1.8.2 - version and uptime added to GW status
 
 2022-07-02:

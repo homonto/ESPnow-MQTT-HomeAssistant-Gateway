@@ -32,12 +32,27 @@ config
   #define SENSORS_LED_GPIO_BLUE     2         // blinking during sending sensors data to HA - blue?
   #define STATUS_GW_LED_GPIO_RED    3         // blinking during sending gateway data to HA - red?
   #define POWER_ON_LED_GPIO_GREEN   5         // status of device - green?
-  #define POWER_ON_LED_USE_PWM      1           // set to 1 if PWM to be used, 0 for fixed brightness
+  #define POWER_ON_LED_USE_PWM      1         // set to 1 if PWM to be used, 0 for fixed brightness
   #define POWER_ON_LED_DC           20        // DC for Green LED
   // fixed MAC address assigned to ther receiver, to be able to use any ESP32 without changing the code of sender
   // chose any free one [i.e. from broken ESP] and match with sender.ino
   uint8_t FixedMACAddress[] = {0x7c, 0xdF, 0xa1, 0x0b, 0xd9, 0xee};
   #pragma message "compilation for: ESPnow_esp32030_gw2"
+
+#elif DEVICE_ID == 91
+  #define BOARD_TYPE          1 // 1=ESP32 2=ESP32S2 3=ESP32S3 4=ESP32C3
+  #define HOSTNAME            "esp32091"
+  #define IP_ADDRESS          "192.168.1.91"
+  #define ROLE_NAME           "gw3"
+  #define SENSORS_LED_GPIO_BLUE     2         // blinking during sending sensors data to HA - blue?
+  #define STATUS_GW_LED_GPIO_RED    3         // blinking during sending gateway data to HA - red?
+  #define POWER_ON_LED_GPIO_GREEN   5         // status of device - green?
+  #define POWER_ON_LED_USE_PWM      1         // set to 1 if PWM to be used, 0 for fixed brightness
+  #define POWER_ON_LED_DC           20        // DC for Green LED
+  // fixed MAC address assigned to ther receiver, to be able to use any ESP32 without changing the code of sender
+  // chose any free one [i.e. from broken ESP] and match with sender.ino
+  uint8_t FixedMACAddress[] = {0x7c, 0xdF, 0xa1, 0x0b, 0xd9, 0xfe};
+  #pragma message "compilation for: ESPnow_esp32091_gw3"
 
 #else
   #error "Wrong DEVICE_ID chosen"

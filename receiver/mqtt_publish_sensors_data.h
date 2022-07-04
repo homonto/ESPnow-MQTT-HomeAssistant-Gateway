@@ -40,6 +40,10 @@ bool mqtt_publish_sensors_config(const char* hostname, const char* name, const c
   snprintf(batpct_conf_topic,sizeof(batpct_conf_topic),"homeassistant/sensor/%s/batterypercent/config",hostname);
   if (debug_mode) Serial.println("batpct_conf_topic="+String(batpct_conf_topic));
 
+  char batchr_conf_topic[60];
+  snprintf(batchr_conf_topic,sizeof(batchr_conf_topic),"homeassistant/sensor/%s/batchr/config",hostname);
+  if (debug_mode) Serial.println("batchr_conf_topic="+String(batchr_conf_topic));
+
   char rssi_conf_topic[60];
   snprintf(rssi_conf_topic,sizeof(rssi_conf_topic),"homeassistant/sensor/%s/rssi/config",hostname);
   if (debug_mode) Serial.println("rssi_conf_topic="+String(rssi_conf_topic));
@@ -92,6 +96,10 @@ bool mqtt_publish_sensors_config(const char* hostname, const char* name, const c
   char batpct_name[30];
   snprintf(batpct_name,sizeof(batpct_name),"%s_batterypercent",hostname);
   if (debug_mode) Serial.println("batpct_name="+String(batpct_name));
+
+  char batchr_name[30];
+  snprintf(batchr_name,sizeof(batchr_name),"%s_batchr",hostname);
+  if (debug_mode) Serial.println("batchr_name="+String(batchr_name));
 
   char rssi_name[30];
   snprintf(rssi_name,sizeof(rssi_name),"%s_rssi",hostname);
@@ -297,6 +305,38 @@ bool mqtt_publish_sensors_config(const char* hostname, const char* name, const c
       Serial.println("\n BATTERY PERCENT CONFIG UNSUCCESSFULL");
     }
     Serial.println("============ DEBUG CONFIG BATTERY PERCENT END ========\n");
+  }
+
+// batchr config
+  config.clear();
+  config["name"] = batchr_name;
+  config["stat_cla"] = "measurement";
+  config["stat_t"] = sensors_topic_state;
+  config["unit_of_meas"] = "%";
+  config["val_tpl"] = "{{value_json.batchr}}";
+  config["uniq_id"] = batchr_name;
+  config["frc_upd"] = "true";
+  config["entity_category"] = "diagnostic";
+  config["exp_aft"] = 900;
+
+  CREATE_SENSOR_MQTT_DEVICE
+
+  size_c = serializeJson(config, config_json);
+  if (mqtt_connected){ if (!mqttc.publish(batchr_conf_topic,(uint8_t*)config_json,strlen(config_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}}
+  if (debug_mode) {
+    Serial.println("\n============ DEBUG CONFIG BATCHR PERCENT============");
+    Serial.println("Size of batchr config="+String(size_c)+" bytes");
+    Serial.println("Serialised config_json:");
+    Serial.println(config_json);
+    Serial.println("serializeJsonPretty");
+    serializeJsonPretty(config, Serial);
+    if (publish_status) {
+      Serial.println("\n BATCHR CONFIG OK");
+    } else
+    {
+      Serial.println("\n BATCHR CONFIG UNSUCCESSFULL");
+    }
+    Serial.println("============ DEBUG CONFIG BATCHR END ========\n");
   }
 
 // rssi config
@@ -620,6 +660,7 @@ bool mqtt_publish_sensors_values()
   payload["lux"]                = myLocalData.lux;
   payload["battery"]            = myLocalData.bat;
   payload["batterypercent"]     = myLocalData.batpct;
+  payload["batchr"]             = myLocalData.batchr;
   payload["rssi"]               = myLocalData_aux.rssi;
   payload["version"]            = myLocalData.ver;
   payload["charging"]           = myLocalData.charg;
