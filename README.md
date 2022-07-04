@@ -4,7 +4,7 @@
 <ul>
   <li>Build universal sensor device (ESP32 based) equipped with temperature, humidity and light sensors, that can live long on 1 battery charge</li>
   <li>Clone/deploy it to as many sensors as needed (indoor, outdoor etc.) without changing the software or reconfiguration (beyond what is specific to the device i.e. GPIO connection etc.)
-  <li>Build gateway device (that is always powered ON) that transfers data from sensor devices to Home Assistant and automatically creates devices/entities on Home Assistant (no configuration needed) - <b>EDIT:</b> gateway device is now "devices" and every sensor device sends ESPnow message to BROADCAST address. By building multiple gateway devices (and locating them in various places) allows widening the range, without loosing the data when RSSI is very low (extending the range).
+  <li>Build gateway device (that is always powered ON) that transfers data from sensor devices to Home Assistant and automatically creates devices/entities on Home Assistant (no configuration needed) - <b>EDIT:</b> gateway device is now "devices" and every sensor device sends ESPnow message to BROADCAST address. Building multiple gateway devices (and locating them in various places) allows widening the range, without loosing the data when RSSI is very low (extending the range).
 </ul>
 <br>
 <h3>Tasks for the devices:</h3>
