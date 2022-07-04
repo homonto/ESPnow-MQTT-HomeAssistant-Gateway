@@ -2,62 +2,12 @@
 
 // #define DEVICE_ID  29           // "esp32029" - S2, MAC: FF, odd bootCount or all if BROADCAST
 #define DEVICE_ID  30           // "esp32030" - S2, MAC: EE, even bootCount or all if BROADCAST
-// #define DEVICE_ID  91           // "esp32091" - S, MAC: FE, even bootCount or all if BROADCAST
 
 /*
 receiver.ino
 */
-#define VERSION "1.8.1"
-/*
-2022-07-02:
-  1.8.1 - 3 LEDs, POWER_ON_LED_GPIO_GREEN with PWM
+#define VERSION "1.8.2"
 
-2022-07-02:
-  1.8.0 - common script for multiple receivers (DEVICE_ID and config.h)
-
-2022-06-29:
-  1.7.2 - added support for ESP32-S3 board
-        - 2x LED: 1 for gateway device (STATUS_GW_LED_GPIO_RED) and 1 for sensor device (SENSORS_LED_GPIO_BLUE)
-
-2022-06-26:
-  1.7.1 - change name of the device on HA (all devices) to: ESPnow_hostname_name
-
-2022-06-26:
-  1.7.0 - incoming messages in the queue to avoid losing data
-
-2022-06-24:
-  1.6.2 - #define GND_GPIO_FOR_LED      13    // if not equipped comment out - GND for ACTIVITY_LED_GPIO
-        - testing esp_wifi_set_protocol(WIFI_IF_STA, WIFI_PROTOCOL_11B|WIFI_PROTOCOL_11G|WIFI_PROTOCOL_11N|WIFI_PROTOCOL_LR);
-          to extend the range of radio (no conclusion yet)
-2022-06-22:
-  1.6.1 - pretty_ontime implemented as string
-
-2022-06-22:
-  1.6.0 - ontime implemented in seconds
-
-2022-06-21:
-  1.5.0 - gateway firmware update implemented
-
-2022-06-19:
-  1.4.1 - cleaning for github
-
-2022-06-18:
-  1.4.0 - bootCount added
-
-2022-06-15:
-  1.3.0 - switch "publish" to enable/disable publishing to HA
-        - buttons: update/restart
-        - update FW on gateway not yet implemented
-
-2022-06-11:
-  1.2.0 - added device name on sender, myData.name on receiver, it goes to name of the device on HA
-
-2022-06-11:
-  1.1.0 - added lux from TEPT/ADC, added CHARGING
-
-2022-06-10:
-  1.0.0 - journey started ;-)
-*/
 
 // libraries
 #include <esp_now.h>
@@ -106,6 +56,7 @@ int update_firmware_prepare();
 // various, here - UPDATE_INTERVAL
 void hearbeat();
 void ConvertSectoDay(unsigned long n, char * pretty_ontime);
+void uptime(char *uptime);
 
 
 // custom files
@@ -199,6 +150,43 @@ void hearbeat()
 }
 
 
+void uptime(char *uptime)
+{
+  byte days = 0;
+  byte hours = 0;
+  byte minutes = 0;
+  byte seconds = 0;
+
+  unsigned long sec2minutes = 60;
+  unsigned long sec2hours = (sec2minutes * 60);
+  unsigned long sec2days = (sec2hours * 24);
+
+  unsigned long time_delta = (millis()) / 1000UL;
+
+  days = (int)(time_delta / sec2days);
+  hours = (int)((time_delta - days * sec2days) / sec2hours);
+  minutes = (int)((time_delta - days * sec2days - hours * sec2hours) / sec2minutes);
+  seconds = (int)(time_delta - days * sec2days - hours * sec2hours - minutes * sec2minutes);
+
+  if ((minutes == 0) and (hours == 0) and (days == 0)){
+    sprintf(uptime, "%01ds", seconds);
+  }
+  else {
+    if ((hours == 0) and (days == 0)){
+      sprintf(uptime, "%01dm %01ds", minutes, seconds);
+    }
+    else {
+      if (days == 0){
+        sprintf(uptime, "%01dh %01dm", hours, minutes);
+      } else {
+          sprintf(uptime, "%01dd %01dh %01dm", days, hours, minutes);
+      }
+    }
+  }
+
+}
+
+
 void setup()
 {
   program_start_time = millis();
@@ -206,11 +194,6 @@ void setup()
   delay(100);
   Serial.println("\n\n=============================================================");
   Serial.println("GATEWAY started, version: "+String(VERSION));
-  #ifdef GND_GPIO_FOR_LED
-    Serial.println("Enabling GND for LED");
-    pinMode(GND_GPIO_FOR_LED, OUTPUT);
-    digitalWrite(GND_GPIO_FOR_LED, LOW);
-  #endif
 
   #ifdef STATUS_GW_LED_GPIO_RED
     pinMode(STATUS_GW_LED_GPIO_RED, OUTPUT);
@@ -226,7 +209,7 @@ void setup()
       ledcSetup(POWER_ON_LED_PWM_CHANNEL, POWER_ON_LED_PWM_FREQ, POWER_ON_LED_PWM_RESOLUTION);
       ledcAttachPin(POWER_ON_LED_GPIO_GREEN, POWER_ON_LED_PWM_CHANNEL);
       // set brightness of GREEN LED (0-255)
-      ledcWrite(POWER_ON_LED_PWM_CHANNEL, 20);
+      ledcWrite(POWER_ON_LED_PWM_CHANNEL, POWER_ON_LED_DC);
     // or fixed
     #else
       fixed LED setup...

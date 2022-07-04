@@ -14,11 +14,11 @@ config
   #define HOSTNAME            "esp32029"
   #define IP_ADDRESS          "192.168.1.29"
   #define ROLE_NAME           "gw1"
-  #define SENSORS_LED_GPIO_BLUE     14         // blinking during sending sensors data to HA
-  #define GND_GPIO_FOR_LED    13        // if not equipped comment out - GND for SENSORS_LED_GPIO_BLUE on some Lilygo boards
-  #define STATUS_GW_LED_GPIO_RED  14         // blinking during sending gateway data to HA
-  #define POWER_ON_LED_USE_PWM    0           // set to 1 if PWM to be used, 0 for fixed brightness
-  // #define POWER_ON_LED_GPIO_GREEN   4         // status of device - green?
+  #define SENSORS_LED_GPIO_BLUE     3         // blinking during sending sensors data to HA - blue?
+  #define STATUS_GW_LED_GPIO_RED    2         // blinking during sending gateway data to HA - red?
+  #define POWER_ON_LED_GPIO_GREEN   5         // status of device - green?
+  #define POWER_ON_LED_USE_PWM      1         // set to 1 if PWM to be used, 0 for fixed brightness
+  #define POWER_ON_LED_DC           30        // DC for Green LED
   // fixed MAC address assigned to ther receiver, to be able to use any ESP32 without changing the code of sender
   // chose any free one [i.e. from broken ESP] and match with sender.ino
   uint8_t FixedMACAddress[] = {0x7c, 0xdF, 0xa1, 0x0b, 0xd9, 0xff};
@@ -30,10 +30,10 @@ config
   #define IP_ADDRESS          "192.168.1.30"
   #define ROLE_NAME           "gw2"
   #define SENSORS_LED_GPIO_BLUE     2         // blinking during sending sensors data to HA - blue?
-  // #define GND_GPIO_FOR_LED    4         // if not equipped comment out - GND for SENSORS_LED_GPIO_BLUE on some Lilygo boards
-  #define STATUS_GW_LED_GPIO_RED  3         // blinking during sending gateway data to HA - red?
+  #define STATUS_GW_LED_GPIO_RED    3         // blinking during sending gateway data to HA - red?
   #define POWER_ON_LED_GPIO_GREEN   5         // status of device - green?
-  #define POWER_ON_LED_USE_PWM    1           // set to 1 if PWM to be used, 0 for fixed brightness
+  #define POWER_ON_LED_USE_PWM      1           // set to 1 if PWM to be used, 0 for fixed brightness
+  #define POWER_ON_LED_DC           20        // DC for Green LED
   // fixed MAC address assigned to ther receiver, to be able to use any ESP32 without changing the code of sender
   // chose any free one [i.e. from broken ESP] and match with sender.ino
   uint8_t FixedMACAddress[] = {0x7c, 0xdF, 0xa1, 0x0b, 0xd9, 0xee};
@@ -65,7 +65,8 @@ config
 #define MAX_MQTT_ERROR          10
 
 // queue size for incomming data from sensors, whe queue is full no more data is gathered until there is free space in the queue
-#define MAX_QUEUE_COUNT         30
+// set it to as much as many sensor devices you have so each one gets into the queue
+#define MAX_QUEUE_COUNT         6
 
 // LED PWM settings
 #ifdef POWER_ON_LED_GPIO_GREEN

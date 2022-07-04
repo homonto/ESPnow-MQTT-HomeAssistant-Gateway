@@ -30,6 +30,24 @@ bool mqtt_publish_gw_status_config()
   snprintf(status_name,sizeof(status_name),"%s_mystatus",HOSTNAME);
   if (debug_mode) Serial.println("status_name="+String(status_name));
 
+  // uptime
+  char uptime_conf_topic[60];
+  snprintf(uptime_conf_topic,sizeof(uptime_conf_topic),"homeassistant/sensor/%s/uptime/config",HOSTNAME);
+  if (debug_mode) Serial.println("uptime_conf_topic="+String(uptime_conf_topic));
+
+  char uptime_name[30];
+  snprintf(uptime_name,sizeof(uptime_name),"%s_uptime",HOSTNAME);
+  if (debug_mode) Serial.println("uptime_name="+String(uptime_name));
+
+  // version
+  char version_conf_topic[60];
+  snprintf(version_conf_topic,sizeof(version_conf_topic),"homeassistant/sensor/%s/version/config",HOSTNAME);
+  if (debug_mode) Serial.println("version_conf_topic="+String(version_conf_topic));
+
+  char version_name[30];
+  snprintf(version_name,sizeof(version_name),"%s_version",HOSTNAME);
+  if (debug_mode) Serial.println("version_name="+String(version_name));
+
   // rssi of gateway<->AP
   char rssi_conf_topic[60];
   snprintf(rssi_conf_topic,sizeof(rssi_conf_topic),"homeassistant/sensor/%s/rssi/config",HOSTNAME);
@@ -80,6 +98,70 @@ bool mqtt_publish_gw_status_config()
       Serial.println("\n CONFIG UNSUCCESSFULL");
     }
     Serial.println("============ DEBUG [STATUS] CONFIG END ========\n");
+  }
+
+// uptime config
+  config.clear();
+  config["name"] = uptime_name;
+  config["stat_t"] = status_state_topic;
+  config["qos"] = 2;
+  config["retain"] = "true";
+  config["uniq_id"] = uptime_name;
+  config["val_tpl"] = "{{value_json.uptime}}";
+  config["frc_upd"] = "true";
+  config["entity_category"] = "diagnostic";
+  config["exp_aft"] = 60;
+
+  CREATE_GW_MQTT_DEVICE
+
+  size_c = serializeJson(config, config_json);
+  if (!mqttc.publish(uptime_conf_topic,(uint8_t*)config_json,strlen(config_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}
+  if (debug_mode) {
+    Serial.println("\n============ DEBUG [UPTIME] CONFIG:  ============");
+    Serial.println("Size of uptime config_json="+String(size_c)+" bytes");
+    Serial.println("Serialised config_json:");
+    Serial.println(config_json);
+    Serial.println("serializeJsonPretty(config, Serial)");
+    serializeJsonPretty(config, Serial);
+    if (publish_status) {
+      Serial.println("\n CONFIG published OK");
+    } else
+    {
+      Serial.println("\n CONFIG UNSUCCESSFULL");
+    }
+    Serial.println("============ DEBUG [UPTIME] CONFIG END ========\n");
+  }
+
+// version config
+  config.clear();
+  config["name"] = version_name;
+  config["stat_t"] = status_state_topic;
+  config["qos"] = 2;
+  config["retain"] = "true";
+  config["uniq_id"] = version_name;
+  config["val_tpl"] = "{{value_json.version}}";
+  config["frc_upd"] = "true";
+  config["entity_category"] = "diagnostic";
+  config["exp_aft"] = 60;
+
+  CREATE_GW_MQTT_DEVICE
+
+  size_c = serializeJson(config, config_json);
+  if (!mqttc.publish(version_conf_topic,(uint8_t*)config_json,strlen(config_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}
+  if (debug_mode) {
+    Serial.println("\n============ DEBUG [VERSION] CONFIG:  ============");
+    Serial.println("Size of version config_json="+String(size_c)+" bytes");
+    Serial.println("Serialised config_json:");
+    Serial.println(config_json);
+    Serial.println("serializeJsonPretty(config, Serial)");
+    serializeJsonPretty(config, Serial);
+    if (publish_status) {
+      Serial.println("\n CONFIG published OK");
+    } else
+    {
+      Serial.println("\n CONFIG UNSUCCESSFULL");
+    }
+    Serial.println("============ DEBUG [VERSION] CONFIG END ========\n");
   }
 
 // rssi config
@@ -136,6 +218,12 @@ bool mqtt_publish_gw_status_values(const char* status)
   StaticJsonDocument<JSON_PAYLOAD_SIZE> payload;
   payload["status"] = status;
   payload["rssi"] = WiFi.RSSI();
+
+  char ret_clk[60];
+  uptime(ret_clk);
+  payload["uptime"] = ret_clk;
+
+  payload["version"] = VERSION;
 
   char payload_json[JSON_PAYLOAD_SIZE];
   int size_pl = serializeJson(payload, payload_json);
