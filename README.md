@@ -249,7 +249,7 @@ Ontime is also reduced by turning off the bootloader logo during wake up from sl
 
 <img width="531" alt="Screenshot 2022-07-04 at 09 11 52" src="https://user-images.githubusercontent.com/46562447/177111944-b11afa4f-93ac-4319-966b-8fcfd8772ad1.png">
 
-<br>
+<br><br><br>
 <b>Sensor Device on lovelace dashboard:<br>
 <br>
 
