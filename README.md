@@ -92,7 +92,7 @@ And actually both are wrong as you can see below on the screens:
 
 <br>
 <br>
-I used PPK2 and estimated the time the ESP32 works measuring the power consumption. 
+I used PPK2 and estimated the time the ESP32 works measuring the power consumption.
 <br>
 <br>
 <b>Conclusions:</b>
@@ -100,7 +100,7 @@ I used PPK2 and estimated the time the ESP32 works measuring the power consumpti
   <li>don't rely on millis() only
   <li>ESP32-S2 starts much faster (35ms) than ESP32S (310ms)
   <li>ESP32-S2 total working time is much shorter so the total power consumption with S2 is much lower accordingly - battery life is extended
-</ul> 
+</ul>
 <br>
 <br>
 <b>ESP32S and ESP32-S2 ontime after 1.5 days with 180s sleep - almost 2.5-3x more "ontime" for ESP32S:</b>
@@ -269,5 +269,5 @@ All information from sensor device is sent to Home Assistant MQTT broker in one 
 <br>
 <h2>TODO list</h2>
 <ul>
-  <li>Sensor device: OTA over ESPnow, in case sensor device cannot reach AP/router
+  <li>Sensor device: OTA - how to do it ON DEMAND? No idea yet. If device is to listen to gateway, it will consume battery... Anybody knows?
 </ul>
