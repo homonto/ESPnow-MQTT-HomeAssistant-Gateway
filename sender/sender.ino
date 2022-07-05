@@ -38,7 +38,7 @@ sender.ino
 #define FORMAT_FS   0
 
 // version < 10 chars, description in changelog.txt
-#define VERSION "1.14.b1"
+#define VERSION "1.14.0"
 
 // configure device in this file, choose which one you are compiling for on top of this script: #define DEVICE_ID x
 #include "devices_config.h"
@@ -46,7 +46,7 @@ sender.ino
 // ****************  ALL BELOW ALL IS COMMON FOR ANY ESP32 *********************
 #define HIBERNATE           1     // 1=hibernate, 0=deep sleep
 #define WIFI_CHANNEL        8     // in my house
-#define MINIMUM_VOLTS       3.3   // this might go to every device section
+#define MINIMUM_VOLTS       3.5   // this might go to every device section
 #define WAIT_FOR_WIFI       5     // in seconds, for upgrade firmware
 #ifndef PERIODIC_FW_CHECK_HRS     // if not found custom PERIODIC_FW_CHECK_HRS in devices_config.h (per device custom)
   #define PERIODIC_FW_CHECK_HRS   24
@@ -489,8 +489,8 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
       Serial.printf("[%s]: ESPnow SUCCESSFULL\n",__func__);
     } else
     {
-      #ifdef FW_UPGRADE_LED_GPIO
-        digitalWrite(FW_UPGRADE_LED_GPIO,HIGH);
+      #ifdef ERROR_RED_LED_GPIO
+        digitalWrite(ERROR_RED_LED_GPIO,HIGH);
       #endif
       Serial.printf("[%s]: ESPnow FAILED\n",__func__);
     }
@@ -804,15 +804,15 @@ void do_update()
     // blink nicely when FW upgrade successfull
     for (int i=0;i<3;i++)
     {
-      #ifdef FW_UPGRADE_LED_GPIO
-        digitalWrite(FW_UPGRADE_LED_GPIO,LOW);
+      #ifdef ERROR_RED_LED_GPIO
+        digitalWrite(ERROR_RED_LED_GPIO,LOW);
         delay(500);
-        digitalWrite(FW_UPGRADE_LED_GPIO,HIGH);
+        digitalWrite(ERROR_RED_LED_GPIO,HIGH);
         delay(100);
-      #elif defined(ACTIVITY_LED_GPIO)
-        digitalWrite(ACTIVITY_LED_GPIO,LOW);
+      #elif defined(ACT_BLUE_LED_GPIO)
+        digitalWrite(ACT_BLUE_LED_GPIO,LOW);
         delay(500);
-        digitalWrite(ACTIVITY_LED_GPIO,HIGH);
+        digitalWrite(ACT_BLUE_LED_GPIO,HIGH);
         delay(100);
       #endif
     }
@@ -820,10 +820,10 @@ void do_update()
   } else
   {
     Serial.printf("[%s]: FW update failed - reason: %d\nRESTARTING - FW update failed\n\n",__func__,update_firmware_status);
-    #ifdef FW_UPGRADE_LED_GPIO
-      sos(FW_UPGRADE_LED_GPIO);
-    #elif defined(ACTIVITY_LED_GPIO)
-      sos(ACTIVITY_LED_GPIO);
+    #ifdef ERROR_RED_LED_GPIO
+      sos(ERROR_RED_LED_GPIO);
+    #elif defined(ACT_BLUE_LED_GPIO)
+      sos(ACT_BLUE_LED_GPIO);
     #endif
   }
   do_esp_restart();
@@ -833,24 +833,24 @@ void do_update()
 // real upgrade
 void updateFirmware(uint8_t *data, size_t len)
 {
-  // blink FW_UPGRADE_LED_GPIO or...
-  #ifdef FW_UPGRADE_LED_GPIO
+  // blink ERROR_RED_LED_GPIO or...
+  #ifdef ERROR_RED_LED_GPIO
     if (blink_led_status) {
       blink_led_status=LOW;
-      digitalWrite(FW_UPGRADE_LED_GPIO,blink_led_status);
+      digitalWrite(ERROR_RED_LED_GPIO,blink_led_status);
     } else {
       blink_led_status=HIGH;
-      digitalWrite(FW_UPGRADE_LED_GPIO,blink_led_status);
+      digitalWrite(ERROR_RED_LED_GPIO,blink_led_status);
     }
   #else
-    // ...blink ACTIVITY_LED_GPIO
-    #ifdef ACTIVITY_LED_GPIO
+    // ...blink ACT_BLUE_LED_GPIO
+    #ifdef ACT_BLUE_LED_GPIO
       if (blink_led_status) {
         blink_led_status=LOW;
-        digitalWrite(ACTIVITY_LED_GPIO,blink_led_status);
+        digitalWrite(ACT_BLUE_LED_GPIO,blink_led_status);
       } else {
         blink_led_status=HIGH;
-        digitalWrite(ACTIVITY_LED_GPIO,blink_led_status);
+        digitalWrite(ACT_BLUE_LED_GPIO,blink_led_status);
       }
     #endif
   #endif
@@ -949,7 +949,7 @@ void setup()
   #endif
 
 // turn on LED
-  #ifdef ACTIVITY_LED_GPIO
+  #ifdef ACT_BLUE_LED_GPIO
     #ifdef GND_GPIO_FOR_LED
       #ifdef DEBUG
         Serial.printf("[%s]: Enabling GND for LED on GPIO=%d\n",__func__,GND_GPIO_FOR_LED);
@@ -957,8 +957,8 @@ void setup()
       pinMode(GND_GPIO_FOR_LED, OUTPUT);
       digitalWrite(GND_GPIO_FOR_LED, LOW);
     #endif
-    pinMode(ACTIVITY_LED_GPIO, OUTPUT);
-    digitalWrite(ACTIVITY_LED_GPIO, HIGH);
+    pinMode(ACT_BLUE_LED_GPIO, OUTPUT);
+    digitalWrite(ACT_BLUE_LED_GPIO, HIGH);
   #endif
 
 // power for sensors from GPIO - MUST be before any SDA sensor is in use obviously!
@@ -1022,13 +1022,13 @@ void setup()
       Serial.printf("[%s]: Double Reset Detected\n",__func__);
     // #endif
     DRD_Detected = true;
-    #ifdef FW_UPGRADE_LED_GPIO
-      pinMode(FW_UPGRADE_LED_GPIO,OUTPUT);
-      digitalWrite(FW_UPGRADE_LED_GPIO, HIGH);
+    #ifdef ERROR_RED_LED_GPIO
+      pinMode(ERROR_RED_LED_GPIO,OUTPUT);
+      digitalWrite(ERROR_RED_LED_GPIO, HIGH);
     #else
-      #ifdef ACTIVITY_LED_GPIO
-        pinMode(ACTIVITY_LED_GPIO,OUTPUT);
-        digitalWrite(ACTIVITY_LED_GPIO, HIGH);
+      #ifdef ACT_BLUE_LED_GPIO
+        pinMode(ACT_BLUE_LED_GPIO,OUTPUT);
+        digitalWrite(ACT_BLUE_LED_GPIO, HIGH);
       #endif
     #endif
 
@@ -1050,8 +1050,8 @@ void setup()
         Serial.printf("SUCCESSFULL\n",__func__);
       } else
       {
-        #ifdef FW_UPGRADE_LED_GPIO
-          digitalWrite(FW_UPGRADE_LED_GPIO,HIGH);
+        #ifdef ERROR_RED_LED_GPIO
+          digitalWrite(ERROR_RED_LED_GPIO,HIGH);
         #endif
         Serial.printf("FAILED\n",__func__);
       }
@@ -1175,12 +1175,12 @@ void setup()
 // gather data
   if (!gather_data())
   {
-    #ifdef FW_UPGRADE_LED_GPIO
-      digitalWrite(FW_UPGRADE_LED_GPIO,HIGH);
+    #ifdef ERROR_RED_LED_GPIO
+      digitalWrite(ERROR_RED_LED_GPIO,HIGH);
     #endif
-    #ifdef DEBUG
+    // #ifdef DEBUG
       Serial.printf("[%s]: NOT sending ANY data - gethering data FAILED!\n",__func__);
-    #endif
+    // #endif
     return;
   } else
   {

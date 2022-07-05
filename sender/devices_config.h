@@ -6,8 +6,8 @@ device configuration template:
 #define DEVICE_NAME           "Garage"     // obligatory, max 10 characters
 #define BOARD_TYPE            1     // obligatory, 1=ESP32/WROOM,WROVER 2=ESP32S2 3=ESP32S3 4=ESP32C3
 #define ENABLE_3V_GPIO        21    // if not equipped comment out - power for sensors from Vcc
-#define ACTIVITY_LED_GPIO     25    // if not equipped comment out - it blinks when sensor is ON/ if not defined FW_UPGRADE_LED_GPIO then it blinks when upgrade firmware is ongoing
-#define FW_UPGRADE_LED_GPIO   26    // if not equipped comment out - blinks when upgrade firmware is ongoing
+#define ACT_BLUE_LED_GPIO     25    // if not equipped comment out - it blinks when sensor is ON/ if not defined ERROR_RED_LED_GPIO then it blinks when upgrade firmware is ongoing
+#define ERROR_RED_LED_GPIO   26    // if not equipped comment out - blinks when upgrade firmware is ongoing
 #define POWER_GPIO            39    // pin 6, green LED on charger TP4056, HIGH on charging, LOW on full
 #define CHARGING_GPIO         38    // pin 7, red   LED on charger TP4056, HIGH on full, LOW on charging
 #define SLEEP_TIME            180   // seconds
@@ -20,7 +20,7 @@ device configuration template:
 #define USE_CUSTOM_I2C_GPIO   1     // instead of standard ones: 21,22 for ESP32S and 8,9 for ESP32S2), 0 if not in use
 #define SDA_GPIO              18    // relevant only if USE_CUSTOM_I2C_GPIO=1
 #define SCL_GPIO              19    // relevant only if USE_CUSTOM_I2C_GPIO=1
-#define GND_GPIO_FOR_LED      13    // if not equipped comment out - GND for ACTIVITY_LED_GPIO
+#define GND_GPIO_FOR_LED      13    // if not equipped comment out - GND for ACT_BLUE_LED_GPIO
 #define PERIODIC_FW_CHECK_HRS 24    // check FW update every hours
 
 test devices: esp32080 - 099
@@ -33,8 +33,8 @@ test devices: esp32080 - 099
   #define DEVICE_NAME           "Garage"
   #define BOARD_TYPE            1
   #define ENABLE_3V_GPIO        21
-  #define ACTIVITY_LED_GPIO     25
-  #define FW_UPGRADE_LED_GPIO   26
+  #define ACT_BLUE_LED_GPIO     25
+  #define ERROR_RED_LED_GPIO   26
   #define CHARGING_GPIO         35
   #define POWER_GPIO            32
   #define SLEEP_TIME            180
@@ -57,8 +57,8 @@ test devices: esp32080 - 099
   #define DEVICE_NAME           "Papa"
   #define BOARD_TYPE            2
   #define ENABLE_3V_GPIO        5
-  #define ACTIVITY_LED_GPIO     1
-  // #define FW_UPGRADE_LED_GPIO   26
+  #define ACT_BLUE_LED_GPIO     1
+  // #define ERROR_RED_LED_GPIO   26
   #define CHARGING_GPIO         38
   #define POWER_GPIO            39
   #define SLEEP_TIME            180
@@ -81,8 +81,8 @@ test devices: esp32080 - 099
   #define DEVICE_NAME           "Dining"
   #define BOARD_TYPE            1
   #define ENABLE_3V_GPIO        19
-  #define ACTIVITY_LED_GPIO     25
-  #define FW_UPGRADE_LED_GPIO   26
+  #define ACT_BLUE_LED_GPIO     25
+  #define ERROR_RED_LED_GPIO   26
   #define CHARGING_GPIO         16
   #define POWER_GPIO            17
   #define SLEEP_TIME            180
@@ -105,8 +105,8 @@ test devices: esp32080 - 099
   #define DEVICE_NAME           "ToiletUp"
   #define BOARD_TYPE            1
   #define ENABLE_3V_GPIO        32
-  #define ACTIVITY_LED_GPIO     25
-  #define FW_UPGRADE_LED_GPIO   26
+  #define ACT_BLUE_LED_GPIO     25
+  #define ERROR_RED_LED_GPIO   26
   #define CHARGING_GPIO         16
   #define POWER_GPIO            17
   #define SLEEP_TIME            180
@@ -129,8 +129,8 @@ test devices: esp32080 - 099
   #define DEVICE_NAME           "Milena"
   #define BOARD_TYPE            1
   #define ENABLE_3V_GPIO        33
-  #define ACTIVITY_LED_GPIO     25
-  #define FW_UPGRADE_LED_GPIO   26
+  #define ACT_BLUE_LED_GPIO     25
+  #define ERROR_RED_LED_GPIO   26
   #define CHARGING_GPIO         16
   #define POWER_GPIO            17
   #define SLEEP_TIME            180
@@ -153,8 +153,8 @@ test devices: esp32080 - 099
   #define DEVICE_NAME           "Garden"
   #define BOARD_TYPE            2
   #define ENABLE_3V_GPIO        3
-  #define ACTIVITY_LED_GPIO     6
-  #define FW_UPGRADE_LED_GPIO   5
+  #define ACT_BLUE_LED_GPIO     6
+  #define ERROR_RED_LED_GPIO   5
   #define CHARGING_GPIO         38
   #define POWER_GPIO            39
   #define SLEEP_TIME            180
@@ -179,8 +179,8 @@ test devices: esp32080 - 099
   #define DEVICE_NAME           "Lilygo1a"
   #define BOARD_TYPE            2
   // #define ENABLE_3V_GPIO        32
-  #define ACTIVITY_LED_GPIO     14
-  // #define FW_UPGRADE_LED_GPIO   33
+  #define ACT_BLUE_LED_GPIO     14
+  // #define ERROR_RED_LED_GPIO   33
   // #define CHARGING_GPIO         38
   // #define POWER_GPIO            39
   #define SLEEP_TIME            5
@@ -203,8 +203,8 @@ test devices: esp32080 - 099
   #define DEVICE_NAME           "S"
   #define BOARD_TYPE            1
   // #define ENABLE_3V_GPIO        32
-  // #define ACTIVITY_LED_GPIO     33
-  #define FW_UPGRADE_LED_GPIO   32
+  // #define ACT_BLUE_LED_GPIO     33
+  #define ERROR_RED_LED_GPIO   32
   // #define CHARGING_GPIO         38
   // #define POWER_GPIO            39
   #define SLEEP_TIME            5
@@ -227,8 +227,8 @@ test devices: esp32080 - 099
   #define DEVICE_NAME           "Lilygo2"
   #define BOARD_TYPE            2
   // #define ENABLE_3V_GPIO        32
-  #define ACTIVITY_LED_GPIO     14
-  // #define FW_UPGRADE_LED_GPIO   33
+  #define ACT_BLUE_LED_GPIO     14
+  // #define ERROR_RED_LED_GPIO   33
   // #define CHARGING_GPIO         38
   // #define POWER_GPIO            39
   #define SLEEP_TIME            5
@@ -251,8 +251,8 @@ test devices: esp32080 - 099
   #define DEVICE_NAME           "Lilygo3a"
   #define BOARD_TYPE            2
   // #define ENABLE_3V_GPIO        32
-  #define ACTIVITY_LED_GPIO     14
-  // #define FW_UPGRADE_LED_GPIO   33
+  #define ACT_BLUE_LED_GPIO     14
+  // #define ERROR_RED_LED_GPIO   33
   // #define CHARGING_GPIO         38
   // #define POWER_GPIO            39
   #define SLEEP_TIME            5
@@ -275,8 +275,8 @@ test devices: esp32080 - 099
   #define DEVICE_NAME           "testS"
   #define BOARD_TYPE            1
   #define ENABLE_3V_GPIO        32
-  // #define ACTIVITY_LED_GPIO     33
-  // #define FW_UPGRADE_LED_GPIO   33
+  // #define ACT_BLUE_LED_GPIO     33
+  // #define ERROR_RED_LED_GPIO   33
   // #define CHARGING_GPIO         38
   // #define POWER_GPIO            39
   #define SLEEP_TIME            5
@@ -299,8 +299,8 @@ test devices: esp32080 - 099
   #define DEVICE_NAME           "testS3"
   #define BOARD_TYPE            3
   // #define ENABLE_3V_GPIO        32
-  #define ACTIVITY_LED_GPIO     7
-  #define FW_UPGRADE_LED_GPIO   5
+  #define ACT_BLUE_LED_GPIO     7
+  #define ERROR_RED_LED_GPIO   5
   // #define CHARGING_GPIO         38
   // #define POWER_GPIO            39
   #define SLEEP_TIME            5
@@ -323,8 +323,8 @@ test devices: esp32080 - 099
   #define DEVICE_NAME           "testS2"
   #define BOARD_TYPE            2
   // #define ENABLE_3V_GPIO        32
-  // #define ACTIVITY_LED_GPIO     7
-  // #define FW_UPGRADE_LED_GPIO   5
+  // #define ACT_BLUE_LED_GPIO     7
+  // #define ERROR_RED_LED_GPIO   5
   // #define CHARGING_GPIO         38
   // #define POWER_GPIO            39
   #define SLEEP_TIME            2

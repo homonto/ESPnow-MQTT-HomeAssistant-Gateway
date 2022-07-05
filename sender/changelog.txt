@@ -1,3 +1,6 @@
+2022-07-05:
+  1.14.0  - rename LEDs, blink RED on error, MINIMUM_VOLTS=3.5V 
+
 2022-07-04:
   1.14.b1 - battery change rate, redo myData structure, fake receiver, lipo.quickStart abandoned
 
