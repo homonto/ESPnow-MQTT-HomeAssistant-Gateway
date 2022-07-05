@@ -16,10 +16,10 @@ sender.ino
 // detailed config in the file devices_config.h
 
 // #define DEVICE_ID  28           // "esp32028" - S,  production - Garage
-#define DEVICE_ID  100          // "esp32100" - S2, production - Papa
+// #define DEVICE_ID  100          // "esp32100" - S2, production - Papa
 // #define DEVICE_ID  101          // "esp32101" - S,  production - Dining
 // #define DEVICE_ID  102          // "esp32102" - S,  production - Toilet
-// #define DEVICE_ID  104          // "esp32104" - S,  production - Milena
+#define DEVICE_ID  104          // "esp32104" - S,  production - Milena
 // #define DEVICE_ID  105          // "esp32105" - S2, production - Garden
 
 // #define DEVICE_ID  86           // "esp32086" - S2, test - Lilygo1
