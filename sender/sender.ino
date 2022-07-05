@@ -16,20 +16,17 @@ sender.ino
 // detailed config in the file devices_config.h
 
 // #define DEVICE_ID  28           // "esp32028" - S,  production - Garage
-// #define DEVICE_ID  100          // "esp32101" - S2, production - Papa
+#define DEVICE_ID  100          // "esp32100" - S2, production - Papa
 // #define DEVICE_ID  101          // "esp32101" - S,  production - Dining
 // #define DEVICE_ID  102          // "esp32102" - S,  production - Toilet
 // #define DEVICE_ID  104          // "esp32104" - S,  production - Milena
 // #define DEVICE_ID  105          // "esp32105" - S2, production - Garden
 
-// #define DEVICE_ID  86           // "esp32086" - S2, test - Lilygo1a
-// #define DEVICE_ID  87           // "esp32087" - S,  test - S
-// #define DEVICE_ID  88           // "esp32088" - S2, test - Lilygo2
-// #define DEVICE_ID  89           // "esp32089" - S2, test - Lilygo3a
-// #define DEVICE_ID  90           // "esp32090" - S2, test - S2
-// #define DEVICE_ID  91           // "esp32091" - S,  test - S
-// #define DEVICE_ID  92           // "esp32092" - S3, test - S3 Ai-Thinker
-// #define DEVICE_ID  93           // "esp32093" - S2, test - S2
+// #define DEVICE_ID  86           // "esp32086" - S2, test - Lilygo1
+// #define DEVICE_ID  89           // "esp32089" - S2, test - Lilygo3
+// #define DEVICE_ID  91           // "esp32091" - S,  testS
+// #define DEVICE_ID  92           // "esp32092" - S3, test - Ai-Thinker
+
 
 // **** reset MAX17048 on first deployment only, then change to 0 **************
 #define RESET_MAX17048  0
@@ -489,6 +486,7 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
       Serial.printf("[%s]: ESPnow SUCCESSFULL\n",__func__);
     } else
     {
+      // it never returns FAILED in case of MAC_BROADCAST used - work on it!
       #ifdef ERROR_RED_LED_GPIO
         digitalWrite(ERROR_RED_LED_GPIO,HIGH);
       #endif
