@@ -1,5 +1,8 @@
+2022-07-06:
+  1.14.1  - turn off ENABLE_3V_GPIO when gather_data() fails (otherwise sleep current is 300uA)
+
 2022-07-05:
-  1.14.0  - rename LEDs, blink RED on error, MINIMUM_VOLTS=3.5V 
+  1.14.0  - rename LEDs, blink RED on error, MINIMUM_VOLTS=3.5V
 
 2022-07-04:
   1.14.b1 - battery change rate, redo myData structure, fake receiver, lipo.quickStart abandoned

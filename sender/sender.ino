@@ -35,7 +35,7 @@ sender.ino
 #define FORMAT_FS   0
 
 // version < 10 chars, description in changelog.txt
-#define VERSION "1.14.0"
+#define VERSION "1.14.1"
 
 // configure device in this file, choose which one you are compiling for on top of this script: #define DEVICE_ID x
 #include "devices_config.h"
@@ -992,7 +992,6 @@ void setup()
       #endif
       // quickStart restarts measuring change rate - disabling it - test it!
       // lipo.quickStart();
-      delay(10);
       #if (RESET_MAX17048 == 1)
         Serial.printf("[%s]: !!! Resetting MAX17048 - MAKE SURE TO DISABLE IT ON NEXT COMPILATION !!!\n",__func__);
         lipo.reset();
@@ -1179,6 +1178,13 @@ void setup()
     // #ifdef DEBUG
       Serial.printf("[%s]: NOT sending ANY data - gethering data FAILED!\n",__func__);
     // #endif
+
+    // needed here as well due to "return" below - without it, sleep current is 10x more (300uA)
+    // turn off power for sensors
+    #ifdef ENABLE_3V_GPIO
+      digitalWrite(ENABLE_3V_GPIO, LOW);
+    #endif
+
     return;
   } else
   {
@@ -1189,7 +1195,7 @@ void setup()
   }
 // gather data END
 
-// turn off power for sensors - not needed anymore
+// turn off power for sensors - all code below is only valid if gather_data() was successfull
   #ifdef ENABLE_3V_GPIO
     digitalWrite(ENABLE_3V_GPIO, LOW);
   #endif
