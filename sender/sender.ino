@@ -4,6 +4,7 @@ sender.ino
 
 // ******************************* DEBUG ***************************************
 // #define DEBUG
+
 // #define PPK2_GPIO 35           // comment out if not used - GPIO to test power and timings using PPK2
 #define USE_FAKE_RECEIVER   0     // 1=use this to avoid flooding receiver/HA, any other proper receivers
 
@@ -35,7 +36,7 @@ sender.ino
 #define FORMAT_FS   0
 
 // version < 10 chars, description in changelog.txt
-#define VERSION "1.14.1"
+#define VERSION "1.14.2"
 
 // configure device in this file, choose which one you are compiling for on top of this script: #define DEVICE_ID x
 #include "devices_config.h"
@@ -46,7 +47,7 @@ sender.ino
 #define MINIMUM_VOLTS       3.5   // this might go to every device section
 #define WAIT_FOR_WIFI       5     // in seconds, for upgrade firmware
 #ifndef PERIODIC_FW_CHECK_HRS     // if not found custom PERIODIC_FW_CHECK_HRS in devices_config.h (per device custom)
-  #define PERIODIC_FW_CHECK_HRS   24
+  #define PERIODIC_FW_CHECK_HRS   168
 #endif
 // ******************************  some consistency checks *************************
 #if ((USE_TSL2561 == 1) and (USE_TEPT4400 == 1))
@@ -179,7 +180,7 @@ typedef struct struct_message
   char name[11];        //          [11]
   char boot[6];         // 12345    [6]
   unsigned long ontime;
-  char batchr[10];       // -234.6789 [10]
+  char batchr[10];      // -234.6789 [10]
 } struct_message;
 
 struct_message myData;
