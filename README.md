@@ -23,7 +23,8 @@
 </ul>
 <br>
 <h3>Final schematic (ESP32-S2 based):</h3>
-<img width="1022" alt="Screenshot 2022-07-07 at 21 37 46" src="https://user-images.githubusercontent.com/46562447/177867131-1c95e913-9a85-4be9-9964-16375df76330.png">
+<img width="1088" alt="Screenshot 2022-07-07 at 21 45 12" src="https://user-images.githubusercontent.com/46562447/177868190-8f3dac36-4d2f-49e9-b07d-a71ff26dd909.png">
+
 <br>
 <br>
 <br>
