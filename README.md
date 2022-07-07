@@ -35,6 +35,8 @@
 <br>
 <h3>Final PCB (ESP32-S2 based):</h3>
 <img width="1299" alt="Screenshot 2022-07-07 at 21 27 09" src="https://user-images.githubusercontent.com/46562447/177865693-10016c07-eb08-447c-9519-59ccc6162da4.png">
+<br>
+<img width="1037" alt="Screenshot 2022-07-07 at 21 36 29" src="https://user-images.githubusercontent.com/46562447/177866919-afb88319-9ee9-4c2e-9bfc-9122b748b7b3.png">
 
 <br>
 <br>
