@@ -25,6 +25,18 @@
 <img width="1056" alt="s" src="https://user-images.githubusercontent.com/46562447/174493436-59580695-339b-47a6-a3c7-aca9be8a14dc.png">
 <img width="1030" alt="s2" src="https://user-images.githubusercontent.com/46562447/174493450-0c83bded-bc4d-4e2b-81a3-2a97067c947f.png">
 
+<br>
+<h3>Final schematic (ESP32-S2 based):</h3>
+<img width="1024" alt="Screenshot 2022-07-07 at 21 26 34" src="https://user-images.githubusercontent.com/46562447/177865615-f192d8c5-f266-4227-a0c7-1c2dc0fff97a.png">
+<br>
+<br>
+<br>
+<h3>Final PCB (ESP32-S2 based):</h3>
+<img width="1299" alt="Screenshot 2022-07-07 at 21 27 09" src="https://user-images.githubusercontent.com/46562447/177865693-10016c07-eb08-447c-9519-59ccc6162da4.png">
+
+<br>
+<br>
+<br>
 
 <h2>Power consumption and management</h2>
 <h3> Sensor device is powered with LiPo battery and equipped with TP4056 USB-C charger.</h3>
