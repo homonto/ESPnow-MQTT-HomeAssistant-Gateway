@@ -27,9 +27,7 @@
 
 <br>
 <h3>Final schematic (ESP32-S2 based):</h3>
-<img width="1026" alt="Screenshot 2022-07-07 at 21 34 44" src="https://user-images.githubusercontent.com/46562447/177866622-60ead50d-9b1e-403d-ba57-0f4e63cf88e5.png">
-
-
+<img width="1022" alt="Screenshot 2022-07-07 at 21 37 46" src="https://user-images.githubusercontent.com/46562447/177867131-1c95e913-9a85-4be9-9964-16375df76330.png">
 <br>
 <br>
 <br>
