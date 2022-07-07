@@ -21,10 +21,6 @@
   <li>ESP32S-WROOM or ESP32-S2 WROOM, around 2$ on Aliexpress (bare metal - <b>do NOT use the development board with additional components! - they cannot go to uA due to the on board elements, i.e. LDO, LED etc.)</b>
   <li>few additional components as per schematics (see below)
 </ul>
-
-<img width="1056" alt="s" src="https://user-images.githubusercontent.com/46562447/174493436-59580695-339b-47a6-a3c7-aca9be8a14dc.png">
-<img width="1030" alt="s2" src="https://user-images.githubusercontent.com/46562447/174493450-0c83bded-bc4d-4e2b-81a3-2a97067c947f.png">
-
 <br>
 <h3>Final schematic (ESP32-S2 based):</h3>
 <img width="1022" alt="Screenshot 2022-07-07 at 21 37 46" src="https://user-images.githubusercontent.com/46562447/177867131-1c95e913-9a85-4be9-9964-16375df76330.png">
