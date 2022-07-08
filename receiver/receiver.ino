@@ -310,9 +310,9 @@ void loop()
       {
         if (debug_mode) Serial.println("motion["+String(MOTION_SENSOR_GPIO)+"] changed, now="+String(motion));
         if (motion)
-          mqtt_publish_gw_status_values("motion");
+          mqtt_publish_gw_status_values("online");
         else
-          mqtt_publish_gw_status_values("cleared");
+          mqtt_publish_gw_status_values("online");
         old_motion = motion;
       }
       aux_update_interval_motion = start_loop_time;
