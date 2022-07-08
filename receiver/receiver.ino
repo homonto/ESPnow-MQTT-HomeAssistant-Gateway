@@ -1,13 +1,13 @@
 // #define DEBUG
 
-#define DEVICE_ID  29           // "esp32029" - S2, MAC: FF, odd bootCount or all if BROADCAST
-// #define DEVICE_ID  30           // "esp32030" - S2, MAC: EE, even bootCount or all if BROADCAST
+// #define DEVICE_ID  29           // "esp32029" - S2, MAC: FF, odd bootCount or all if BROADCAST
+#define DEVICE_ID  30           // "esp32030" - S2, MAC: EE, even bootCount or all if BROADCAST
 // #define DEVICE_ID  91           // "esp32031" - S,  MAC: FE, even bootCount or all if BROADCAST
 
 /*
 receiver.ino
 */
-#define VERSION "1.9.b1"
+#define VERSION "1.9.1"
 
 
 // libraries
@@ -194,7 +194,7 @@ void setup()
   Serial.begin(115200);
   delay(100);
   Serial.println("\n\n=============================================================");
-  Serial.println("GATEWAY started, version: "+String(VERSION));
+  Serial.println("GATEWAY started, DEVICE_ID="+String(DEVICE_ID)+", version: "+String(VERSION));
 
   #ifdef STATUS_GW_LED_GPIO_RED
     pinMode(STATUS_GW_LED_GPIO_RED, OUTPUT);
@@ -219,7 +219,10 @@ void setup()
     #endif
   #endif
 
-
+  #ifdef MOTION_SENSOR_GPIO
+    pinMode(MOTION_SENSOR_GPIO, INPUT_PULLDOWN);
+    Serial.println("MOTION_SENSOR_GPIO="+String(MOTION_SENSOR_GPIO)+" activated");
+  #endif
 
   queue = xQueueCreate( MAX_QUEUE_COUNT, sizeof( struct struct_message ) );
   if(queue == NULL)
@@ -291,6 +294,30 @@ void loop()
     hearbeat();
     aux_update_interval = start_loop_time;
   }
+
+  #ifdef MOTION_SENSOR_GPIO
+    if (start_loop_time > (aux_update_interval_motion + UPDATE_INTERVAL_MOTION))
+    {
+      old_motion = motion;
+      motion = digitalRead(MOTION_SENSOR_GPIO);
+      #ifdef STATUS_GW_LED_GPIO_RED
+        if (motion)
+          digitalWrite(STATUS_GW_LED_GPIO_RED,HIGH);
+        else
+          digitalWrite(STATUS_GW_LED_GPIO_RED,LOW);
+      #endif
+      if (old_motion != motion)
+      {
+        if (debug_mode) Serial.println("motion["+String(MOTION_SENSOR_GPIO)+"] changed, now="+String(motion));
+        if (motion)
+          mqtt_publish_gw_status_values("motion");
+        else
+          mqtt_publish_gw_status_values("cleared");
+        old_motion = motion;
+      }
+      aux_update_interval_motion = start_loop_time;
+    }
+  #endif
 
   int queue_count = uxQueueMessagesWaiting(queue);
   if (queue_count > 0)

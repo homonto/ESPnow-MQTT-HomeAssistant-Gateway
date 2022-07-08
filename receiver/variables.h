@@ -79,4 +79,7 @@ bool debug_mode = false;  // change to true to see tones of messages
 long aux_update_interval = 0;
 bool publish_sensors_to_ha = true;
 long tt, program_start_time;
+long aux_update_interval_motion = 0; 
+bool motion = false;
+bool old_motion = false;
 // global others END

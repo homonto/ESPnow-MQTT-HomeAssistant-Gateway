@@ -22,6 +22,7 @@ config
   // fixed MAC address assigned to ther receiver, to be able to use any ESP32 without changing the code of sender
   // chose any free one [i.e. from broken ESP] and match with sender.ino
   uint8_t FixedMACAddress[] = {0x7c, 0xdF, 0xa1, 0x0b, 0xd9, 0xff};
+  // #define MOTION_SENSOR_GPIO        10
   #pragma message "compilation for: ESPnow_esp32029_gw1"
 
 #elif DEVICE_ID == 30
@@ -37,6 +38,7 @@ config
   // fixed MAC address assigned to ther receiver, to be able to use any ESP32 without changing the code of sender
   // chose any free one [i.e. from broken ESP] and match with sender.ino
   uint8_t FixedMACAddress[] = {0x7c, 0xdF, 0xa1, 0x0b, 0xd9, 0xee};
+  #define MOTION_SENSOR_GPIO        10
   #pragma message "compilation for: ESPnow_esp32030_gw2"
 
 #elif DEVICE_ID == 91
@@ -75,6 +77,8 @@ config
 
 // loop update interval ms
 #define UPDATE_INTERVAL         (10 * 1000) //10000
+// loop motion update interval ms
+#define UPDATE_INTERVAL_MOTION  ( 10 )
 
 // mqtt - how many attempts to connect to MQTT broker before restarting
 #define MAX_MQTT_ERROR          10

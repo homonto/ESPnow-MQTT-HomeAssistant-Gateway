@@ -57,6 +57,15 @@ bool mqtt_publish_gw_status_config()
   snprintf(rssi_name,sizeof(rssi_name),"%s_rssi",HOSTNAME);
   if (debug_mode) Serial.println("rssi_name="+String(rssi_name));
 
+  // motion on
+  char motion_conf_topic[60];
+  snprintf(motion_conf_topic,sizeof(motion_conf_topic),"homeassistant/binary_sensor/%s/motion/config",HOSTNAME);
+  if (debug_mode) Serial.println("motion_conf_topic="+String(motion_conf_topic));
+
+  char motion_name[30];
+  snprintf(motion_name,sizeof(motion_name),"%s_motion",HOSTNAME);
+  if (debug_mode) Serial.println("motion_name="+String(motion_name));
+
   // commont topic
   char status_state_topic[60];
   snprintf(status_state_topic,sizeof(status_state_topic),"%s/sensor/state",HOSTNAME);
@@ -197,6 +206,39 @@ bool mqtt_publish_gw_status_config()
     Serial.println("============ DEBUG CONFIG RSSI END ========\n");
   }
 
+// motion config
+  config.clear();
+  config["name"] = motion_name;
+  config["dev_cla"] = "motion";
+  // config["stat_cla"] = "measurement";
+  config["stat_t"] = status_state_topic;
+  // config["unit_of_meas"] = "dBm";
+  config["val_tpl"] = "{{value_json.motion}}";
+  config["uniq_id"] = motion_name;
+  config["frc_upd"] = "true";
+  // config["entity_category"] = "sensor";
+  config["exp_aft"] = 60;
+
+  CREATE_GW_MQTT_DEVICE
+
+  size_c = serializeJson(config, config_json);
+  if (mqtt_connected){ if (!mqttc.publish(motion_conf_topic,(uint8_t*)config_json,strlen(config_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}}
+  if (debug_mode) {
+    Serial.println("\n============ DEBUG CONFIG RSSI PERCENT============");
+    Serial.println("Size of battery percent config="+String(size_c)+" bytes");
+    Serial.println("Serialised config_json:");
+    Serial.println(config_json);
+    Serial.println("serializeJsonPretty");
+    serializeJsonPretty(config, Serial);
+    if (publish_status) {
+      Serial.println("\n RSSI CONFIG OK");
+    } else
+    {
+      Serial.println("\n RSSI CONFIG UNSUCCESSFULL");
+    }
+    Serial.println("============ DEBUG CONFIG RSSI END ========\n");
+  }
+
 
   return publish_status;
 }
@@ -224,6 +266,11 @@ bool mqtt_publish_gw_status_values(const char* status)
   payload["uptime"] = ret_clk;
 
   payload["version"] = VERSION;
+
+  if (motion)
+    payload["motion"] = "ON";
+  else
+    payload["motion"] = "OFF";
 
   char payload_json[JSON_PAYLOAD_SIZE];
   int size_pl = serializeJson(payload, payload_json);
