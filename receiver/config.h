@@ -77,8 +77,9 @@ config
 
 // loop update interval ms
 #define UPDATE_INTERVAL         (10 * 1000) //10000
-// loop motion update interval ms
-#define UPDATE_INTERVAL_MOTION  ( 10 )
+// motion doelay s
+#define MIN_MOTION_DELAY_S      3
+#define MAX_MOTION_DELAY_S      30
 
 // mqtt - how many attempts to connect to MQTT broker before restarting
 #define MAX_MQTT_ERROR          10

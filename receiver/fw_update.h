@@ -110,7 +110,7 @@ int update_firmware_prepare()
     int len = fw_totalLength;
     // this is required to start firmware update process
     Update.begin(UPDATE_SIZE_UNKNOWN);
-    Serial.printf("[%s]: FW Size: %dbytes\n",__func__,fw_totalLength);
+    Serial.printf("[%s]: FW Size: %d bytes\n",__func__,fw_totalLength);
     // create buffer for read
     uint8_t buff[128] = { 0 };
     // get tcp stream
@@ -138,10 +138,10 @@ int update_firmware_prepare()
   } else
   {
     Serial.printf("[%s]: Cannot download firmware file. Only HTTP response 200: OK is supported. Double check firmware location #defined in UPDATE_FIRMWARE_FILE.\n",__func__);
-    Serial.printf("[%s]: UNSUCESSFUL - time: %llums\n",__func__,millis()-start_upgrade_time);
+    Serial.printf("[%s]: UNSUCESSFUL - time: %lums\n",__func__,millis()-start_upgrade_time);
     return resp;
   }
   firmware_update_client.end();
-  Serial.printf("[%s]: SUCESSFUL - time: %llums\n",__func__,millis()-start_upgrade_time);
+  Serial.printf("[%s]: SUCESSFUL - time: %lums\n",__func__,millis()-start_upgrade_time);
   return 0;
 }

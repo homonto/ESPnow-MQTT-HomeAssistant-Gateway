@@ -592,7 +592,7 @@ bool mqtt_publish_sensors_values()
 {
   if (!publish_sensors_to_ha)
   {
-    // Serial.printf(" | NOT sending to HA\n");
+    if (debug_mode) Serial.printf(" | NOT sending to HA\n");
     return false;
   }
 
@@ -613,31 +613,28 @@ bool mqtt_publish_sensors_values()
   char pretty_ontime[17]; // "999d 24h 60m 60s" = 16 characters
   ConvertSectoDay(myLocalData.ontime,pretty_ontime);
 
-  // #ifdef DEBUG
-    Serial.printf("[%s]: -> %dB,rssi=%ddBm, from: %s, boot=%s",__func__,sizeof(myLocalData),myLocalData_aux.rssi, myLocalData.host,myLocalData.boot);
-    // if  (atoi(myLocalData.boot) % 2 == 0)
-    // {
-    //   Serial.printf(" boot is EVEN -> not my duty to send to HA\n",__func__);
-    //   return false;
-    // }
-  // #endif
-  // Serial.println("\nESPnow Message received from:");
-  // Serial.print("\tname=");Serial.println(myLocalData.name);
-  // Serial.print("\thostname=");Serial.println(myLocalData.host);
-  // Serial.print("\tMAC=");Serial.println(myLocalData_aux.macStr);
-  // Serial.print("\tSize of message=");Serial.print(sizeof(myLocalData));Serial.println(" bytes");
-  // Serial.print("\ttemp=");Serial.println(myLocalData.temp);
-  // Serial.print("\thum=");Serial.println(myLocalData.hum);
-  // Serial.print("\tlux=");Serial.println(myLocalData.lux);
-  // Serial.print("\tbat=");Serial.println(myLocalData.bat);
-  // Serial.print("\tbatpct=");Serial.println(myLocalData.batpct);
-  // Serial.print("\tcharg=");Serial.println(myLocalData.charg);
-  // Serial.print("\tver=");Serial.println(myLocalData.ver);
-  // Serial.print("\trssi=");Serial.println(myLocalData_aux.rssi);
-  // Serial.print("\tboot=");Serial.println(myLocalData.boot);
-  // Serial.print("\tontime=");Serial.println(myLocalData.ontime);
-  // Serial.print("\tpretty_ontime=");Serial.println(pretty_ontime);
-  // Serial.println();
+  Serial.printf("[%s]: -> %dB,rssi=%ddBm, from: %s, boot=%s",__func__,sizeof(myLocalData),myLocalData_aux.rssi, myLocalData.host,myLocalData.boot);
+
+  if (debug_mode)
+  {
+    Serial.println("\nESPnow Message received from:");
+    Serial.print("\tname=");Serial.println(myLocalData.name);
+    Serial.print("\thostname=");Serial.println(myLocalData.host);
+    Serial.print("\tMAC=");Serial.println(myLocalData_aux.macStr);
+    Serial.print("\tSize of message=");Serial.print(sizeof(myLocalData));Serial.println(" bytes");
+    Serial.print("\ttemp=");Serial.println(myLocalData.temp);
+    Serial.print("\thum=");Serial.println(myLocalData.hum);
+    Serial.print("\tlux=");Serial.println(myLocalData.lux);
+    Serial.print("\tbat=");Serial.println(myLocalData.bat);
+    Serial.print("\tbatpct=");Serial.println(myLocalData.batpct);
+    Serial.print("\tcharg=");Serial.println(myLocalData.charg);
+    Serial.print("\tver=");Serial.println(myLocalData.ver);
+    Serial.print("\trssi=");Serial.println(myLocalData_aux.rssi);
+    Serial.print("\tboot=");Serial.println(myLocalData.boot);
+    Serial.print("\tontime=");Serial.println(myLocalData.ontime);
+    Serial.print("\tpretty_ontime=");Serial.println(pretty_ontime);
+    Serial.println();
+  }
 
   #ifdef SENSORS_LED_GPIO_BLUE
     digitalWrite(SENSORS_LED_GPIO_BLUE,HIGH);
@@ -673,12 +670,6 @@ bool mqtt_publish_sensors_values()
   char payload_json[JSON_PAYLOAD_SIZE];
   int size_pl = serializeJson(payload, payload_json);
 
-  // if (!publish_sensors_to_ha)
-  // {
-  //   Serial.printf(" | NOT sending to HA\n");
-  //   return false;
-  // }
-
   if (mqtt_connected){ if (!mqttc.publish(sensors_topic_state,(uint8_t*)payload_json,strlen(payload_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}}
   // #ifdef DEBUG
     Serial.printf(" -> sending to HA...",__func__);
@@ -709,7 +700,7 @@ bool mqtt_publish_sensors_values()
 
 
   publish_status = mqtt_publish_gw_last_updated_sensor_values(myLocalData.host);
-  // Serial.print("[last_updated_sensor] updating GW on HA...");
+
   #ifdef DEBUG
     Serial.printf("[%s]: updating GW on HA...",__func__);
     if (publish_status)

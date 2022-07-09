@@ -5,19 +5,10 @@ variables
 #include "config.h"
 
 // data structure for sensors
-// typedef struct struct_message {
-//   char host[10];
-//   char temp[6];
-//   char hum[6];
-//   char lux[6];
-//   char bat[6];
-//   char batpct[6];
-//   char ver[10];
-//   char charg[5];
-//   char name[11];
-//   char boot[5];
-//   unsigned long ontime;
-// } struct_message;
+/* - change to:
+- unsigned int: boot, lux
+- float: temp, hum, bat, batpct, batchr
+*/
 typedef struct struct_message
 {
   char host[10];        // esp32123 [9]
@@ -35,7 +26,7 @@ typedef struct struct_message
 } struct_message;
 // espnow data structure END
 
-// data structure for sensors - auxiliary with RSSI and MAC (of sender)
+// auxiliary data structure for sensors - with RSSI and MAC (of sender)
 typedef struct struct_message_aux {
   int rssi;
   char macStr[18];
@@ -74,12 +65,17 @@ int update_progress=0;
 int old_update_progress=0;
 bool blink_led_status=false;
 
+// motion
+volatile bool motion = false;
+portMUX_TYPE motion_mutex    = portMUX_INITIALIZER_UNLOCKED;
+volatile unsigned long start_motion_ms = 0;
+volatile unsigned long last_motion_ms = 0;
+bool motion_printed = false;
+
 // global others
 bool debug_mode = false;  // change to true to see tones of messages
-long aux_update_interval = 0;
+unsigned long aux_update_interval = 0;
 bool publish_sensors_to_ha = true;
-long tt, program_start_time;
-long aux_update_interval_motion = 0; 
-bool motion = false;
-bool old_motion = false;
+unsigned long tt, program_start_time;
+int motion_delay_s = 3;
 // global others END

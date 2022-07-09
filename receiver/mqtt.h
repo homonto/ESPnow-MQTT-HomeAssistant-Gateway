@@ -63,11 +63,17 @@ void mqtt_reconnect()
   snprintf(publish_cmd_topic,sizeof(publish_cmd_topic),"%s/cmd/publish",HOSTNAME);
   mqttc.subscribe(publish_cmd_topic);
 
+  // motion delay seconds
+  char motion_delay_cmd_topic[30];
+  snprintf(motion_delay_cmd_topic,sizeof(motion_delay_cmd_topic),"%s/cmd/motion_delay",HOSTNAME);
+  mqttc.subscribe(motion_delay_cmd_topic);
+
   Serial.println("[mqtt_reconnect] GW subscribed to:");
   {
     Serial.print(" ");Serial.println(restart_cmd_topic);
     Serial.print(" ");Serial.println(update_cmd_topic);
     Serial.print(" ");Serial.println(publish_cmd_topic);
+    Serial.print(" ");Serial.println(motion_delay_cmd_topic);
   }
 
   long em = millis();
@@ -99,6 +105,8 @@ void mqtt_callback(char* topic, byte* message, unsigned int length)
   char publish_cmd_topic[30];
   snprintf(publish_cmd_topic,sizeof(publish_cmd_topic),"%s/cmd/publish",HOSTNAME);
 
+  char motion_delay_cmd_topic[30];
+  snprintf(motion_delay_cmd_topic,sizeof(motion_delay_cmd_topic),"%s/cmd/motion_delay",HOSTNAME);
 
   String messageTemp;
   for (int i = 0; i < length; i++)
@@ -169,6 +177,32 @@ void mqtt_callback(char* topic, byte* message, unsigned int length)
     } else
     {
       Serial.println("switch publish NOT changed");
+    }
+  }
+
+  else
+  //motion delay
+  if (String(topic) == motion_delay_cmd_topic)
+  {
+    int old_motion_delay_s = motion_delay_s;
+    motion_delay_s = messageTemp.toInt();
+    if (motion_delay_s != old_motion_delay_s)
+    {
+      if ((motion_delay_s < MIN_MOTION_DELAY_S) or (motion_delay_s > MAX_MOTION_DELAY_S))
+      {
+        motion_delay_s = old_motion_delay_s;
+        Serial.println("motion delay beyond limits - NOT changed");
+      } else
+      {
+        mqtt_publish_number_motion_delay_values();
+        // if (debug_mode)
+        {
+          Serial.println("motion delay changed from: " + String(old_motion_delay_s) +" to: " + String(motion_delay_s));
+        }
+      }
+    } else
+    {
+      Serial.println("motion delay the same - NOT changed");
     }
   }
 

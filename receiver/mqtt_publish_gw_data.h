@@ -57,7 +57,7 @@ bool mqtt_publish_gw_status_config()
   snprintf(rssi_name,sizeof(rssi_name),"%s_rssi",HOSTNAME);
   if (debug_mode) Serial.println("rssi_name="+String(rssi_name));
 
-  // motion on
+  // motion sensor
   char motion_conf_topic[60];
   snprintf(motion_conf_topic,sizeof(motion_conf_topic),"homeassistant/binary_sensor/%s/motion/config",HOSTNAME);
   if (debug_mode) Serial.println("motion_conf_topic="+String(motion_conf_topic));
@@ -95,7 +95,7 @@ bool mqtt_publish_gw_status_config()
   if (!mqttc.publish(status_conf_topic,(uint8_t*)config_json,strlen(config_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}
   if (debug_mode) {
     Serial.println("\n============ DEBUG [STATUS] CONFIG:  ============");
-    Serial.println("Size of status config_json="+String(size_c)+" bytes");
+    Serial.println("Size of config_json="+String(size_c)+" bytes");
     Serial.println("Serialised config_json:");
     Serial.println(config_json);
     Serial.println("serializeJsonPretty(config, Serial)");
@@ -127,7 +127,7 @@ bool mqtt_publish_gw_status_config()
   if (!mqttc.publish(uptime_conf_topic,(uint8_t*)config_json,strlen(config_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}
   if (debug_mode) {
     Serial.println("\n============ DEBUG [UPTIME] CONFIG:  ============");
-    Serial.println("Size of uptime config_json="+String(size_c)+" bytes");
+    Serial.println("Size of config_json="+String(size_c)+" bytes");
     Serial.println("Serialised config_json:");
     Serial.println(config_json);
     Serial.println("serializeJsonPretty(config, Serial)");
@@ -159,7 +159,7 @@ bool mqtt_publish_gw_status_config()
   if (!mqttc.publish(version_conf_topic,(uint8_t*)config_json,strlen(config_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}
   if (debug_mode) {
     Serial.println("\n============ DEBUG [VERSION] CONFIG:  ============");
-    Serial.println("Size of version config_json="+String(size_c)+" bytes");
+    Serial.println("Size of config_json="+String(size_c)+" bytes");
     Serial.println("Serialised config_json:");
     Serial.println(config_json);
     Serial.println("serializeJsonPretty(config, Serial)");
@@ -191,19 +191,19 @@ bool mqtt_publish_gw_status_config()
   size_c = serializeJson(config, config_json);
   if (mqtt_connected){ if (!mqttc.publish(rssi_conf_topic,(uint8_t*)config_json,strlen(config_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}}
   if (debug_mode) {
-    Serial.println("\n============ DEBUG CONFIG RSSI PERCENT============");
-    Serial.println("Size of battery percent config="+String(size_c)+" bytes");
+    Serial.println("\n============ DEBUG [RSSI] CONFIG  ============");
+    Serial.println("Size of config="+String(size_c)+" bytes");
     Serial.println("Serialised config_json:");
     Serial.println(config_json);
     Serial.println("serializeJsonPretty");
     serializeJsonPretty(config, Serial);
     if (publish_status) {
-      Serial.println("\n RSSI CONFIG OK");
+      Serial.println("\n CONFIG published OK");
     } else
     {
-      Serial.println("\n RSSI CONFIG UNSUCCESSFULL");
+      Serial.println("\n CONFIG UNSUCCESSFULL");
     }
-    Serial.println("============ DEBUG CONFIG RSSI END ========\n");
+    Serial.println("============ DEBUG [RSSI] CONFIG END ========\n");
   }
 
 // motion config
@@ -224,21 +224,20 @@ bool mqtt_publish_gw_status_config()
   size_c = serializeJson(config, config_json);
   if (mqtt_connected){ if (!mqttc.publish(motion_conf_topic,(uint8_t*)config_json,strlen(config_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}}
   if (debug_mode) {
-    Serial.println("\n============ DEBUG CONFIG RSSI PERCENT============");
-    Serial.println("Size of battery percent config="+String(size_c)+" bytes");
+    Serial.println("\n============ DEBUG [MOTION] CONFIG ============");
+    Serial.println("Size of config="+String(size_c)+" bytes");
     Serial.println("Serialised config_json:");
     Serial.println(config_json);
     Serial.println("serializeJsonPretty");
     serializeJsonPretty(config, Serial);
     if (publish_status) {
-      Serial.println("\n RSSI CONFIG OK");
+      Serial.println("\n CONFIG published OK");
     } else
     {
-      Serial.println("\n RSSI CONFIG UNSUCCESSFULL");
+      Serial.println("\n CONFIG UNSUCCESSFULL");
     }
-    Serial.println("============ DEBUG CONFIG RSSI END ========\n");
+    Serial.println("============ DEBUG [MOTION] CONFIG END ========\n");
   }
-
 
   return publish_status;
 }
@@ -278,8 +277,8 @@ bool mqtt_publish_gw_status_values(const char* status)
   if (!mqttc.publish(status_state_topic,(uint8_t*)payload_json,strlen(payload_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}
 
   if (debug_mode) {
-    Serial.println("\n============ DEBUG: PAYLOAD STATUS ============");
-    Serial.println("Size of status payload="+String(size_pl)+" bytes");
+    Serial.println("\n============ DEBUG [STATUS] PAYLOAD ============");
+    Serial.println("Size of payload="+String(size_pl)+" bytes");
     Serial.println("Serialised payload_json:");
     Serial.println(payload_json);
     Serial.println("serializeJsonPretty");
@@ -290,7 +289,7 @@ bool mqtt_publish_gw_status_values(const char* status)
     {
       Serial.println("\n STATUS VALUES NOT published");
     }
-    Serial.println("============ DEBUG: PAYLOAD STATUS END ========\n");
+    Serial.println("============ DEBUG [STATUS] PAYLOAD END ========\n");
   }
   if (!publish_status) {Serial.println("\n STATUS VALUES NOT published");}
   return publish_status;
@@ -336,7 +335,7 @@ bool mqtt_publish_gw_last_updated_sensor_config()
   if (!mqttc.publish(status_conf_topic,(uint8_t*)config_json,strlen(config_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}
   if (debug_mode) {
     Serial.println("\n============ DEBUG [LAST UPDATED SENSOR] CONFIG:  ============");
-    Serial.println("Size of status config_json="+String(size_c)+" bytes");
+    Serial.println("Size of config_json="+String(size_c)+" bytes");
     Serial.println("Serialised config_json:");
     Serial.println(config_json);
     Serial.println("serializeJsonPretty(config, Serial)");
@@ -376,7 +375,7 @@ bool mqtt_publish_gw_last_updated_sensor_values(const char* status)
 
   if (debug_mode) {
     Serial.println("\n============ DEBUG: [LAST UPDATED SENSOR] VALUES ============");
-    Serial.println("Size of status payload="+String(size_pl)+" bytes");
+    Serial.println("Size of payload="+String(size_pl)+" bytes");
     Serial.println("Serialised payload_json:");
     Serial.println(payload_json);
     Serial.println("serializeJsonPretty");
@@ -389,7 +388,7 @@ bool mqtt_publish_gw_last_updated_sensor_values(const char* status)
     }
     Serial.println("============ DEBUG: PAYLOAD [LAST UPDATED SENSOR] VALUES END ========\n");
   }
-  if (!publish_status) {Serial.println("\n [LAST UPDATED SENSOR] VALUES NOT published");}
+  if (!publish_status) {Serial.println("\n DEBUG [LAST UPDATED SENSOR] VALUES NOT published");}
   return publish_status;
 }
 
@@ -436,7 +435,7 @@ bool mqtt_publish_button_update_config()
   if (mqtt_connected){ if (!mqttc.publish(update_conf_topic,(uint8_t*)config_json,strlen(config_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}}
   if (debug_mode) {
     Serial.println("\n============ DEBUG [UPDATE] CONFIG:  ============");
-    Serial.println("Size of update config_json="+String(size_c)+" bytes");
+    Serial.println("Size of config_json="+String(size_c)+" bytes");
     Serial.println("Serialised config_json:");
     Serial.println(config_json);
     Serial.println("serializeJsonPretty(config, Serial)");
@@ -495,8 +494,8 @@ bool mqtt_publish_button_restart_config()
   size_c = serializeJson(config, config_json);
   if (mqtt_connected){ if (!mqttc.publish(restart_conf_topic,(uint8_t*)config_json,strlen(config_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}}
   if (debug_mode) {
-    Serial.println("\n============ DEBUG [UPDATE] CONFIG:  ============");
-    Serial.println("Size of restart config_json="+String(size_c)+" bytes");
+    Serial.println("\n============ DEBUG [RESTART] CONFIG:  ============");
+    Serial.println("Size of config_json="+String(size_c)+" bytes");
     Serial.println("Serialised config_json:");
     Serial.println(config_json);
     Serial.println("serializeJsonPretty(config, Serial)");
@@ -507,7 +506,7 @@ bool mqtt_publish_button_restart_config()
     {
       Serial.println("\n CONFIG UNSUCCESSFULL");
     }
-    Serial.println("============ DEBUG [UPDATE] CONFIG END ========\n");
+    Serial.println("============ DEBUG [RESTART] CONFIG END ========\n");
   }
 
   return publish_status;
@@ -560,19 +559,19 @@ bool mqtt_publish_switch_publish_config()
   size_c = serializeJson(config, config_json);
   if (mqtt_connected){ if (!mqttc.publish(publish_conf_topic,(uint8_t*)config_json,strlen(config_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}}
   if (debug_mode) {
-    Serial.println("\n============ DEBUG publish SWITCH CONFIG  ============");
-    Serial.println("Size of publish config_json="+String(size_c)+" bytes");
+    Serial.println("\n============ DEBUG [PUBLISH SWITCH] CONFIG  ============");
+    Serial.println("Size of config_json="+String(size_c)+" bytes");
     Serial.println("Serialised config_json:");
     Serial.println(config_json);
     Serial.println("serializeJsonPretty(config, Serial)");
     serializeJsonPretty(config, Serial);
     if (publish_status) {
-      Serial.println("\n publish SWITCH CONFIG OK");
+      Serial.println("\n CONFIG published OK");
     } else
     {
-      Serial.println("\n publish SWITCH CONFIG UNSUCCESSFULL");
+      Serial.println("\n CONFIG UNSUCCESSFULL");
     }
-    Serial.println("============ DEBUG publish SWITCH CONFIG END ========\n");
+    Serial.println("============ DEBUG [PUBLISH SWITCH] CONFIG END ========\n");
   }
   return publish_status;
 }
@@ -599,8 +598,8 @@ bool mqtt_publish_switch_publish_values()
   if (mqtt_connected){ if (!mqttc.publish(publish_state_topic,(uint8_t*)payload_json,strlen(payload_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}}
 
   if (debug_mode) {
-    Serial.println("\n============ DEBUG: PAYLOAD publish ============");
-    Serial.println("Size of publish payload="+String(size_pl)+" bytes");
+    Serial.println("\n============ DEBUG: [PUBLISH SWITCH] PAYLOAD ============");
+    Serial.println("Size of payload="+String(size_pl)+" bytes");
     Serial.println("Serialised payload_json:");
     Serial.println(payload_json);
     Serial.println("serializeJsonPretty");
@@ -611,7 +610,113 @@ bool mqtt_publish_switch_publish_values()
     {
       Serial.println("\n publish VALUES NOT published");
     }
-    Serial.println("============ DEBUG: PAYLOAD publish END ========\n");
+    Serial.println("============ DEBUG: [PUBLISH SWITCH] END ========\n");
+  }
+  if (!publish_status) {Serial.println("\n publish VALUES NOT published");}
+
+  return publish_status;
+}
+
+// motion delay in seconds - number on HA
+bool mqtt_publish_number_motion_delay_config()
+{
+  // motion_delay number (seconds)
+  char motion_delay_conf_topic[60];
+  snprintf(motion_delay_conf_topic,sizeof(motion_delay_conf_topic),"homeassistant/number/%s/motion_delay/config",HOSTNAME);
+  if (debug_mode) Serial.println("motion_delay_conf_topic="+String(motion_delay_conf_topic));
+
+  char motion_delay_name[30];
+  snprintf(motion_delay_name,sizeof(motion_delay_name),"%s_motion_delay",HOSTNAME);
+  if (debug_mode) Serial.println("motion_delay_name="+String(motion_delay_name));
+
+  char motion_delay_state_topic[60];
+  snprintf(motion_delay_state_topic,sizeof(motion_delay_state_topic),"%s/number/motion_delay",HOSTNAME);
+  if (debug_mode) Serial.println("motion_delay_state_topic="+String(motion_delay_state_topic));
+
+  char motion_delay_cmd_topic[30];
+  snprintf(motion_delay_cmd_topic,sizeof(motion_delay_cmd_topic),"%s/cmd/motion_delay",HOSTNAME);
+  if (debug_mode) Serial.println("motion_delay_cmd_topic="+String(motion_delay_cmd_topic));
+
+  bool publish_status = true;
+  StaticJsonDocument<JSON_CONFIG_SIZE> config;
+  JsonObject dev;
+  int size_c;
+  char config_json[JSON_CONFIG_SIZE];
+
+// motion_delay config
+  config.clear();
+  config["name"] = motion_delay_name;
+  config["stat_t"] = motion_delay_state_topic;
+  config["command_topic"] = motion_delay_cmd_topic;
+  config["min"] = MIN_MOTION_DELAY_S;
+  config["max"] = MAX_MOTION_DELAY_S;
+  config["unit_of_meas"] = "s";
+  config["qos"] = "2";
+  config["retain"] = "true";
+  config["uniq_id"] = motion_delay_name;
+  config["entity_category"] = "config";
+  config["val_tpl"] = "{{value_json.motion_delay}}";
+  config["exp_aft"] = 60;
+  config["frc_upd"] = "true";
+
+  CREATE_GW_MQTT_DEVICE
+
+  size_c = serializeJson(config, config_json);
+  if (mqtt_connected){ if (!mqttc.publish(motion_delay_conf_topic,(uint8_t*)config_json,strlen(config_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}}
+  if (debug_mode) {
+    Serial.println("\n============ DEBUG [MOTION DELAY] CONFIG ============");
+    Serial.println("Size of config="+String(size_c)+" bytes");
+    Serial.println("Serialised config_json:");
+    Serial.println(config_json);
+    Serial.println("serializeJsonPretty");
+    serializeJsonPretty(config, Serial);
+    if (publish_status) {
+      Serial.println("\n CONFIG published OK");
+    } else
+    {
+      Serial.println("\n CONFIG UNSUCCESSFULL");
+    }
+    Serial.println("============ DEBUG [MOTION DELAY] CONFIG END ========\n");
+  }
+
+  return publish_status;
+}
+
+
+bool mqtt_publish_number_motion_delay_values()
+{
+  char motion_delay_state_topic[60];
+  snprintf(motion_delay_state_topic,sizeof(motion_delay_state_topic),"%s/number/motion_delay",HOSTNAME);
+  if (debug_mode) Serial.println("motion_delay_state_topic="+String(motion_delay_state_topic));
+
+  bool publish_status = true;
+  if (!mqtt_publish_number_motion_delay_config()){
+    Serial.println("\n PUBLISH CONFIG NOT published");
+    return false;
+  }
+
+  StaticJsonDocument<JSON_PAYLOAD_SIZE> payload;
+  payload["motion_delay"] = motion_delay_s;
+
+  char payload_json[JSON_PAYLOAD_SIZE];
+  int size_pl = serializeJson(payload, payload_json);
+
+  if (mqtt_connected){ if (!mqttc.publish(motion_delay_state_topic,(uint8_t*)payload_json,strlen(payload_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}}
+
+  if (debug_mode) {
+    Serial.println("\n============ DEBUG: [MOTION DELAY] PAYLOAD ============");
+    Serial.println("Size of payload="+String(size_pl)+" bytes");
+    Serial.println("Serialised payload_json:");
+    Serial.println(payload_json);
+    Serial.println("serializeJsonPretty");
+    serializeJsonPretty(payload, Serial);
+    if (publish_status) {
+      Serial.println("\n publish VALUES published OK");
+    } else
+    {
+      Serial.println("\n publish VALUES NOT published");
+    }
+    Serial.println("============ DEBUG: [MOTION DELAY] END ========\n");
   }
   if (!publish_status) {Serial.println("\n publish VALUES NOT published");}
 
