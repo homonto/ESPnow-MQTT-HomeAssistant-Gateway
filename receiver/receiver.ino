@@ -7,7 +7,7 @@
 /*
 receiver.ino
 */
-#define VERSION "1.9.2"
+#define VERSION "1.9.3"
 
 
 // libraries
@@ -81,7 +81,7 @@ void IRAM_ATTR motion_detected()
   digitalWrite(STATUS_GW_LED_GPIO_RED,HIGH);
   // start_motion_ms - first time motion detected - set only if no motion before
   if (!motion) start_motion_ms = millis();
-  // last_motion_ms - last time motion detected - reset on each motion to keep the status for motion_delay_s since the last occurence
+  // last_motion_ms - last time motion detected - reset on each motion to keep the "Detected" status for motion_delay_s since the last occurence
   last_motion_ms = millis();
   motion = true;
   portEXIT_CRITICAL_ISR(&motion_mutex);
@@ -120,8 +120,7 @@ void ConvertSectoDay(unsigned long n, char *pretty_ontime)
       }
     }
   }
-  if (debug_mode)
-    Serial.printf("\n\npretty_ontime=%s\n\n",pretty_ontime);
+  if (debug_mode) Serial.printf("[%s]: pretty_ontime=%s\n",__func__,pretty_ontime);
 }
 
 
@@ -212,8 +211,9 @@ void setup()
   program_start_time = millis();
   Serial.begin(115200);
   delay(100);
-  Serial.println("\n\n=============================================================");
-  Serial.println("GATEWAY started, DEVICE_ID="+String(DEVICE_ID)+", version: "+String(VERSION));
+
+  Serial.printf("\n\n[%s]: =============================================================\n",__func__);
+  Serial.printf("[%s]: GATEWAY started, DEVICE_ID=%d, version=%s\n",__func__,DEVICE_ID,VERSION);
 
   #ifdef STATUS_GW_LED_GPIO_RED
     pinMode(STATUS_GW_LED_GPIO_RED, OUTPUT);
@@ -232,41 +232,36 @@ void setup()
       ledcWrite(POWER_ON_LED_PWM_CHANNEL, POWER_ON_LED_DC);
     // or fixed
     #else
-      fixed LED setup...
       pinMode(POWER_ON_LED_GPIO_GREEN, OUTPUT);
       digitalWrite(POWER_ON_LED_GPIO_GREEN, HIGH);
     #endif
   #endif
 
   #ifdef MOTION_SENSOR_GPIO
-    Serial.println("MOTION_SENSOR_GPIO="+String(MOTION_SENSOR_GPIO)+" activated");
+    Serial.printf("[%s]: MOTION_SENSOR_GPIO=%d activated\n",__func__,MOTION_SENSOR_GPIO);
     attachInterrupt(digitalPinToInterrupt(MOTION_SENSOR_GPIO), motion_detected, RISING);
   #endif
 
   queue = xQueueCreate( MAX_QUEUE_COUNT, sizeof( struct struct_message ) );
   if(queue == NULL)
   {
-    Serial.println("Error creating the queue");
-    delay(10000000);
-  } else
-  {
-    Serial.println("Created the queue");
+    Serial.printf("[%s]: Error creating the queue, restarting in 3s\n",__func__);
+    delay(3000);
+    ESP.restart();
   }
 
   queue_aux = xQueueCreate( MAX_QUEUE_COUNT, sizeof( struct struct_message_aux ) );
   if(queue_aux == NULL)
   {
-    Serial.println("Error creating the queue_aux");
-    delay(10000000);
-  } else
-  {
-    Serial.println("Created the queue_aux");
+    Serial.printf("[%s]: Error creating the queue_aux, restarting in 3s\n",__func__);
+    delay(3000);
+    ESP.restart();
   }
 
   setup_wifi();
   if (!wifi_connected)
   {
-    Serial.println("WiFi NOT connected, REBOTTING in 3s");
+    Serial.printf("[%s]: WiFi NOT connected, restarting in 3s\n",__func__);
     delay(3000);
     ESP.restart();
   }
@@ -278,28 +273,30 @@ void setup()
   mqtt_reconnect();
   if (!mqtt_connected)
   {
-    Serial.println("MQTT NOT connected, REBOTTING in 3s");
+    Serial.printf("[%s]: MQTT NOT connected, restarting in 3s\n",__func__);
     delay(3000);
     ESP.restart();
   }
 
-  Serial.print("configuring GATEWAY status in HA:...");
+  Serial.printf("[%s]: configuring GATEWAY status in HA:...",__func__);
   if (mqtt_publish_gw_status_config())
   {
-    Serial.println("done");
+    Serial.printf("done\n");
   } else
   {
-    Serial.println("FAILED");
-    Serial.println("configuring GATEWAY FAILED, REBOTTING in 3s");
+    Serial.printf("FAILED\n");
+    Serial.printf("[%s]: configuring GATEWAY FAILED, restarting in 3s\n",__func__);
     delay(3000);
     ESP.restart();
   }
   hearbeat();
   espnow_start();
+  Serial.printf("[%s]: Setup finished\n",__func__);
 }
 
 
 void loop()
+// Serial.printf("[%s]: configuring GATEWAY FAILED, restarting in 3s\n",__func__);
 {
   unsigned long start_loop_time = millis();
 
@@ -322,23 +319,21 @@ void loop()
     {
       if (!motion_printed)
       {
-        mqtt_publish_gw_status_values("Detected");
-        // if (debug_mode)
-          Serial.printf("motion DETECTED at: %lums\n",now);
+        mqtt_publish_gw_status_values("online");
+        Serial.printf("[%s]: motion DETECTED at: %lus\n",__func__,(now/1000));
         motion_printed = true;
       }
       // keep motion "Detected" for entire motion_delay_s time since the last detection (not the first detection)
       // last_motion_ms + (motion_delay_s * 1000)
       if ((now - last_motion_ms) > (motion_delay_s * 1000))
       {
-        // if (debug_mode)
-          Serial.printf("motion stopped at %lums, after %lums total active time (%lums after last occurence).\n",now, (now - start_motion_ms),(now - last_motion_ms));
+        Serial.printf("[%s]: motion stopped at %lus, after %lus of total active time, (%lus after last occurence).\n",__func__,(now/1000), ((now - start_motion_ms)/1000),((now - last_motion_ms)/1000));
         portENTER_CRITICAL(&motion_mutex);
         motion = false;
         portEXIT_CRITICAL(&motion_mutex);
         digitalWrite(STATUS_GW_LED_GPIO_RED,LOW);
         motion_printed = false;
-        mqtt_publish_gw_status_values("Cleared");
+        mqtt_publish_gw_status_values("online");
       }
     }
   #endif

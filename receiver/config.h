@@ -3,90 +3,104 @@
 config
 */
 
-#include <passwords.h>          // passwords inside my library - for my personal usage
-// #include "passwords.h"          // passwords in current folder - for github - see the structure inside the file
+#include <passwords.h>              // passwords inside my library - for my personal usage
+// #include "passwords.h"           // passwords in current folder - for github - see the structure inside the file
 
 #include "variables.h"
 
-// custom for this device - Gateway - different boards
-#if DEVICE_ID == 29
-  #define BOARD_TYPE          2 // 1=ESP32 2=ESP32S2 3=ESP32S3 4=ESP32C3
-  #define HOSTNAME            "esp32029"
-  #define IP_ADDRESS          "192.168.1.29"
-  #define ROLE_NAME           "gw1"
-  #define SENSORS_LED_GPIO_BLUE     3         // blinking during sending sensors data to HA - blue?
-  #define STATUS_GW_LED_GPIO_RED    2         // blinking during sending gateway data to HA - red?
-  #define POWER_ON_LED_GPIO_GREEN   5         // status of device - green?
-  #define POWER_ON_LED_USE_PWM      1         // set to 1 if PWM to be used, 0 for fixed brightness
-  #define POWER_ON_LED_DC           30        // DC for Green LED
+// DEVICE CUSTOM SETTINGS END
+/*
+configuration template:
+#if DEVICE_ID == 88                 // unique ID defining the gateway device, must be chosen in receiver.ino
+  #define BOARD_TYPE                2               // 1=ESP32 2=ESP32S2 3=ESP32S3 4=ESP32C3
+  #define HOSTNAME                  "esp32088"      // max 9 characters, used as name in HA
+  #define IP_ADDRESS                "192.168.1.88"  // fixed IP, not in use anymore for WiFi, only for name in HA
+  #define ROLE_NAME                 "gw1"           // part of the name in HA (gateway 1)
+  #define SENSORS_LED_GPIO_BLUE     3               // blinking during receiving and sending sensors data to HA - blue
+  #define STATUS_GW_LED_GPIO_RED    2               // blinking during sending gateway data to HA - red
+  #define POWER_ON_LED_GPIO_GREEN   5               // status of device - green
+  #define POWER_ON_LED_USE_PWM      1               // set to 1 if PWM to be used, 0 for fixed brightness
+  #define POWER_ON_LED_DC           30              // DC for Green LED to avoid too bright
   // fixed MAC address assigned to ther receiver, to be able to use any ESP32 without changing the code of sender
   // chose any free one [i.e. from broken ESP] and match with sender.ino
   uint8_t FixedMACAddress[] = {0x7c, 0xdF, 0xa1, 0x0b, 0xd9, 0xff};
+  // #define MOTION_SENSOR_GPIO     10               // where motion detector is connected to
+  #pragma message "compilation for: ESPnow_esp32029_gw1"
+*/
+#if DEVICE_ID == 29
+  #define BOARD_TYPE                2
+  #define HOSTNAME                  "esp32029"
+  #define IP_ADDRESS                "192.168.1.29"
+  #define ROLE_NAME                 "gw1"
+  #define SENSORS_LED_GPIO_BLUE     3
+  #define STATUS_GW_LED_GPIO_RED    2
+  #define POWER_ON_LED_GPIO_GREEN   5
+  #define POWER_ON_LED_USE_PWM      1
+  #define POWER_ON_LED_DC           30
+  uint8_t FixedMACAddress[] = {0x7c, 0xdF, 0xa1, 0x0b, 0xd9, 0xFF};
   // #define MOTION_SENSOR_GPIO        10
   #pragma message "compilation for: ESPnow_esp32029_gw1"
 
 #elif DEVICE_ID == 30
-  #define BOARD_TYPE          2 // 1=ESP32 2=ESP32S2 3=ESP32S3 4=ESP32C3
-  #define HOSTNAME            "esp32030"
-  #define IP_ADDRESS          "192.168.1.30"
-  #define ROLE_NAME           "gw2"
-  #define SENSORS_LED_GPIO_BLUE     2         // blinking during sending sensors data to HA - blue?
-  #define STATUS_GW_LED_GPIO_RED    3         // blinking during sending gateway data to HA - red?
-  #define POWER_ON_LED_GPIO_GREEN   5         // status of device - green?
-  #define POWER_ON_LED_USE_PWM      1         // set to 1 if PWM to be used, 0 for fixed brightness
-  #define POWER_ON_LED_DC           20        // DC for Green LED
-  // fixed MAC address assigned to ther receiver, to be able to use any ESP32 without changing the code of sender
-  // chose any free one [i.e. from broken ESP] and match with sender.ino
-  uint8_t FixedMACAddress[] = {0x7c, 0xdF, 0xa1, 0x0b, 0xd9, 0xee};
+  #define BOARD_TYPE                2
+  #define HOSTNAME                  "esp32030"
+  #define IP_ADDRESS                "192.168.1.30"
+  #define ROLE_NAME                 "gw2"
+  #define SENSORS_LED_GPIO_BLUE     2
+  #define STATUS_GW_LED_GPIO_RED    3
+  #define POWER_ON_LED_GPIO_GREEN   5
+  #define POWER_ON_LED_USE_PWM      1
+  #define POWER_ON_LED_DC           20
+  uint8_t FixedMACAddress[] = {0x7c, 0xdF, 0xa1, 0x0b, 0xd9, 0xEE};
   #define MOTION_SENSOR_GPIO        10
   #pragma message "compilation for: ESPnow_esp32030_gw2"
 
 #elif DEVICE_ID == 91
-  #define BOARD_TYPE          1 // 1=ESP32 2=ESP32S2 3=ESP32S3 4=ESP32C3
-  #define HOSTNAME            "esp32091"
-  #define IP_ADDRESS          "192.168.1.91"
-  #define ROLE_NAME           "gw3"
-  #define SENSORS_LED_GPIO_BLUE     2         // blinking during sending sensors data to HA - blue?
-  #define STATUS_GW_LED_GPIO_RED    3         // blinking during sending gateway data to HA - red?
-  #define POWER_ON_LED_GPIO_GREEN   5         // status of device - green?
-  #define POWER_ON_LED_USE_PWM      1         // set to 1 if PWM to be used, 0 for fixed brightness
-  #define POWER_ON_LED_DC           20        // DC for Green LED
-  // fixed MAC address assigned to ther receiver, to be able to use any ESP32 without changing the code of sender
-  // chose any free one [i.e. from broken ESP] and match with sender.ino
-  uint8_t FixedMACAddress[] = {0x7c, 0xdF, 0xa1, 0x0b, 0xd9, 0xfe};
+  #define BOARD_TYPE                1
+  #define HOSTNAME                  "esp32091"
+  #define IP_ADDRESS                "192.168.1.91"
+  #define ROLE_NAME                 "gw3"
+  #define SENSORS_LED_GPIO_BLUE     2
+  #define STATUS_GW_LED_GPIO_RED    3
+  #define POWER_ON_LED_GPIO_GREEN   5
+  #define POWER_ON_LED_USE_PWM      1
+  #define POWER_ON_LED_DC           20
+  uint8_t FixedMACAddress[] = {0x7c, 0xdF, 0xa1, 0x0b, 0xd9, 0xFE};
   #pragma message "compilation for: ESPnow_esp32091_gw3"
 
 #else
   #error "Wrong DEVICE_ID chosen"
 #endif
+// DEVICE CUSTOM SETTINGS END
 
-// wifi common settings - often changed
-// channel must be the same as for senders!
-#define WIFI_CHANNEL        8
-#define IP_GATEWAY          "192.168.1.1"
-#define IP_SUBNET           "255.255.255.0"
-#define IP_DNS              "192.168.1.1"
+// wifi common settings
+#define WIFI_CHANNEL                8     // channel must be the same as for sender devices!
+#define IP_GATEWAY                  "192.168.1.1"
+#define IP_SUBNET                   "255.255.255.0"
+#define IP_DNS                      "192.168.1.1"
+#define WAIT_FOR_WIFI               5     // in seconds
 
 // for PubSubClient:
 // it is used in: mqttc.setBufferSize(MQTT_PAYLOAD_MAX_SIZE); to increase max packet size
 //default is 256 but it is not enough in this program - check debug in case of issue
-#define MQTT_PAYLOAD_MAX_SIZE   1024
-// for ArduinoJson
-#define JSON_CONFIG_SIZE        1024 // config is bigger than payload due to device information
-#define JSON_PAYLOAD_SIZE       512
+#define MQTT_PAYLOAD_MAX_SIZE       1024
 
-// loop update interval ms
-#define UPDATE_INTERVAL         (10 * 1000) //10000
-// motion doelay s
-#define MIN_MOTION_DELAY_S      3
-#define MAX_MOTION_DELAY_S      30
+// for ArduinoJson
+#define JSON_CONFIG_SIZE            1024  // config is bigger than payload due to device information
+#define JSON_PAYLOAD_SIZE           512
+
+// loop update interval
+#define UPDATE_INTERVAL             (10 * 1000) // in milliseconds
+// motion delay s
+#define MIN_MOTION_DELAY_S          3     // in seconds
+#define MAX_MOTION_DELAY_S          30    // in seconds
 
 // mqtt - how many attempts to connect to MQTT broker before restarting
-#define MAX_MQTT_ERROR          10
+#define MAX_MQTT_ERROR              10
 
 // queue size for incomming data from sensors, whe queue is full no more data is gathered until there is free space in the queue
 // set it to as much as many sensor devices you have so each one gets into the queue
-#define MAX_QUEUE_COUNT         6
+#define MAX_QUEUE_COUNT             6
 
 // LED PWM settings
 #ifdef POWER_ON_LED_GPIO_GREEN

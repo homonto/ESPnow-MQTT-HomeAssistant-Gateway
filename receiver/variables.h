@@ -5,7 +5,7 @@ variables
 #include "config.h"
 
 // data structure for sensors
-/* - change to:
+/* TODO: change to:
 - unsigned int: boot, lux
 - float: temp, hum, bat, batpct, batchr
 */
@@ -77,5 +77,5 @@ bool debug_mode = false;  // change to true to see tones of messages
 unsigned long aux_update_interval = 0;
 bool publish_sensors_to_ha = true;
 unsigned long tt, program_start_time;
-int motion_delay_s = 3;
+int motion_delay_s = 10;
 // global others END

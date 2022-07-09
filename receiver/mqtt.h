@@ -13,7 +13,7 @@ void mqtt_reconnect()
 {
   if (mqttc.connected())
   {
-    Serial.println("MQTT connected");
+    Serial.printf("[%s]: MQTT connected\n",__func__);
     mqtt_connected = true;
     return;
   }
@@ -22,26 +22,25 @@ void mqtt_reconnect()
   int mqtt_error = 0;
   mqtt_connected=false;
   if (!wifi_connected) {
-    Serial.println("mqtt_callback: WiFi not connected");
-    Serial.print("mqtt_connected=");Serial.println(mqtt_connected);
+    Serial.printf("[%s]: WiFi NOT connected\n",__func__);
     return;
   }
 
   while (!mqttc.connected()) {
     ++mqtt_error;
-    Serial.println("Attempting MQTT connection for " + String(mqtt_error)+" time");
+    Serial.printf("[%s]: Attempting MQTT connection for %d time\n",__func__,mqtt_error);
     long sm1=millis(); while(millis() < sm1 + 1000) {}
 
     if (mqttc.connect(HOSTNAME,HA_MQTT_USER, HA_MQTT_PASSWORD))
     {
       mqtt_connected = true;
-      Serial.println("MQTT connected");
+      Serial.printf("[%s]: MQTT connected\n",__func__);
     } else
     {
       if (mqtt_error >= MAX_MQTT_ERROR)
       {
-        Serial.println("FATAL MQTT ERROR !!!!!!!!");
-        Serial.println("restart ESP in 3s");
+        Serial.printf("[%s]: FATAL MQTT ERROR !!!!!!!!\n",__func__);
+        Serial.println("restart ESP in 3s\n\n");
         delay(3000);
         ESP.restart();
       }
@@ -68,17 +67,17 @@ void mqtt_reconnect()
   snprintf(motion_delay_cmd_topic,sizeof(motion_delay_cmd_topic),"%s/cmd/motion_delay",HOSTNAME);
   mqttc.subscribe(motion_delay_cmd_topic);
 
-  Serial.println("[mqtt_reconnect] GW subscribed to:");
+  Serial.printf("[%s]: GW subscribed to:\n",__func__);
   {
-    Serial.print(" ");Serial.println(restart_cmd_topic);
-    Serial.print(" ");Serial.println(update_cmd_topic);
-    Serial.print(" ");Serial.println(publish_cmd_topic);
-    Serial.print(" ");Serial.println(motion_delay_cmd_topic);
+    Serial.printf("\t%s\n",restart_cmd_topic);
+    Serial.printf("\t%s\n",update_cmd_topic);
+    Serial.printf("\t%s\n",publish_cmd_topic);
+    Serial.printf("\t%s\n",motion_delay_cmd_topic);
   }
 
   long em = millis();
   long mt=em-sm;
-  Serial.println("MQTT RECONNECT TIME:"+String(mt)+"ms");
+  Serial.printf("[%s]: MQTT RECONNECT TIME: %dms\n",__func__,mt);
 }
 // mqtt reconnect END
 
@@ -90,8 +89,9 @@ void mqtt_callback(char* topic, byte* message, unsigned int length)
   long sm = micros();
 
   if ((!wifi_connected) or (!mqtt_connected)) {
-    if (debug_mode)
-      Serial.println("mqtt_callback: WiFi or MQTT not connected");
+    // if (debug_mode)
+    // Serial.println("mqtt_callback: WiFi or MQTT not connected");
+    Serial.printf("[%s]: WiFi or MQTT not connected, leaving...\n",__func__);
     return;
   }
   bool publish_status = true;
@@ -115,7 +115,7 @@ void mqtt_callback(char* topic, byte* message, unsigned int length)
   }
   //
   // if (debug_mode){
-    Serial.println("\nMQTT message received:\n\ttopic:\t" +String(topic)+"\n\tmessage:\t"+String(messageTemp));
+    Serial.printf("\n[%s]: MQTT message received:\n\t%s\n\tmessage:\t%s\n",__func__,topic,messageTemp);
   // }
 
   String topic_str = String(topic);
@@ -131,7 +131,7 @@ void mqtt_callback(char* topic, byte* message, unsigned int length)
       long sm2 = millis(); while(millis() < sm2 + 100) {};
       if (publish_status)
       {
-        Serial.println("\n\nRESTARTING on MQTT message\n\n");
+        Serial.printf("\n\n[%s]: RESTARTING on MQTT message\n\n\n",__func__);
         ESP.restart();
       }
     }
@@ -148,7 +148,7 @@ void mqtt_callback(char* topic, byte* message, unsigned int length)
       long sm2 = millis(); while(millis() < sm2 + 100) {};
       if (publish_status)
       {
-        Serial.println("UPDATING FIRMWARE on MQTT message");
+        Serial.printf("\n\n[%s]: UPDATING FIRMWARE on MQTT message\n\n\n",__func__);
         perform_update_firmware=true;
       }
     }
@@ -173,10 +173,10 @@ void mqtt_callback(char* topic, byte* message, unsigned int length)
     if (publish_sensors_to_ha != old_publish_sensors_to_ha)
     {
       mqtt_publish_switch_publish_values();
-      Serial.println("switch publish changed");
+      Serial.printf("[%s]: switch [publish] changed on MQTT message from: %d to %d\n",__func__,old_publish_sensors_to_ha,publish_sensors_to_ha);
     } else
     {
-      Serial.println("switch publish NOT changed");
+      Serial.printf("[%s]: switch publish NOT changed\n",__func__);
     }
   }
 
@@ -191,26 +191,27 @@ void mqtt_callback(char* topic, byte* message, unsigned int length)
       if ((motion_delay_s < MIN_MOTION_DELAY_S) or (motion_delay_s > MAX_MOTION_DELAY_S))
       {
         motion_delay_s = old_motion_delay_s;
-        Serial.println("motion delay beyond limits - NOT changed");
+        Serial.printf("[%s]: motion delay beyond limits - NOT changed\n",__func__);
       } else
       {
         mqtt_publish_number_motion_delay_values();
-        // if (debug_mode)
         {
-          Serial.println("motion delay changed from: " + String(old_motion_delay_s) +" to: " + String(motion_delay_s));
+          // Serial.println("motion delay changed from: " + String(old_motion_delay_s) +" to: " + String(motion_delay_s));
+          Serial.printf("[%s]: motion delay changed from: %ds to: %ds\n",__func__,old_motion_delay_s,motion_delay_s);
         }
       }
     } else
     {
-      Serial.println("motion delay the same - NOT changed");
+      Serial.printf("[%s]: motion delay the same - NOT changed\n",__func__);
     }
   }
 
-  if (debug_mode){
+  // if (debug_mode){
     long em = micros(); //END measurement time
     long mt=em-sm;
-    Serial.println("mqtt_callback MEASUREMENT TIME:"+String(mt)+"us");
-  }
+    // Serial.println("mqtt_callback MEASUREMENT TIME:"+String(mt)+"us");
+    Serial.printf("[%s]: MQTT CALLBACK TIME: %dus\n",__func__,mt);
+  // }
 
 }
 // mqtt callback END

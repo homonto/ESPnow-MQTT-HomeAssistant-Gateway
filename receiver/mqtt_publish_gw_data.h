@@ -82,7 +82,6 @@ bool mqtt_publish_gw_status_config()
   config["name"] = status_name;
   config["stat_t"] = status_state_topic;
   config["qos"] = 2;
-  config["retain"] = "true";
   config["uniq_id"] = status_name;
   config["val_tpl"] = "{{value_json.status}}";
   config["frc_upd"] = "true";
@@ -210,13 +209,10 @@ bool mqtt_publish_gw_status_config()
   config.clear();
   config["name"] = motion_name;
   config["dev_cla"] = "motion";
-  // config["stat_cla"] = "measurement";
   config["stat_t"] = status_state_topic;
-  // config["unit_of_meas"] = "dBm";
   config["val_tpl"] = "{{value_json.motion}}";
   config["uniq_id"] = motion_name;
   config["frc_upd"] = "true";
-  // config["entity_category"] = "sensor";
   config["exp_aft"] = 60;
 
   CREATE_GW_MQTT_DEVICE

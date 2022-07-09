@@ -608,12 +608,13 @@ bool mqtt_publish_sensors_values()
 // values topic
   char sensors_topic_state[60];
   snprintf(sensors_topic_state,sizeof(sensors_topic_state),"%s/sensor/state",myLocalData.host);
-  if (debug_mode)Serial.println("sensors_topic_state="+String(sensors_topic_state));
+  if (debug_mode) Serial.println("sensors_topic_state="+String(sensors_topic_state));
 
   char pretty_ontime[17]; // "999d 24h 60m 60s" = 16 characters
   ConvertSectoDay(myLocalData.ontime,pretty_ontime);
 
-  Serial.printf("[%s]: -> %dB,rssi=%ddBm, from: %s, boot=%s",__func__,sizeof(myLocalData),myLocalData_aux.rssi, myLocalData.host,myLocalData.boot);
+  Serial.printf("[%s]:\n",__func__);
+  Serial.printf("\t%d bytes received from: %s: rssi=%ddBm, boot=%s",sizeof(myLocalData), myLocalData.host, myLocalData_aux.rssi, myLocalData.boot);
 
   if (debug_mode)
   {
@@ -672,10 +673,10 @@ bool mqtt_publish_sensors_values()
 
   if (mqtt_connected){ if (!mqttc.publish(sensors_topic_state,(uint8_t*)payload_json,strlen(payload_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}}
   // #ifdef DEBUG
-    Serial.printf(" -> sending to HA...",__func__);
+    Serial.printf(" -> sending to HA...");
     if (publish_status)
     {
-      Serial.printf("OK\n");
+      Serial.printf("SUCCESSFULL\n");
     } else
     {
       Serial.println("FAILED");

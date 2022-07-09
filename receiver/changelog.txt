@@ -1,4 +1,10 @@
+TODO:
+1 - implement #ifdef DEBUG instead of if (debug_mode)
+2 - data structure for sensors - change from char[] to digits
+
+
 2022-07-09:
+  1.9.3  - cleaning (Serial.println(), config.h etc.)
   1.9.2  - motion with interrupts
          - keep motion "Detected" for entire motion_delay_s time since the last detection (not the first detection)
          - few cosmetics
