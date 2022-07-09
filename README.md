@@ -11,6 +11,7 @@
 <ul>
   <li>Sensor devices: (battery powered) wake up, measure the environment and battery, send to gateway over ESPnow, go to sleep, wake up after specified period and repeat
   <li>Gateway device: (always ON) receive message over ESPnow from sensors, convert to Home Assistant auto discovery code and send to Home Assistant over MQTT/WiFi
+  <p><b>EDIT:</b>Gateway device, since it is always powered ON, got also motion detector (microwave) so it can be also a part of the home alarm system
 </ul>
 <br>
 <h3> To satisfy the requirements I've chosen: </h3>
