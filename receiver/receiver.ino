@@ -1,13 +1,13 @@
 // #define DEBUG
 
-// #define DEVICE_ID  29           // "esp32029" - S2, MAC: FF, odd bootCount or all if BROADCAST
-#define DEVICE_ID  30           // "esp32030" - S2, MAC: EE, even bootCount or all if BROADCAST
+#define DEVICE_ID  29           // "esp32029" - S2, MAC: FF, odd bootCount or all if BROADCAST
+// #define DEVICE_ID  30           // "esp32030" - S2, MAC: EE, even bootCount or all if BROADCAST
 // #define DEVICE_ID  91           // "esp32031" - S,  MAC: FE, even bootCount or all if BROADCAST
 
 /*
 receiver.ino
 */
-#define VERSION "1.9.3"
+#define VERSION "1.10.1"
 
 
 // libraries
@@ -37,9 +37,11 @@ bool mqtt_publish_button_update_config();
 bool mqtt_publish_gw_status_config();
 bool mqtt_publish_gw_status_values(const char* status);
 
-// motion sensor delay in seconds
-bool mqtt_publish_number_motion_delay_config();
-bool mqtt_publish_number_motion_delay_values();
+// #ifdef MOTION_SENSOR_GPIO
+//   // motion sensor delay in seconds
+//   bool mqtt_publish_number_motion_delay_config();
+//   bool mqtt_publish_number_motion_delay_values();
+// #endif
 
 // on message arrival from sensors
 bool mqtt_publish_gw_last_updated_sensor_config();
@@ -62,8 +64,9 @@ int update_firmware_prepare();
 void hearbeat();
 void ConvertSectoDay(unsigned long n, char * pretty_ontime);
 void uptime(char *uptime);
-void IRAM_ATTR detected_f();
-
+// #ifdef MOTION_SENSOR_GPIO
+//   void IRAM_ATTR detected_f();
+// #endif
 
 // custom files
 #include "config.h"
@@ -75,18 +78,19 @@ void IRAM_ATTR detected_f();
 #include "mqtt_publish_sensors_data.h"
 #include "fw_update.h"
 
-void IRAM_ATTR motion_detected()
-{
-  portENTER_CRITICAL_ISR(&motion_mutex);
-  digitalWrite(STATUS_GW_LED_GPIO_RED,HIGH);
-  // start_motion_ms - first time motion detected - set only if no motion before
-  if (!motion) start_motion_ms = millis();
-  // last_motion_ms - last time motion detected - reset on each motion to keep the "Detected" status for motion_delay_s since the last occurence
-  last_motion_ms = millis();
-  motion = true;
-  portEXIT_CRITICAL_ISR(&motion_mutex);
-}
-
+// #ifdef MOTION_SENSOR_GPIO
+//   void IRAM_ATTR motion_detected()
+//   {
+//     portENTER_CRITICAL_ISR(&motion_mutex);
+//     digitalWrite(STATUS_GW_LED_GPIO_RED,HIGH);
+//     // start_motion_ms - first time motion detected - set only if no motion before
+//     if (!motion) start_motion_ms = millis();
+//     // last_motion_ms - last time motion detected - reset on each motion to keep the "Detected" status for motion_delay_s since the last occurence
+//     last_motion_ms = millis();
+//     motion = true;
+//     portEXIT_CRITICAL_ISR(&motion_mutex);
+//   }
+// #endif
 void ConvertSectoDay(unsigned long n, char *pretty_ontime)
 {
   size_t nbytes;
@@ -140,7 +144,9 @@ void hearbeat()
   publish_status = publish_status && mqtt_publish_button_restart_config();
   publish_status = publish_status && mqtt_publish_gw_last_updated_sensor_config();
   publish_status = publish_status && mqtt_publish_switch_publish_values();
-  publish_status = publish_status && mqtt_publish_number_motion_delay_values();
+  // #ifdef MOTION_SENSOR_GPIO
+  //   publish_status = publish_status && mqtt_publish_number_motion_delay_values();
+  // #endif
 
   int queue_count = uxQueueMessagesWaiting(queue);
   if (queue_count == MAX_QUEUE_COUNT)
@@ -163,9 +169,16 @@ void hearbeat()
   }
 
   #ifdef STATUS_GW_LED_GPIO_RED
-    // don't turn off the led if motion detected
-    if (!motion) digitalWrite(STATUS_GW_LED_GPIO_RED,LOW);
+    digitalWrite(STATUS_GW_LED_GPIO_RED,LOW);
+    // #ifdef MOTION_SENSOR_GPIO
+    //   // keep ON the led if motion detected
+    //   if (motion) digitalWrite(STATUS_GW_LED_GPIO_RED,HIGH);
+    // #endif
   #endif
+
+
+
+
 }
 
 
@@ -237,10 +250,10 @@ void setup()
     #endif
   #endif
 
-  #ifdef MOTION_SENSOR_GPIO
-    Serial.printf("[%s]: MOTION_SENSOR_GPIO=%d activated\n",__func__,MOTION_SENSOR_GPIO);
-    attachInterrupt(digitalPinToInterrupt(MOTION_SENSOR_GPIO), motion_detected, RISING);
-  #endif
+  // #ifdef MOTION_SENSOR_GPIO
+  //   Serial.printf("[%s]: MOTION_SENSOR_GPIO=%d activated\n",__func__,MOTION_SENSOR_GPIO);
+  //   attachInterrupt(digitalPinToInterrupt(MOTION_SENSOR_GPIO), motion_detected, HIGH);
+  // #endif
 
   queue = xQueueCreate( MAX_QUEUE_COUNT, sizeof( struct struct_message ) );
   if(queue == NULL)
@@ -312,31 +325,31 @@ void loop()
     aux_update_interval = start_loop_time;
   }
 
-  // motion
-  #ifdef MOTION_SENSOR_GPIO
-    unsigned long now = millis();
-    if (motion)
-    {
-      if (!motion_printed)
-      {
-        mqtt_publish_gw_status_values("online");
-        Serial.printf("[%s]: motion DETECTED at: %lus\n",__func__,(now/1000));
-        motion_printed = true;
-      }
-      // keep motion "Detected" for entire motion_delay_s time since the last detection (not the first detection)
-      // last_motion_ms + (motion_delay_s * 1000)
-      if ((now - last_motion_ms) > (motion_delay_s * 1000))
-      {
-        Serial.printf("[%s]: motion stopped at %lus, after %lus of total active time, (%lus after last occurence).\n",__func__,(now/1000), ((now - start_motion_ms)/1000),((now - last_motion_ms)/1000));
-        portENTER_CRITICAL(&motion_mutex);
-        motion = false;
-        portEXIT_CRITICAL(&motion_mutex);
-        digitalWrite(STATUS_GW_LED_GPIO_RED,LOW);
-        motion_printed = false;
-        mqtt_publish_gw_status_values("online");
-      }
-    }
-  #endif
+  // // motion
+  // #ifdef MOTION_SENSOR_GPIO
+  //   unsigned long now = millis();
+  //   if (motion)
+  //   {
+  //     if (!motion_printed)
+  //     {
+  //       mqtt_publish_gw_status_values("online");
+  //       Serial.printf("[%s]: motion DETECTED at: %lus\n",__func__,(now/1000));
+  //       motion_printed = true;
+  //     }
+  //     // keep motion "Detected" for entire motion_delay_s time since the last detection (not the first detection)
+  //     // last_motion_ms + (motion_delay_s * 1000)
+  //     if ((now - last_motion_ms) > (motion_delay_s * 1000))
+  //     {
+  //       Serial.printf("[%s]: motion stopped at %lus, after %lus of total active time, (%lus after last occurence).\n",__func__,(now/1000), ((now - start_motion_ms)/1000),((now - last_motion_ms)/1000));
+  //       portENTER_CRITICAL(&motion_mutex);
+  //       motion = false;
+  //       portEXIT_CRITICAL(&motion_mutex);
+  //       digitalWrite(STATUS_GW_LED_GPIO_RED,LOW);
+  //       motion_printed = false;
+  //       mqtt_publish_gw_status_values("online");
+  //     }
+  //   }
+  // #endif
 
   int queue_count = uxQueueMessagesWaiting(queue);
   if (queue_count > 0)

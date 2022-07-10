@@ -2,6 +2,9 @@ TODO:
 1 - implement #ifdef DEBUG instead of if (debug_mode)
 2 - data structure for sensors - change from char[] to digits
 
+2022-07-09:
+  1.10.1 - corrections
+  1.10.0 - remove MOTION sensor because of interference with antenna
 
 2022-07-09:
   1.9.3  - cleaning (Serial.println(), config.h etc.)

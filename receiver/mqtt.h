@@ -62,17 +62,21 @@ void mqtt_reconnect()
   snprintf(publish_cmd_topic,sizeof(publish_cmd_topic),"%s/cmd/publish",HOSTNAME);
   mqttc.subscribe(publish_cmd_topic);
 
-  // motion delay seconds
-  char motion_delay_cmd_topic[30];
-  snprintf(motion_delay_cmd_topic,sizeof(motion_delay_cmd_topic),"%s/cmd/motion_delay",HOSTNAME);
-  mqttc.subscribe(motion_delay_cmd_topic);
+  #ifdef MOTION_SENSOR_GPIO
+    // motion delay seconds
+    char motion_delay_cmd_topic[30];
+    snprintf(motion_delay_cmd_topic,sizeof(motion_delay_cmd_topic),"%s/cmd/motion_delay",HOSTNAME);
+    mqttc.subscribe(motion_delay_cmd_topic);
+  #endif
 
   Serial.printf("[%s]: GW subscribed to:\n",__func__);
   {
     Serial.printf("\t%s\n",restart_cmd_topic);
     Serial.printf("\t%s\n",update_cmd_topic);
     Serial.printf("\t%s\n",publish_cmd_topic);
-    Serial.printf("\t%s\n",motion_delay_cmd_topic);
+    #ifdef MOTION_SENSOR_GPIO
+      Serial.printf("\t%s\n",motion_delay_cmd_topic);
+    #endif
   }
 
   long em = millis();
@@ -105,8 +109,10 @@ void mqtt_callback(char* topic, byte* message, unsigned int length)
   char publish_cmd_topic[30];
   snprintf(publish_cmd_topic,sizeof(publish_cmd_topic),"%s/cmd/publish",HOSTNAME);
 
-  char motion_delay_cmd_topic[30];
-  snprintf(motion_delay_cmd_topic,sizeof(motion_delay_cmd_topic),"%s/cmd/motion_delay",HOSTNAME);
+  #ifdef MOTION_SENSOR_GPIO
+    char motion_delay_cmd_topic[30];
+    snprintf(motion_delay_cmd_topic,sizeof(motion_delay_cmd_topic),"%s/cmd/motion_delay",HOSTNAME);
+  #endif
 
   String messageTemp;
   for (int i = 0; i < length; i++)
@@ -180,31 +186,33 @@ void mqtt_callback(char* topic, byte* message, unsigned int length)
     }
   }
 
-  else
-  //motion delay
-  if (String(topic) == motion_delay_cmd_topic)
-  {
-    int old_motion_delay_s = motion_delay_s;
-    motion_delay_s = messageTemp.toInt();
-    if (motion_delay_s != old_motion_delay_s)
+  #ifdef MOTION_SENSOR_GPIO
+    else
+    //motion delay
+    if (String(topic) == motion_delay_cmd_topic)
     {
-      if ((motion_delay_s < MIN_MOTION_DELAY_S) or (motion_delay_s > MAX_MOTION_DELAY_S))
+      int old_motion_delay_s = motion_delay_s;
+      motion_delay_s = messageTemp.toInt();
+      if (motion_delay_s != old_motion_delay_s)
       {
-        motion_delay_s = old_motion_delay_s;
-        Serial.printf("[%s]: motion delay beyond limits - NOT changed\n",__func__);
+        if ((motion_delay_s < MIN_MOTION_DELAY_S) or (motion_delay_s > MAX_MOTION_DELAY_S))
+        {
+          motion_delay_s = old_motion_delay_s;
+          Serial.printf("[%s]: motion delay beyond limits - NOT changed\n",__func__);
+        } else
+        {
+          mqtt_publish_number_motion_delay_values();
+          {
+            // Serial.println("motion delay changed from: " + String(old_motion_delay_s) +" to: " + String(motion_delay_s));
+            Serial.printf("[%s]: motion delay changed from: %ds to: %ds\n",__func__,old_motion_delay_s,motion_delay_s);
+          }
+        }
       } else
       {
-        mqtt_publish_number_motion_delay_values();
-        {
-          // Serial.println("motion delay changed from: " + String(old_motion_delay_s) +" to: " + String(motion_delay_s));
-          Serial.printf("[%s]: motion delay changed from: %ds to: %ds\n",__func__,old_motion_delay_s,motion_delay_s);
-        }
+        Serial.printf("[%s]: motion delay the same - NOT changed\n",__func__);
       }
-    } else
-    {
-      Serial.printf("[%s]: motion delay the same - NOT changed\n",__func__);
     }
-  }
+  #endif
 
   // if (debug_mode){
     long em = micros(); //END measurement time

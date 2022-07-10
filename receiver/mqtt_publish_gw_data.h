@@ -57,6 +57,7 @@ bool mqtt_publish_gw_status_config()
   snprintf(rssi_name,sizeof(rssi_name),"%s_rssi",HOSTNAME);
   if (debug_mode) Serial.println("rssi_name="+String(rssi_name));
 
+#ifdef MOTION_SENSOR_GPIO
   // motion sensor
   char motion_conf_topic[60];
   snprintf(motion_conf_topic,sizeof(motion_conf_topic),"homeassistant/binary_sensor/%s/motion/config",HOSTNAME);
@@ -65,6 +66,7 @@ bool mqtt_publish_gw_status_config()
   char motion_name[30];
   snprintf(motion_name,sizeof(motion_name),"%s_motion",HOSTNAME);
   if (debug_mode) Serial.println("motion_name="+String(motion_name));
+#endif
 
   // commont topic
   char status_state_topic[60];
@@ -205,6 +207,7 @@ bool mqtt_publish_gw_status_config()
     Serial.println("============ DEBUG [RSSI] CONFIG END ========\n");
   }
 
+#ifdef MOTION_SENSOR_GPIO
 // motion config
   config.clear();
   config["name"] = motion_name;
@@ -234,6 +237,7 @@ bool mqtt_publish_gw_status_config()
     }
     Serial.println("============ DEBUG [MOTION] CONFIG END ========\n");
   }
+#endif
 
   return publish_status;
 }
@@ -262,10 +266,12 @@ bool mqtt_publish_gw_status_values(const char* status)
 
   payload["version"] = VERSION;
 
+#ifdef MOTION_SENSOR_GPIO
   if (motion)
     payload["motion"] = "ON";
   else
     payload["motion"] = "OFF";
+#endif
 
   char payload_json[JSON_PAYLOAD_SIZE];
   int size_pl = serializeJson(payload, payload_json);
@@ -613,6 +619,7 @@ bool mqtt_publish_switch_publish_values()
   return publish_status;
 }
 
+#ifdef MOTION_SENSOR_GPIO
 // motion delay in seconds - number on HA
 bool mqtt_publish_number_motion_delay_config()
 {
@@ -718,3 +725,4 @@ bool mqtt_publish_number_motion_delay_values()
 
   return publish_status;
 }
+#endif

@@ -52,7 +52,7 @@ configuration template:
   #define POWER_ON_LED_USE_PWM      1
   #define POWER_ON_LED_DC           20
   uint8_t FixedMACAddress[] = {0x7c, 0xdF, 0xa1, 0x0b, 0xd9, 0xEE};
-  #define MOTION_SENSOR_GPIO        10
+  // #define MOTION_SENSOR_GPIO        10
   #pragma message "compilation for: ESPnow_esp32030_gw2"
 
 #elif DEVICE_ID == 91
@@ -93,7 +93,7 @@ configuration template:
 #define UPDATE_INTERVAL             (10 * 1000) // in milliseconds
 // motion delay s
 #define MIN_MOTION_DELAY_S          3     // in seconds
-#define MAX_MOTION_DELAY_S          30    // in seconds
+#define MAX_MOTION_DELAY_S          180    // in seconds
 
 // mqtt - how many attempts to connect to MQTT broker before restarting
 #define MAX_MQTT_ERROR              10

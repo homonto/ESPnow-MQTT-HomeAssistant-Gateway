@@ -65,17 +65,20 @@ int update_progress=0;
 int old_update_progress=0;
 bool blink_led_status=false;
 
-// motion
-volatile bool motion = false;
-portMUX_TYPE motion_mutex    = portMUX_INITIALIZER_UNLOCKED;
-volatile unsigned long start_motion_ms = 0;
-volatile unsigned long last_motion_ms = 0;
-bool motion_printed = false;
+#ifdef MOTION_SENSOR_GPIO
+  // motion
+  volatile bool motion = false;
+  portMUX_TYPE motion_mutex    = portMUX_INITIALIZER_UNLOCKED;
+  volatile unsigned long start_motion_ms = 0;
+  volatile unsigned long last_motion_ms = 0;
+  bool motion_printed = false;
+  int motion_delay_s = 10;
+#endif
 
 // global others
 bool debug_mode = false;  // change to true to see tones of messages
 unsigned long aux_update_interval = 0;
 bool publish_sensors_to_ha = true;
 unsigned long tt, program_start_time;
-int motion_delay_s = 10;
+
 // global others END
