@@ -3,6 +3,12 @@ TODO:
 2 - data structure for sensors - change from char[] to digits
 
 2022-07-09:
+  1.11.b1 - added:
+            char sender_type[10]; // "motion" "env"
+            char motion[2];       // "0" "1"  [2]
+            for motion devices to reuse gateway with the same message structure
+
+2022-07-09:
   1.10.1 - corrections
   1.10.0 - remove MOTION sensor because of interference with antenna
 

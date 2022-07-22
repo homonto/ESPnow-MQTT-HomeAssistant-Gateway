@@ -23,6 +23,8 @@ typedef struct struct_message
   char boot[6];         // 12345    [6]
   unsigned long ontime;
   char batchr[10];       // -234.6789 [10]
+  char sender_type[10];  // "motion" "env"
+  char motion[2];        // "0" "1"  [2]
 } struct_message;
 // espnow data structure END
 
@@ -52,6 +54,10 @@ struct_message myData;
 
 // aux_data from/for sensors: rssi and MAC
 struct_message_aux myData_aux;
+
+// local copies after receiving to avoid overwriting
+struct_message myLocalData;
+struct_message_aux myLocalData_aux;
 
 // critical for OnDataRecv
 portMUX_TYPE receive_cb_mutex    = portMUX_INITIALIZER_UNLOCKED;

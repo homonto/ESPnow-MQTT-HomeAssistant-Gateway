@@ -76,6 +76,10 @@ bool mqtt_publish_sensors_config(const char* hostname, const char* name, const c
   snprintf(mac_conf_topic,sizeof(mac_conf_topic),"homeassistant/sensor/%s/mac/config",hostname);
   if (debug_mode) Serial.println("mac_conf_topic="+String(mac_conf_topic));
 
+  char dev_type_conf_topic[60];
+  snprintf(dev_type_conf_topic,sizeof(dev_type_conf_topic),"homeassistant/sensor/%s/dev_type/config",hostname);
+  if (debug_mode) Serial.println("dev_type_conf_topic="+String(dev_type_conf_topic));
+
 // sensors/entities names
   char temp_name[30];
   snprintf(temp_name,sizeof(temp_name),"%s_temperature",hostname);
@@ -133,6 +137,10 @@ bool mqtt_publish_sensors_config(const char* hostname, const char* name, const c
   snprintf(mac_name,sizeof(mac_name),"%s_mac",hostname);
   if (debug_mode) Serial.println("mac_name="+String(mac_name));
 
+  char dev_type_name[30];
+  snprintf(dev_type_name,sizeof(dev_type_name),"%s_dev_type",hostname);
+  if (debug_mode) Serial.println("dev_type_name="+String(dev_type_name));
+
 // values/state topic
   char sensors_topic_state[60];
   snprintf(sensors_topic_state,sizeof(sensors_topic_state),"%s/sensor/state",hostname);
@@ -144,6 +152,9 @@ bool mqtt_publish_sensors_config(const char* hostname, const char* name, const c
   int size_c;
   char config_json[JSON_CONFIG_SIZE];
 
+// "env" sensors only END
+if (strcmp(myLocalData.sender_type, "env") == 0)
+{
 // temperature config
   config.clear();
   config["name"] = temp_name;
@@ -339,69 +350,6 @@ bool mqtt_publish_sensors_config(const char* hostname, const char* name, const c
     Serial.println("============ DEBUG CONFIG BATCHR END ========\n");
   }
 
-// rssi config
-  config.clear();
-  config["name"] = rssi_name;
-  config["dev_cla"] = "signal_strength";
-  config["stat_cla"] = "measurement";
-  config["stat_t"] = sensors_topic_state;
-  config["unit_of_meas"] = "dBm";
-  config["val_tpl"] = "{{value_json.rssi}}";
-  config["uniq_id"] = rssi_name;
-  config["frc_upd"] = "true";
-  config["entity_category"] = "diagnostic";
-  config["exp_aft"] = 900;
-
-  CREATE_SENSOR_MQTT_DEVICE
-
-  size_c = serializeJson(config, config_json);
-  if (mqtt_connected){ if (!mqttc.publish(rssi_conf_topic,(uint8_t*)config_json,strlen(config_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}}
-  if (debug_mode) {
-    Serial.println("\n============ DEBUG CONFIG RSSI ============");
-    Serial.println("Size of rssi config="+String(size_c)+" bytes");
-    Serial.println("Serialised config_json:");
-    Serial.println(config_json);
-    Serial.println("serializeJsonPretty");
-    serializeJsonPretty(config, Serial);
-    if (publish_status) {
-      Serial.println("\n RSSI CONFIG OK");
-    } else
-    {
-      Serial.println("\n RSSI CONFIG UNSUCCESSFULL");
-    }
-    Serial.println("============ DEBUG CONFIG RSSI END ========\n");
-  }
-
-// version config
-  config.clear();
-  config["name"] = version_name;
-  config["stat_t"] = sensors_topic_state;
-  config["val_tpl"] = "{{value_json.version}}";
-  config["uniq_id"] = version_name;
-  config["frc_upd"] = "true";
-  config["entity_category"] = "diagnostic";
-  config["exp_aft"] = 900;
-
-  CREATE_SENSOR_MQTT_DEVICE
-
-  size_c = serializeJson(config, config_json);
-  if (mqtt_connected){ if (!mqttc.publish(version_conf_topic,(uint8_t*)config_json,strlen(config_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}}
-  if (debug_mode) {
-    Serial.println("\n============ DEBUG CONFIG VERSION ============");
-    Serial.println("Size of version config="+String(size_c)+" bytes");
-    Serial.println("Serialised config_json:");
-    Serial.println(config_json);
-    Serial.println("serializeJsonPretty");
-    serializeJsonPretty(config, Serial);
-    if (publish_status) {
-      Serial.println("\n VERSION CONFIG OK");
-    } else
-    {
-      Serial.println("\n VERSION CONFIG UNSUCCESSFULL");
-    }
-    Serial.println("============ DEBUG CONFIG VERSION END ========\n");
-  }
-
 // charging config
   config.clear();
   config["name"] = charging_name;
@@ -431,37 +379,6 @@ bool mqtt_publish_sensors_config(const char* hostname, const char* name, const c
     }
     Serial.println("============ DEBUG CONFIG CHARGING END ========\n");
   }
-
-// sensor name config
-  config.clear();
-  config["name"] = name_name;
-  config["stat_t"] = sensors_topic_state;
-  config["val_tpl"] = "{{value_json.name}}";
-  config["uniq_id"] = name_name;
-  config["frc_upd"] = "true";
-  config["entity_category"] = "diagnostic";
-  config["exp_aft"] = 900;
-
-  CREATE_SENSOR_MQTT_DEVICE
-
-  size_c = serializeJson(config, config_json);
-  if (mqtt_connected){ if (!mqttc.publish(name_conf_topic,(uint8_t*)config_json,strlen(config_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}}
-  if (debug_mode) {
-    Serial.println("\n============ DEBUG CONFIG NAME ============");
-    Serial.println("Size of name config="+String(size_c)+" bytes");
-    Serial.println("Serialised config_json:");
-    Serial.println(config_json);
-    Serial.println("serializeJsonPretty");
-    serializeJsonPretty(config, Serial);
-    if (publish_status) {
-      Serial.println("\n NAME CONFIG OK");
-    } else
-    {
-      Serial.println("\n NAME CONFIG UNSUCCESSFULL");
-    }
-    Serial.println("============ DEBUG CONFIG NAME END ========\n");
-  }
-
 
 // sensor bootCount/boot config
   config.clear();
@@ -554,6 +471,83 @@ bool mqtt_publish_sensors_config(const char* hostname, const char* name, const c
     Serial.println("============ DEBUG CONFIG PRETTY ONTIME END ========\n");
   }
 
+}
+// "env" sensors only END
+
+// "motion" sensors only
+if (strcmp(myLocalData.sender_type, "motion") == 0)
+{
+
+  char motion_conf_topic[60];
+  snprintf(motion_conf_topic,sizeof(motion_conf_topic),"homeassistant/binary_sensor/%s/motion/config",hostname);
+  if (debug_mode) Serial.println("motion_conf_topic="+String(motion_conf_topic));
+
+  char motion_name[30];
+  snprintf(motion_name,sizeof(motion_name),"%s_motion",hostname);
+  if (debug_mode) Serial.println("motion_name="+String(motion_name));
+
+// motion config
+  config.clear();
+  config["name"] = motion_name;
+  config["dev_cla"] = "motion";
+  config["stat_t"] = sensors_topic_state;
+  config["val_tpl"] = "{{value_json.motion}}";
+  config["uniq_id"] = motion_name;
+  config["frc_upd"] = "true";
+  config["exp_aft"] = 3600;
+
+  CREATE_SENSOR_MQTT_DEVICE
+
+  size_c = serializeJson(config, config_json);
+  if (mqtt_connected){ if (!mqttc.publish(motion_conf_topic,(uint8_t*)config_json,strlen(config_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}}
+  if (debug_mode) {
+    Serial.println("\n============ DEBUG [MOTION] CONFIG ============");
+    Serial.println("Size of config="+String(size_c)+" bytes");
+    Serial.println("Serialised config_json:");
+    Serial.println(config_json);
+    Serial.println("serializeJsonPretty");
+    serializeJsonPretty(config, Serial);
+    if (publish_status) {
+      Serial.println("\n CONFIG published OK");
+    } else
+    {
+      Serial.println("\n CONFIG UNSUCCESSFULL");
+    }
+    Serial.println("============ DEBUG [MOTION] CONFIG END ========\n");
+  }
+}
+// "motion" sensors only END
+
+// sensor name config
+  config.clear();
+  config["name"] = name_name;
+  config["stat_t"] = sensors_topic_state;
+  config["val_tpl"] = "{{value_json.name}}";
+  config["uniq_id"] = name_name;
+  config["frc_upd"] = "true";
+  config["entity_category"] = "diagnostic";
+  config["exp_aft"] = 900;
+
+  CREATE_SENSOR_MQTT_DEVICE
+
+  size_c = serializeJson(config, config_json);
+  if (mqtt_connected){ if (!mqttc.publish(name_conf_topic,(uint8_t*)config_json,strlen(config_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}}
+  if (debug_mode) {
+    Serial.println("\n============ DEBUG CONFIG NAME ============");
+    Serial.println("Size of name config="+String(size_c)+" bytes");
+    Serial.println("Serialised config_json:");
+    Serial.println(config_json);
+    Serial.println("serializeJsonPretty");
+    serializeJsonPretty(config, Serial);
+    if (publish_status) {
+      Serial.println("\n NAME CONFIG OK");
+    } else
+    {
+      Serial.println("\n NAME CONFIG UNSUCCESSFULL");
+    }
+    Serial.println("============ DEBUG CONFIG NAME END ========\n");
+  }
+
 // sensor mac config
   config.clear();
   config["name"] = mac_name;
@@ -569,7 +563,7 @@ bool mqtt_publish_sensors_config(const char* hostname, const char* name, const c
   size_c = serializeJson(config, config_json);
   if (mqtt_connected){ if (!mqttc.publish(mac_conf_topic,(uint8_t*)config_json,strlen(config_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}}
   if (debug_mode) {
-    Serial.println("\n============ DEBUG CONFIG MAC ONTIME ============");
+    Serial.println("\n============ DEBUG CONFIG MAC ============");
     Serial.println("Size of mac config="+String(size_c)+" bytes");
     Serial.println("Serialised config_json:");
     Serial.println(config_json);
@@ -584,6 +578,99 @@ bool mqtt_publish_sensors_config(const char* hostname, const char* name, const c
     Serial.println("============ DEBUG CONFIG MAC END ========\n");
   }
 
+// rssi config
+  config.clear();
+  config["name"] = rssi_name;
+  config["dev_cla"] = "signal_strength";
+  config["stat_cla"] = "measurement";
+  config["stat_t"] = sensors_topic_state;
+  config["unit_of_meas"] = "dBm";
+  config["val_tpl"] = "{{value_json.rssi}}";
+  config["uniq_id"] = rssi_name;
+  config["frc_upd"] = "true";
+  config["entity_category"] = "diagnostic";
+  config["exp_aft"] = 900;
+
+  CREATE_SENSOR_MQTT_DEVICE
+
+  size_c = serializeJson(config, config_json);
+  if (mqtt_connected){ if (!mqttc.publish(rssi_conf_topic,(uint8_t*)config_json,strlen(config_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}}
+  if (debug_mode) {
+    Serial.println("\n============ DEBUG CONFIG RSSI ============");
+    Serial.println("Size of rssi config="+String(size_c)+" bytes");
+    Serial.println("Serialised config_json:");
+    Serial.println(config_json);
+    Serial.println("serializeJsonPretty");
+    serializeJsonPretty(config, Serial);
+    if (publish_status) {
+      Serial.println("\n CONFIG OK");
+    } else
+    {
+      Serial.println("\n CONFIG UNSUCCESSFULL");
+    }
+    Serial.println("============ DEBUG CONFIG RSSI END ========\n");
+  }
+
+// version config
+  config.clear();
+  config["name"] = version_name;
+  config["stat_t"] = sensors_topic_state;
+  config["val_tpl"] = "{{value_json.version}}";
+  config["uniq_id"] = version_name;
+  config["frc_upd"] = "true";
+  config["entity_category"] = "diagnostic";
+  config["exp_aft"] = 900;
+
+  CREATE_SENSOR_MQTT_DEVICE
+
+  size_c = serializeJson(config, config_json);
+  if (mqtt_connected){ if (!mqttc.publish(version_conf_topic,(uint8_t*)config_json,strlen(config_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}}
+  if (debug_mode) {
+    Serial.println("\n============ DEBUG CONFIG VERSION ============");
+    Serial.println("Size of version config="+String(size_c)+" bytes");
+    Serial.println("Serialised config_json:");
+    Serial.println(config_json);
+    Serial.println("serializeJsonPretty");
+    serializeJsonPretty(config, Serial);
+    if (publish_status) {
+      Serial.println("\n CONFIG OK");
+    } else
+    {
+      Serial.println("\n CONFIG UNSUCCESSFULL");
+    }
+    Serial.println("============ DEBUG CONFIG VERSION END ========\n");
+  }
+
+// sensor dev_type config
+  config.clear();
+  config["name"] = dev_type_name;
+  config["stat_t"] = sensors_topic_state;
+  config["val_tpl"] = "{{value_json.dev_type}}";
+  config["uniq_id"] = dev_type_name;
+  config["frc_upd"] = "true";
+  config["entity_category"] = "diagnostic";
+  config["exp_aft"] = 900;
+
+  CREATE_SENSOR_MQTT_DEVICE
+
+  size_c = serializeJson(config, config_json);
+  if (mqtt_connected){ if (!mqttc.publish(dev_type_conf_topic,(uint8_t*)config_json,strlen(config_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}}
+  if (debug_mode) {
+    Serial.println("\n============ DEBUG CONFIG DEV_TYPE ============");
+    Serial.println("Size of dev_type config="+String(size_c)+" bytes");
+    Serial.println("Serialised config_json:");
+    Serial.println(config_json);
+    Serial.println("serializeJsonPretty");
+    serializeJsonPretty(config, Serial);
+    if (publish_status) {
+      Serial.println("\n CONFIG OK");
+    } else
+    {
+      Serial.println("\n CONFIG UNSUCCESSFULL");
+    }
+    Serial.println("============ DEBUG CONFIG DEV_TYPE END ========\n");
+  }
+
   return publish_status;
 }
 
@@ -596,8 +683,8 @@ bool mqtt_publish_sensors_values()
     return false;
   }
 
-  struct_message myLocalData;
-  struct_message_aux myLocalData_aux;
+  // struct_message myLocalData;
+  // struct_message_aux myLocalData_aux;
 
   // protect the vulnerable ones... ;-)
   portENTER_CRITICAL(&receive_cb_mutex);
@@ -634,6 +721,8 @@ bool mqtt_publish_sensors_values()
     Serial.print("\tboot=");Serial.println(myLocalData.boot);
     Serial.print("\tontime=");Serial.println(myLocalData.ontime);
     Serial.print("\tpretty_ontime=");Serial.println(pretty_ontime);
+    Serial.print("\tsender_type=");Serial.println(myLocalData.sender_type);
+    Serial.print("\tmotion=");Serial.println(myLocalData.motion);
     Serial.println();
   }
 
@@ -642,7 +731,7 @@ bool mqtt_publish_sensors_values()
   #endif
 
   bool publish_status = true;
-  if (!mqtt_publish_sensors_config(myData.host,myData.name,myData_aux.macStr,myLocalData.ver))
+  if (!mqtt_publish_sensors_config(myLocalData.host,myLocalData.name,myLocalData_aux.macStr,myLocalData.ver))
   {
     Serial.printf("[%s]: SENSORS CONFIG NOT published\n",__func__);
     #ifdef SENSORS_LED_GPIO_BLUE
@@ -653,20 +742,36 @@ bool mqtt_publish_sensors_values()
 
   StaticJsonDocument<JSON_PAYLOAD_SIZE> payload;
 
+  // "env" sensors only END
+if (strcmp(myLocalData.sender_type, "env") == 0)
+{
   payload["temperature"]        = myLocalData.temp;
   payload["humidity"]           = myLocalData.hum;
   payload["lux"]                = myLocalData.lux;
   payload["battery"]            = myLocalData.bat;
   payload["batterypercent"]     = myLocalData.batpct;
   payload["batchr"]             = myLocalData.batchr;
-  payload["rssi"]               = myLocalData_aux.rssi;
-  payload["version"]            = myLocalData.ver;
   payload["charging"]           = myLocalData.charg;
-  payload["name"]               = myLocalData.name;
   payload["boot"]               = myLocalData.boot;
   payload["ontime"]             = myLocalData.ontime;
   payload["pretty_ontime"]      = pretty_ontime;
+}
+
+// "motion" sensors only
+if (strcmp(myLocalData.sender_type, "motion") == 0)
+{
+  if (strcmp(myLocalData.motion, "1") == 0)
+    payload["motion"] = "ON";
+  if (strcmp(myLocalData.motion, "0") == 0)
+    payload["motion"] = "OFF";
+}
+
+  payload["name"]               = myLocalData.name;
   payload["mac"]                = myLocalData_aux.macStr;
+  payload["rssi"]               = myLocalData_aux.rssi;
+  payload["version"]            = myLocalData.ver;
+  payload["dev_type"]           = myLocalData.sender_type;
+  // payload["sender_type"]        = myLocalData.sender_type;
 
   char payload_json[JSON_PAYLOAD_SIZE];
   int size_pl = serializeJson(payload, payload_json);
