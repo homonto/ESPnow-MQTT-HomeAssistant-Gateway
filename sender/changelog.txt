@@ -1,4 +1,10 @@
 2022-07-06:
+  1.15.b1 - added:
+            char sender_type[10]; // "motion" "env"
+            char motion[2];       // "0" "1"  [2]
+            for motion devices to reuse gateway with the same message structure
+
+2022-07-06:
   1.14.2  - default PERIODIC_FW_CHECK_HRS is now 168 - 7 days
   1.14.1  - turn off ENABLE_3V_GPIO when gather_data() fails (otherwise sleep current is 300uA)
 

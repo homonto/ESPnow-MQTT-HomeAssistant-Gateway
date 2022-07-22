@@ -36,7 +36,7 @@ sender.ino
 #define FORMAT_FS   0
 
 // version < 10 chars, description in changelog.txt
-#define VERSION "1.14.2"
+#define VERSION "1.15.b1"
 
 // configure device in this file, choose which one you are compiling for on top of this script: #define DEVICE_ID x
 #include "devices_config.h"
@@ -181,6 +181,8 @@ typedef struct struct_message
   char boot[6];         // 12345    [6]
   unsigned long ontime;
   char batchr[10];      // -234.6789 [10]
+  char sender_type[10]; // "motion" "env"
+  char motion[2];       // "0" "1"  [2]
 } struct_message;
 
 struct_message myData;
@@ -505,6 +507,14 @@ bool gather_data()
   #ifdef DEBUG
     Serial.printf("[%s]:\n",__func__);
   #endif
+  // sender_type - "env" so motion=0
+  snprintf(myData.sender_type,sizeof(myData.sender_type),"%s","env");
+  snprintf(myData.motion,sizeof(myData.motion),"%d",0);
+  #ifdef DEBUG
+    Serial.printf(" Data gatehered:\n\tsender_type=%s\n",myData.sender_type);
+    Serial.printf(" Data gatehered:\n\tmotion=%d\n",myData.motion);
+  #endif
+
   // hostname
   strcpy(myData.host, HOSTNAME);
   #ifdef DEBUG
