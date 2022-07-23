@@ -94,6 +94,7 @@ And that is what really matters with the battery life time calculation, because 
 <img width="435" alt="Screenshot 2022-06-19 at 22 20 59" src="https://user-images.githubusercontent.com/46562447/174500948-ce6a89dc-d225-4094-a5b6-923444074d7f.png">
 <br>
 So apparently the winner is <b>ESP32-S2 WROOM</b> with almost triple battery life.
+<b>EDIT:</b> Final product as per design above consumes while sleeping 33uA - I have included LDO to make sure I have stable 3.3V - unfortunately it takes 8uA - still, as described above, the clue is in the very short working time rather than few uA here or there during the sleep.
 <br>
 <h3>Measuring the working time</h3>
 To measure working time you shall NOT rely only on millis or micros. I.e. ESP32S reports millis as first line in setup() as xx while ESP32-S2 shows 280ms.
