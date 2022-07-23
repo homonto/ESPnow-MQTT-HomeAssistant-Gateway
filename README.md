@@ -29,13 +29,23 @@
 <br>
 <br>
 <br>
-<h3>Final PCB (ESP32-S2 based):</h3>
+<h3>Final PCB (ESP32-S2 based) - design:</h3>
 <img width="1299" alt="Screenshot 2022-07-07 at 21 27 09" src="https://user-images.githubusercontent.com/46562447/177865693-10016c07-eb08-447c-9519-59ccc6162da4.png">
 <br>
 <img width="1037" alt="Screenshot 2022-07-07 at 21 36 29" src="https://user-images.githubusercontent.com/46562447/177866919-afb88319-9ee9-4c2e-9bfc-9122b748b7b3.png">
 
 <br>
+<h3>Preparing the boards to solder:</h3>
+<img width="1221" alt="preparation" src="https://user-images.githubusercontent.com/46562447/180612901-c6468ebf-43ef-4aff-9153-c8fa3c386690.png">
+
+
+
 <br>
+<h3>Soldered on hot plate:</h3>
+<img width="1004" alt="soldered" src="https://user-images.githubusercontent.com/46562447/180612912-b02b499b-4335-4df5-aa38-8d840106d9a7.png">
+
+<br>
+
 <br>
 
 <h2>Power consumption and management</h2>
