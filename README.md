@@ -58,7 +58,7 @@ ESP32-S WROOM working time and current:
 <br>
 <img width="1635" alt="s working time 1-2022-06-17 at 20 33 04" src="https://user-images.githubusercontent.com/46562447/174502504-b3937797-6bf0-40bb-af8e-29bc7e98cdff.png">
 
-ESP32-S3 WROOM working time and current:
+ESP32-S2 WROOM working time and current:
 <br>
 <img width="1667" alt="s2 working time 1-2022-06-18 at 12 51 43" src="https://user-images.githubusercontent.com/46562447/174502510-bb3200b7-647a-4269-9ca5-2978d3c97793.png">
 
