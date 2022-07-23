@@ -17,10 +17,10 @@ sender.ino
 // detailed config in the file devices_config.h
 
 // #define DEVICE_ID  28           // "esp32028" - S,  production - Garage
-// #define DEVICE_ID  100          // "esp32100" - S2, production - Papa
+#define DEVICE_ID  100          // "esp32100" - S2, production - Papa
 // #define DEVICE_ID  101          // "esp32101" - S,  production - Dining
 // #define DEVICE_ID  102          // "esp32102" - S,  production - Toilet
-#define DEVICE_ID  104          // "esp32104" - S,  production - Milena
+// #define DEVICE_ID  104          // "esp32104" - S,  production - Milena
 // #define DEVICE_ID  105          // "esp32105" - S2, production - Garden
 
 // #define DEVICE_ID  86           // "esp32086" - S2, test - Lilygo1
@@ -36,7 +36,7 @@ sender.ino
 #define FORMAT_FS   0
 
 // version < 10 chars, description in changelog.txt
-#define VERSION "1.15.b1"
+#define VERSION "1.15.0"
 
 // configure device in this file, choose which one you are compiling for on top of this script: #define DEVICE_ID x
 #include "devices_config.h"
@@ -509,16 +509,16 @@ bool gather_data()
   #endif
   // sender_type - "env" so motion=0
   snprintf(myData.sender_type,sizeof(myData.sender_type),"%s","env");
-  snprintf(myData.motion,sizeof(myData.motion),"%d",0);
+  snprintf(myData.motion,sizeof(myData.motion),"%s","0");
   #ifdef DEBUG
     Serial.printf(" Data gatehered:\n\tsender_type=%s\n",myData.sender_type);
-    Serial.printf(" Data gatehered:\n\tmotion=%d\n",myData.motion);
+    Serial.printf("\tmotion=%s\n",myData.motion);
   #endif
 
   // hostname
   strcpy(myData.host, HOSTNAME);
   #ifdef DEBUG
-    Serial.printf(" Data gatehered:\n\thost=%s\n",myData.host);
+    Serial.printf("\thost=%s\n",myData.host);
   #endif
 
   // name

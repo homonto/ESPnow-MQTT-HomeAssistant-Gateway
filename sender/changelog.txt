@@ -1,3 +1,7 @@
+2022-07-23:
+  1.15.0 - "motion" "env" ok
+         - corrections
+
 2022-07-06:
   1.15.b1 - added:
             char sender_type[10]; // "motion" "env"
