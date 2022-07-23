@@ -45,9 +45,19 @@
 <img width="1004" alt="soldered" src="https://user-images.githubusercontent.com/46562447/180612912-b02b499b-4335-4df5-aa38-8d840106d9a7.png">
 
 <br>
+<h3>SHT31 - temperature and humidity sensor:</h3>
+<img width="721" alt="sht" src="https://user-images.githubusercontent.com/46562447/180615851-c810309d-3509-4d79-b8c0-36f1eb9ef930.png">
 
 <br>
+<h3>TSL2561 - light sensor:</h3>
+<img width="731" alt="tsl" src="https://user-images.githubusercontent.com/46562447/180615863-af1f1b5c-3b35-44e4-bff1-814092fb4a18.png">
 
+<br>
+<h3>Testing all before putting into the box:</h3>
+<img width="1158" alt="testing" src="https://user-images.githubusercontent.com/46562447/180615874-d182682f-36ac-4bc9-83c6-fdc08481ce72.png">
+
+<br>
+<br>
 <h2>Power consumption and management</h2>
 <h3> Sensor device is powered with LiPo battery and equipped with TP4056 USB-C charger.</h3>
 It can be connected to solar panel or - from time to time if possible/needed - to USB-C charger.
@@ -94,7 +104,13 @@ And that is what really matters with the battery life time calculation, because 
 <img width="435" alt="Screenshot 2022-06-19 at 22 20 59" src="https://user-images.githubusercontent.com/46562447/174500948-ce6a89dc-d225-4094-a5b6-923444074d7f.png">
 <br>
 So apparently the winner is <b>ESP32-S2 WROOM</b> with almost triple battery life.
-<b>EDIT:</b> Final product as per design above consumes while sleeping 33uA - I have included LDO to make sure I have stable 3.3V - unfortunately it takes 8uA - still, as described above, the clue is in the very short working time rather than few uA here or there during the sleep.
+<p>
+<b>EDIT:</b> Final product as per design above consumes while sleeping 33uA - I have included LDO to make sure I have stable 3.3V - unfortunately it takes 8uA - still, as described above, the clue is in the very short working time rather than few uA here or there during the sleep - we are still talking above 9 200 hours on 1 battery charge - more than a year (383 days).
+<p>
+<br>
+  <img width="470" alt="Screenshot 2022-07-23 at 18 24 08" src="https://user-images.githubusercontent.com/46562447/180616082-d279e82b-7feb-4438-9cb7-816fcb115e12.png">
+
+<br>
 <br>
 <h3>Measuring the working time</h3>
 To measure working time you shall NOT rely only on millis or micros. I.e. ESP32S reports millis as first line in setup() as xx while ESP32-S2 shows 280ms.
