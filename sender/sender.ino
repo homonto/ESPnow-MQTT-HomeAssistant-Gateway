@@ -3,7 +3,7 @@ sender.ino
 */
 
 // ******************************* DEBUG ***************************************
-// #define DEBUG
+#define DEBUG
 
 // #define PPK2_GPIO 35           // comment out if not used - GPIO to test power and timings using PPK2
 #define USE_FAKE_RECEIVER   0     // 1=use this to avoid flooding receiver/HA, any other proper receivers
@@ -17,13 +17,13 @@ sender.ino
 // detailed config in the file devices_config.h
 
 // #define DEVICE_ID  28           // "esp32028" - S,  production - Garage
-#define DEVICE_ID  100          // "esp32100" - S2, production - Papa
+// #define DEVICE_ID  100          // "esp32100" - S2, production - Papa
 // #define DEVICE_ID  101          // "esp32101" - S,  production - Dining
 // #define DEVICE_ID  102          // "esp32102" - S,  production - Toilet
 // #define DEVICE_ID  104          // "esp32104" - S,  production - Milena
 // #define DEVICE_ID  105          // "esp32105" - S2, production - Garden
 
-// #define DEVICE_ID  86           // "esp32086" - S2, test - Lilygo1
+#define DEVICE_ID  86           // "esp32086" - S2, test - Lilygo1
 // #define DEVICE_ID  89           // "esp32089" - S2, test - Lilygo3
 // #define DEVICE_ID  91           // "esp32091" - S,  testS
 // #define DEVICE_ID  92           // "esp32092" - S3, test - Ai-Thinker
@@ -33,7 +33,7 @@ sender.ino
 #define FORMAT_FS   0
 
 // version < 10 chars, description in changelog.txt
-#define VERSION "1.15.1a"
+#define VERSION "1.15.2"
 
 // configure device in this file, choose which one you are compiling for on top of this script: #define DEVICE_ID x
 #include "devices_config.h"
@@ -41,7 +41,7 @@ sender.ino
 // ****************  ALL BELOW ALL IS COMMON FOR ANY ESP32 *********************
 #define HIBERNATE           1     // 1=hibernate, 0=deep sleep
 #define WIFI_CHANNEL        8     // in my house
-#define MINIMUM_VOLTS       3.5   // this might go to every device section
+#define MINIMUM_VOLTS       3.3   // this might go to every device section
 #define WAIT_FOR_WIFI       5     // in seconds, for upgrade firmware
 #ifndef PERIODIC_FW_CHECK_HRS     // if not found custom PERIODIC_FW_CHECK_HRS in devices_config.h (per device custom)
   #define PERIODIC_FW_CHECK_HRS   168
