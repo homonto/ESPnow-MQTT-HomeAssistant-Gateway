@@ -219,7 +219,7 @@ test devices: esp32080 - 099
   // #define SCL_GPIO              19
   // #define GND_GPIO_FOR_LED      13
   // #define PERIODIC_FW_CHECK_HRS
-  #pragma message "compilation for: esp32086-new_dev"
+  #pragma message "compilation for: esp32086-new_device"
 //
 
 // *************** "esp32089" - S2, test - Lilygo3 ****************************

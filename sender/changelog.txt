@@ -1,5 +1,5 @@
 2022-07-24:
-  1.15.1 - lipo.reset() on reset button or power reconnect
+  1.15.1a - lipo.reset() on reset button or power reconnect
          - boot_reason in loop() as sometimes Serial is not fast enough to print in setup()
 
 2022-07-23:
