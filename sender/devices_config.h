@@ -198,28 +198,28 @@ test devices: esp32080 - 099
 // =======================================================================================================
 
 // *************** "esp32086" - S2, test -  ****************************
-// #elif DEVICE_ID == 86
-//   #define HOSTNAME              "esp32086"
-//   #define DEVICE_NAME           "new_dev"
-//   #define BOARD_TYPE            2
-//   #define ENABLE_3V_GPIO        3
-//   #define ACT_BLUE_LED_GPIO     6
-//   #define ERROR_RED_LED_GPIO    5
-//   #define CHARGING_GPIO         39
-//   #define POWER_GPIO            38
-//   #define SLEEP_TIME            30
-//   #define USE_MAX17048          1
-//   #define USE_SHT31             1
-//   #define USE_TSL2561           1
-//   #define USE_TEPT4400          0
-//   // #define LUX_ADC_GPIO          36
-//   // #define LUX_MAX_RAW_READING   2900
-//   // #define USE_CUSTOM_I2C_GPIO   0
-//   // #define SDA_GPIO              18
-//   // #define SCL_GPIO              19
-//   // #define GND_GPIO_FOR_LED      13
-//   // #define PERIODIC_FW_CHECK_HRS
-//   #pragma message "compilation for: esp32086-new_dev"
+#elif DEVICE_ID == 86
+  #define HOSTNAME              "esp32086"
+  #define DEVICE_NAME           "new_dev"
+  #define BOARD_TYPE            2
+  #define ENABLE_3V_GPIO        3
+  #define ACT_BLUE_LED_GPIO     6
+  #define ERROR_RED_LED_GPIO    5
+  #define CHARGING_GPIO         39
+  #define POWER_GPIO            38
+  #define SLEEP_TIME            5
+  #define USE_MAX17048          1
+  #define USE_SHT31             1
+  #define USE_TSL2561           1
+  #define USE_TEPT4400          0
+  // #define LUX_ADC_GPIO          36
+  // #define LUX_MAX_RAW_READING   2900
+  // #define USE_CUSTOM_I2C_GPIO   0
+  // #define SDA_GPIO              18
+  // #define SCL_GPIO              19
+  // #define GND_GPIO_FOR_LED      13
+  // #define PERIODIC_FW_CHECK_HRS
+  #pragma message "compilation for: esp32086-new_dev"
 //
 
 // *************** "esp32089" - S2, test - Lilygo3 ****************************

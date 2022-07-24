@@ -29,14 +29,11 @@ sender.ino
 // #define DEVICE_ID  92           // "esp32092" - S3, test - Ai-Thinker
 
 
-// **** reset MAX17048 on first deployment only, then change to 0 **************
-#define RESET_MAX17048  0
-
 // **** format FS on first deployment only, then change to 0 or comment out ****
 #define FORMAT_FS   0
 
 // version < 10 chars, description in changelog.txt
-#define VERSION "1.15.0"
+#define VERSION "1.15.1"
 
 // configure device in this file, choose which one you are compiling for on top of this script: #define DEVICE_ID x
 #include "devices_config.h"
@@ -199,6 +196,7 @@ long program_start_time,em,tt,start_espnow_time;
 int bootCount = 1;
 unsigned long saved_ontime_l = 0;
 unsigned long current_ontime_l = 0;
+byte boot_reason;
 
 // files to store some data
 #define BOOT_COUNT_FILE     "/bootcount.dat"
@@ -952,6 +950,11 @@ void setup()
   Serial.printf("[%s]: Device: %s (%s)\n",__func__,DEVICE_NAME,HOSTNAME);
   esp_sleep_enable_timer_wakeup(SLEEP_TIME * uS_TO_S_FACTOR);
 
+  boot_reason = esp_reset_reason();
+  //1 = reset pressed or battery changed/power reconnected
+  //3 = ESP.restart()
+  //8 = from sleep
+
 // custom SDA & SCL
   #if (USE_CUSTOM_I2C_GPIO == 1)
     Wire.setPins(SDA_GPIO,SCL_GPIO);
@@ -1003,10 +1006,13 @@ void setup()
       #endif
       // quickStart restarts measuring change rate - disabling it - test it!
       // lipo.quickStart();
-      #if (RESET_MAX17048 == 1)
-        Serial.printf("[%s]: !!! Resetting MAX17048 - MAKE SURE TO DISABLE IT ON NEXT COMPILATION !!!\n",__func__);
+      if (boot_reason == 1)
+      {
+        #ifdef DEBUG
+          Serial.printf("[%s]: Resetting MAX17048 on reset button pressed or battery changed/power reconnected\n",__func__);
+        #endif
         lipo.reset();
-      #endif
+      }
     }
   #else
     #ifdef DEBUG
@@ -1084,11 +1090,7 @@ void setup()
       }
     }
     // reset bootCount on DRD_Detected or on button reset
-    byte boot_reason = esp_reset_reason();
     if ((DRD_Detected) or (boot_reason == 1)) bootCount = 1;
-    #ifdef DEBUG
-      Serial.printf("[%s]: boot_reason=%d\n",__func__,boot_reason);
-    #endif
 
     // convert int to char array
     int nbytes = snprintf(NULL,0,"%d",bootCount) + 1;
@@ -1283,6 +1285,11 @@ void setup()
 // loop
 void loop()
 {
+  // second time print as sometimes serial does not show the beginning - just for debug
+  #ifdef DEBUG
+    Serial.printf("[%s]: boot_reason=%d\n",__func__,boot_reason);
+  #endif
+
   drd->loop();
   if (!DRD_Detected)
   {
