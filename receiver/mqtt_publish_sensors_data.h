@@ -10,11 +10,18 @@ mqtt functions for sensors
 bool mqtt_publish_sensors_config(const char* hostname, const char* name, const char* mac, const char* fw)
 {
   // sensor device definition
+    /*
+    name with MAC of sender:
+    dev["name"]="ESPnow_" + String(hostname) + "_" + String(name) + "_" + String(mac); \
+    name without MAC of sender:
+    dev["name"]="ESPnow_" + String(hostname) + "_" + String(name); \
+    */
+
     #define CREATE_SENSOR_MQTT_DEVICE \
     dev = config.createNestedObject("device"); \
     dev["ids"]=mac;  \
     dev["name"]="ESPnow_" + String(hostname) + "_" + String(name); \
-    dev["mdl"]="model"; \
+    dev["mdl"]="ESP32"; \
     dev["mf"]="ZH"; \
     dev["sw"]= fw;
   // sensor device definition END

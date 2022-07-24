@@ -7,7 +7,7 @@
 /*
 receiver.ino
 */
-#define VERSION "1.11.b1"
+#define VERSION "1.11.b2"
 
 
 // libraries
