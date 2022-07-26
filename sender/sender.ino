@@ -3,7 +3,7 @@ sender.ino
 */
 
 // ******************************* DEBUG ***************************************
-#define DEBUG
+// #define DEBUG
 
 // #define PPK2_GPIO 35           // comment out if not used - GPIO to test power and timings using PPK2
 #define USE_FAKE_RECEIVER   0     // 1=use this to avoid flooding receiver/HA, any other proper receivers
@@ -17,10 +17,10 @@ sender.ino
 // detailed config in the file devices_config.h
 
 // #define DEVICE_ID  28           // "esp32028" - S,  production - Garage
-#define DEVICE_ID  100          // "esp32100" - S2, production - Papa
+// #define DEVICE_ID  100          // "esp32100" - S2, production - Papa
 // #define DEVICE_ID  101          // "esp32101" - S,  production - Dining
 // #define DEVICE_ID  102          // "esp32102" - S,  production - Toilet
-// #define DEVICE_ID  104          // "esp32104" - S,  production - Milena
+#define DEVICE_ID  104          // "esp32104" - S,  production - Milena
 // #define DEVICE_ID  105          // "esp32105" - S2, production - Garden
 
 // #define DEVICE_ID  86           // "esp32086" - S2, test - Lilygo1
@@ -33,7 +33,7 @@ sender.ino
 #define FORMAT_FS   0
 
 // version < 10 chars, description in changelog.txt
-#define VERSION "1.15.2"
+#define VERSION "1.16.0"
 
 // configure device in this file, choose which one you are compiling for on top of this script: #define DEVICE_ID x
 #include "devices_config.h"
@@ -163,23 +163,22 @@ uint8_t broadcastAddress_all[]  = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 // final receiver MAC address, changeable in the code depends on bootCount
 uint8_t broadcastAddress[]      = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-
-typedef struct struct_message
+typedef struct struct_message          // 88 bytes
 {
-  char host[10];        // esp32123 [9]
-  char temp[7];         // 123.56   [7]
-  char hum[7];          // 123.56   [7]
-  char lux[6];          // 12345    [6]
-  char bat[5];          // 1.34     [5]
-  char batpct[8];       // 123.56   [7]
-  char ver[10];         // 123.56.89[10]
-  char charg[5];        // FULL     [5]
-  char name[11];        //          [11]
-  char boot[6];         // 12345    [6]
-  unsigned long ontime;
-  char batchr[10];      // -234.6789 [10]
-  char sender_type[10]; // "motion" "env"
-  char motion[2];       // "0" "1"  [2]
+  char host[10];        // esp32123   - 9 characters maximum (esp32123=8)
+  char name[16];        // 15 characters maximum
+  char ver[10];         // 123.56.89  - 9 characters maximum (123.56.89=9)
+  char sender_type[10]; // "motion" "env", space for others as well in the future
+  char charg[5];        // "FULL","ON","NC" - 4 characters maximum
+  float temp;
+  float hum;
+  float lux;
+  float bat;
+  float batpct;
+  float batchr;
+  byte motion;          // 0 - no motion, 1 - motion
+  unsigned int boot;
+  unsigned long ontime; // seconds, probably unsigned int would be enough - check it
 } struct_message;
 
 struct_message myData;
@@ -188,7 +187,7 @@ esp_now_peer_info_t peerInfo;
 
 // auxuliary variables
 #define uS_TO_S_FACTOR 1000000ULL
-// become false if sensor is not initiated, it sends then "N/A"
+// become false if sensor is not initiated, it sends then "0.0"
 bool sht31ok = true;
 bool max17ok = true;
 bool tslok   = true;
@@ -214,7 +213,7 @@ char charging[5];
 // ****************  FUNCTIONS *************************
 
 // declaration
-void lux_with_tept(char* lux);
+void lux_with_tept(long int* lux_int);
 void charging_state();
 void listDir(fs::FS &fs, const char * dirname, uint8_t levels);
 bool readFile(fs::FS &fs, const char * path, char * data);
@@ -237,7 +236,7 @@ void do_esp_restart();
 // implementation
 // lux from ADC
 #if (USE_TEPT4400 == 1)
-  void lux_with_tept(char* lux)
+  void lux_with_tept(long int* lux_int)
   {
     // it takes 5ms max
     #ifdef DEBUG
@@ -245,7 +244,7 @@ void do_esp_restart();
     #endif
 
     uint32_t read_digital = 0;
-    size_t nbytes;
+    // size_t nbytes;
 
     analogSetPinAttenuation(LUX_ADC_GPIO, ADC_11db);
     adcAttachPin(LUX_ADC_GPIO);
@@ -259,12 +258,11 @@ void do_esp_restart();
     #endif
 
     if (read_digital > LUX_MAX_RAW_READING) read_digital = LUX_MAX_RAW_READING;
-    nbytes = snprintf(NULL,0,"%d",map(read_digital, 0, LUX_MAX_RAW_READING, 0, LUX_MAX_RAW_MAPPED_READING)) +1;
-    snprintf(lux,nbytes,"%d",map(read_digital, 0, LUX_MAX_RAW_READING, 0, LUX_MAX_RAW_MAPPED_READING));
-    #ifdef DEBUG
-      long mt=millis()-sm;
-      Serial.printf("\t[%s]: lux_with_tept TIME: %dms\n",__func__,mt);
-    #endif
+    *lux_int = map(read_digital, 0, LUX_MAX_RAW_READING, 0, LUX_MAX_RAW_MAPPED_READING);
+    // #ifdef DEBUG
+    //   long mt=millis()-sm;
+    //   Serial.printf("\t[%s]: lux_with_tept TIME: %dms\n",__func__,mt);
+    // #endif
   }
 #endif
 
@@ -507,10 +505,10 @@ bool gather_data()
   #endif
   // sender_type - "env" so motion=0
   snprintf(myData.sender_type,sizeof(myData.sender_type),"%s","env");
-  snprintf(myData.motion,sizeof(myData.motion),"%s","0");
+  myData.motion = 0;    // always 0 for normal env sensor
   #ifdef DEBUG
     Serial.printf(" Data gatehered:\n\tsender_type=%s\n",myData.sender_type);
-    Serial.printf("\tmotion=%s\n",myData.motion);
+    Serial.printf("\tmotion=%d\n",myData.motion);
   #endif
 
   // hostname
@@ -526,24 +524,27 @@ bool gather_data()
   #endif
 
   // sht31
-  snprintf(myData.temp,sizeof(myData.temp),"%s","N/A");
-  snprintf(myData.hum,sizeof(myData.hum),"%s","N/A");
+  myData.temp = 0.00f;
+  myData.hum = 0.00f;
   #if (USE_SHT31 == 1)
     if (sht31ok)
     {
-      snprintf(myData.temp,sizeof(myData.temp),"%0.2f",sht31.readTemperature());
-      snprintf(myData.hum,sizeof(myData.hum),"%0.2f",sht31.readHumidity());
+      myData.temp = sht31.readTemperature();
+      myData.hum = sht31.readHumidity();
     }
   #endif
   #ifdef DEBUG
-    Serial.printf("\ttemp=%sC\n",myData.temp);
-    Serial.printf("\thum=%s%%\n",myData.hum);
+    Serial.printf("\ttemp=%fC\n",myData.temp);
+    Serial.printf("\thum=%f%%\n",myData.hum);
   #endif
 
   // lux
-  snprintf(myData.lux,sizeof(myData.lux),"%s","N/A");
+  myData.lux = 0.0f;
   #if (USE_TEPT4400 == 1)
-    lux_with_tept(myData.lux);
+    long int lux_int;
+    lux_with_tept(&lux_int);
+    myData.lux = (float)lux_int;
+
   #elif (USE_TSL2561 == 1)
     unsigned int data0, data1; //data0=infrared, data1=visible light
     double lux;              // Resulting lux value
@@ -564,33 +565,25 @@ bool gather_data()
     delay(ms);
     light.manualStop();
 
+    myData.lux = 0.0f;
     if (tslok)
     {
       if (light.getData(data0,data1))
       {
         good = light.getLux(gain,ms,data0,data1,lux);
-        byte nbytes = snprintf(NULL,0,"%0f",lux) +1;
-        snprintf(myData.lux,nbytes,"%0.0f",lux);
+        myData.lux = lux;
       }
-      else
-      {
-        // measurement not ok
-        snprintf(myData.lux,sizeof(myData.lux),"%s","N/A");
-      }
-    } else
-    {
-      // tslok (sensor initialize) not ok
-      snprintf(myData.lux,sizeof(myData.lux),"%s","N/A");
     }
+
   #endif
   #ifdef DEBUG
-    Serial.printf("\tlux=%slx\n",myData.lux);
+    Serial.printf("\tlux=%flx\n",myData.lux);
   #endif
 
   // battery
-  snprintf(myData.bat,sizeof(myData.bat),"%s","N/A");
-  snprintf(myData.batpct,sizeof(myData.batpct),"%s","N/A");
-  snprintf(myData.batchr,sizeof(myData.batchr),"%s","N/A");
+  myData.bat = 0.0f;
+  myData.batpct = 0.0f;
+  myData.batchr = 0.0f;
 
   #if (USE_MAX17048 == 1)
     if (max17ok)
@@ -604,23 +597,15 @@ bool gather_data()
         // }
       // testing delay 195ms END
 
-      float bat_volts = 0.0f;
-      float bat_pct = 0.0f;
-      float bat_chr = 0.0f;
-
-      bat_volts = lipo.getVoltage();
-      bat_pct = lipo.getSOC();
-      bat_chr = lipo.getChangeRate();
-
-      snprintf(myData.bat,sizeof(myData.bat),"%0.2f",bat_volts);
-      snprintf(myData.batpct,sizeof(myData.batpct),"%0.2f",bat_pct);
-      snprintf(myData.batchr,sizeof(myData.batchr),"%0.4f",bat_chr);
+      myData.bat = lipo.getVoltage();
+      myData.batpct = lipo.getSOC();
+      myData.batchr = lipo.getChangeRate();
 
       // EMERGENCY - LOW BATTERY!
-      if (bat_volts < MINIMUM_VOLTS)
+      if (myData.bat < MINIMUM_VOLTS)
       {
         // #ifdef DEBUG
-          Serial.printf("[%s]: battery volts=%0.2fV, that is below minimum [%0.2fV]\n",__func__,bat_volts,MINIMUM_VOLTS);
+          Serial.printf("[%s]: battery volts=%0.2fV, that is below minimum [%0.2fV]\n",__func__,myData.bat,MINIMUM_VOLTS);
         // #endif
 
         if (DRD_Detected)
@@ -650,9 +635,9 @@ bool gather_data()
     // lipo.sleep();
   #endif
   #ifdef DEBUG
-    Serial.printf("\tbat=%sV\n",myData.bat);
-    Serial.printf("\tbatpct=%s%%\n",myData.batpct);
-    Serial.printf("\tbatchr=%s%%\n",myData.batchr);
+    Serial.printf("\tbat=%fV\n",myData.bat);
+    Serial.printf("\tbatpct=%f%%\n",myData.batpct);
+    Serial.printf("\tbatchr=%f%%\n",myData.batchr);
   #endif
 
   // version
@@ -675,9 +660,9 @@ bool gather_data()
   #endif
 
   // bootCount
-  snprintf(myData.boot,sizeof(myData.boot),"%d",bootCount);
+  myData.boot = bootCount;
   #ifdef DEBUG
-    Serial.printf("\tboot=%s\n",myData.boot);
+    Serial.printf("\tboot=%d\n",myData.boot);
   #endif
 
   // ontime in seconds rather than ms
@@ -939,12 +924,7 @@ void setup()
 {
   program_start_time = millis();
 
-// testing with PPK2
-  #ifdef PPK2_GPIO
-    pinMode(PPK2_GPIO,OUTPUT);
-    digitalWrite(PPK2_GPIO,HIGH);
-  #endif
-
+  // welcome screen
   Serial.begin(115200);
   Serial.printf("\n======= S T A R T =======\n");
   Serial.printf("[%s]: Device: %s (%s)\n",__func__,DEVICE_NAME,HOSTNAME);
@@ -955,22 +935,32 @@ void setup()
   //3 = ESP.restart()
   //8 = from sleep
 
+  // LEDS: BLUE ON, RED OFF, GND for LED LOW if needed
+  #ifdef ERROR_RED_LED_GPIO
+    pinMode(ERROR_RED_LED_GPIO,OUTPUT);
+    digitalWrite(ERROR_RED_LED_GPIO, LOW);
+  #endif
+  #ifdef ACT_BLUE_LED_GPIO
+    pinMode(ACT_BLUE_LED_GPIO,OUTPUT);
+    digitalWrite(ACT_BLUE_LED_GPIO, HIGH);
+  #endif
+  #ifdef GND_GPIO_FOR_LED
+    #ifdef DEBUG
+      Serial.printf("[%s]: Enabling GND for LED on GPIO=%d\n",__func__,GND_GPIO_FOR_LED);
+    #endif
+    pinMode(GND_GPIO_FOR_LED, OUTPUT);
+    digitalWrite(GND_GPIO_FOR_LED, LOW);
+  #endif
+
+// testing with PPK2
+  #ifdef PPK2_GPIO
+    pinMode(PPK2_GPIO,OUTPUT);
+    digitalWrite(PPK2_GPIO,HIGH);
+  #endif
+
 // custom SDA & SCL
   #if (USE_CUSTOM_I2C_GPIO == 1)
     Wire.setPins(SDA_GPIO,SCL_GPIO);
-  #endif
-
-// turn on LED
-  #ifdef ACT_BLUE_LED_GPIO
-    #ifdef GND_GPIO_FOR_LED
-      #ifdef DEBUG
-        Serial.printf("[%s]: Enabling GND for LED on GPIO=%d\n",__func__,GND_GPIO_FOR_LED);
-      #endif
-      pinMode(GND_GPIO_FOR_LED, OUTPUT);
-      digitalWrite(GND_GPIO_FOR_LED, LOW);
-    #endif
-    pinMode(ACT_BLUE_LED_GPIO, OUTPUT);
-    digitalWrite(ACT_BLUE_LED_GPIO, HIGH);
   #endif
 
 // power for sensors from GPIO - MUST be before any SDA sensor is in use obviously!
@@ -1037,11 +1027,9 @@ void setup()
     // #endif
     DRD_Detected = true;
     #ifdef ERROR_RED_LED_GPIO
-      pinMode(ERROR_RED_LED_GPIO,OUTPUT);
       digitalWrite(ERROR_RED_LED_GPIO, HIGH);
     #else
       #ifdef ACT_BLUE_LED_GPIO
-        pinMode(ACT_BLUE_LED_GPIO,OUTPUT);
         digitalWrite(ACT_BLUE_LED_GPIO, HIGH);
       #endif
     #endif
@@ -1291,6 +1279,7 @@ void loop()
   #endif
 
   drd->loop();
+  // DRD_Detected = true; //drain battery by performing upgrade always ;-)
   if (!DRD_Detected)
   {
     drd->stop();

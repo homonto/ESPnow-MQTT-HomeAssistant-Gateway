@@ -1,9 +1,11 @@
 #pragma once
 /*
+last updated to the new version: esp32100
+
 device configuration template:
 
 #define HOSTNAME              "esp32028"   // obligatory, max 9 characters
-#define DEVICE_NAME           "Garage"     // obligatory, max 10 characters
+#define DEVICE_NAME           "Garage"     // obligatory, max 15 characters
 #define BOARD_TYPE            1     // obligatory, 1=ESP32/WROOM,WROVER 2=ESP32S2 3=ESP32S3 4=ESP32C3
 #define ENABLE_3V_GPIO        21    // if not equipped comment out - power for sensors from Vcc
 #define ACT_BLUE_LED_GPIO     25    // if not equipped comment out - it blinks when sensor is ON/ if not defined ERROR_RED_LED_GPIO then it blinks when upgrade firmware is ongoing or on error
@@ -51,30 +53,6 @@ test devices: esp32080 - 099
   // #define PERIODIC_FW_CHECK_HRS
   #pragma message "compilation for: esp32028-Garage"
 
-// // *************** "esp32100" - S2, production - Papa ************************
-// #elif DEVICE_ID == 100
-//   #define HOSTNAME              "esp32100"
-//   #define DEVICE_NAME           "Papa"
-//   #define BOARD_TYPE            2
-//   #define ENABLE_3V_GPIO        5
-//   #define ACT_BLUE_LED_GPIO     1
-//   #define ERROR_RED_LED_GPIO    1
-//   #define CHARGING_GPIO         38
-//   #define POWER_GPIO            39
-//   #define SLEEP_TIME            180
-//   #define USE_MAX17048          1
-//   #define USE_SHT31             1
-//   #define USE_TSL2561           0
-//   #define USE_TEPT4400          1
-//   #define LUX_ADC_GPIO          4
-//   #define LUX_MAX_RAW_READING   6767
-//   #define USE_CUSTOM_I2C_GPIO   0
-//   #define SDA_GPIO              18
-//   #define SCL_GPIO              19
-//   // #define GND_GPIO_FOR_LED      13
-//   // #define PERIODIC_FW_CHECK_HRS
-//   #pragma message "compilation for: esp32100-Papa"
-
 // *************** "esp32100" - S2, production - Papa ************************
 #elif DEVICE_ID == 100
   #define HOSTNAME              "esp32100"
@@ -90,8 +68,8 @@ test devices: esp32080 - 099
   #define USE_SHT31             1
   #define USE_TSL2561           1
   #define USE_TEPT4400          0
-  // #define LUX_ADC_GPIO          36
-  // #define LUX_MAX_RAW_READING   2900
+  #define LUX_ADC_GPIO          13
+  #define LUX_MAX_RAW_READING   2900
   // #define USE_CUSTOM_I2C_GPIO   0
   // #define SDA_GPIO              18
   // #define SCL_GPIO              19
