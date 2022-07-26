@@ -78,7 +78,7 @@ test devices: esp32080 - 099
 // *************** "esp32100" - S2, production - Papa ************************
 #elif DEVICE_ID == 100
   #define HOSTNAME              "esp32100"
-  #define DEVICE_NAME           "Papa_New"
+  #define DEVICE_NAME           "Papa"
   #define BOARD_TYPE            2
   #define ENABLE_3V_GPIO        3
   #define ACT_BLUE_LED_GPIO     6
