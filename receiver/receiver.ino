@@ -1,13 +1,13 @@
 // #define DEBUG
 
-// #define DEVICE_ID  29           // "esp32029" - S2, MAC: FF, odd bootCount or all if BROADCAST
-#define DEVICE_ID  30           // "esp32030" - S2, MAC: EE, even bootCount or all if BROADCAST
+#define DEVICE_ID  29           // "esp32029" - S2, MAC: FF, odd bootCount or all if BROADCAST
+// #define DEVICE_ID  30           // "esp32030" - S2, MAC: EE, even bootCount or all if BROADCAST
 // #define DEVICE_ID  91           // "esp32031" - S,  MAC: FE, even bootCount or all if BROADCAST
 
 /*
 receiver.ino
 */
-#define VERSION "1.11.b2"
+#define VERSION "1.12.0"
 
 
 // libraries
@@ -354,10 +354,8 @@ void loop()
   int queue_count = uxQueueMessagesWaiting(queue);
   if (queue_count > 0)
   {
-    // if (debug_mode) Serial.printf("queue size=%d\n",queue_count);
-    if (publish_sensors_to_ha)
-    {
-      mqtt_publish_sensors_values();
-    }
+    // if (debug_mode)
+      Serial.printf("queue size=%d\n",queue_count);
+    mqtt_publish_sensors_values();
   }
 }

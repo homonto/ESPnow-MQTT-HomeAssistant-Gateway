@@ -684,16 +684,18 @@ if (strcmp(myLocalData.sender_type, "motion") == 0)
 
 bool mqtt_publish_sensors_values()
 {
-  if (!publish_sensors_to_ha)
-  {
-    if (debug_mode) Serial.printf(" | NOT sending to HA\n");
-    return false;
-  }
+  // aux variable to format floats
+  char temp_value[50];
 
-  // struct_message myLocalData;
-  // struct_message_aux myLocalData_aux;
+  // removing from here prints received data on screen BUT it always removes data from the queue -
+  // check which one makes sense: here or before mqtt_publish_sensors_data
+  // if (!publish_sensors_to_ha)
+  // {
+  //   if (debug_mode) Serial.printf(" | NOT sending to HA\n");
+  //   return false;
+  // }
 
-  // protect the vulnerable ones... ;-)
+  // protect the vulnerable ones while touching the queue ... ;-)
   portENTER_CRITICAL(&receive_cb_mutex);
     xQueueReceive(queue, &myLocalData, portMAX_DELAY);
     xQueueReceive(queue_aux, &myLocalData_aux, portMAX_DELAY);
@@ -708,10 +710,10 @@ bool mqtt_publish_sensors_values()
   ConvertSectoDay(myLocalData.ontime,pretty_ontime);
 
   Serial.printf("[%s]:\n",__func__);
-  Serial.printf("\t%d bytes received from: %s: rssi=%ddBm, boot=%s",sizeof(myLocalData), myLocalData.host, myLocalData_aux.rssi, myLocalData.boot);
+  Serial.printf("\t%d bytes received from: %s: rssi=%ddBm, boot=%d",sizeof(myLocalData), myLocalData.host, myLocalData_aux.rssi, myLocalData.boot);
 
-  if (debug_mode)
-  {
+  // if (debug_mode)
+  // {
     Serial.println("\nESPnow Message received from:");
     Serial.print("\tname=");Serial.println(myLocalData.name);
     Serial.print("\thostname=");Serial.println(myLocalData.host);
@@ -731,7 +733,7 @@ bool mqtt_publish_sensors_values()
     Serial.print("\tsender_type=");Serial.println(myLocalData.sender_type);
     Serial.print("\tmotion=");Serial.println(myLocalData.motion);
     Serial.println();
-  }
+  // }
 
   #ifdef SENSORS_LED_GPIO_BLUE
     digitalWrite(SENSORS_LED_GPIO_BLUE,HIGH);
@@ -749,42 +751,53 @@ bool mqtt_publish_sensors_values()
 
   StaticJsonDocument<JSON_PAYLOAD_SIZE> payload;
 
-  // "env" sensors only END
+  // "env" sensors only
 if (strcmp(myLocalData.sender_type, "env") == 0)
 {
-  payload["temperature"]        = myLocalData.temp;
-  payload["humidity"]           = myLocalData.hum;
-  payload["lux"]                = myLocalData.lux;
-  payload["battery"]            = myLocalData.bat;
-  payload["batterypercent"]     = myLocalData.batpct;
-  payload["batchr"]             = myLocalData.batchr;
+  // rounding floats to %0.xf accordingly
+  snprintf(temp_value,sizeof(temp_value),"%0.2f",myData.temp);
+  payload["temperature"]        = temp_value;
+  snprintf(temp_value,sizeof(temp_value),"%0.2f",myData.hum);
+  payload["humidity"]           = temp_value;
+  snprintf(temp_value,sizeof(temp_value),"%0.1f",myData.lux);
+  payload["lux"]                = temp_value;
+  snprintf(temp_value,sizeof(temp_value),"%0.2f",myData.bat);
+  payload["battery"]            = temp_value;
+  snprintf(temp_value,sizeof(temp_value),"%0.2f",myData.batpct);
+  payload["batterypercent"]     = temp_value;
+  snprintf(temp_value,sizeof(temp_value),"%0.3f",myData.batchr);
+  payload["batchr"]             = temp_value;
+
   payload["charging"]           = myLocalData.charg;
   payload["boot"]               = myLocalData.boot;
   payload["ontime"]             = myLocalData.ontime;
   payload["pretty_ontime"]      = pretty_ontime;
 }
+  // "env" sensors only END
 
 // "motion" sensors only
 if (strcmp(myLocalData.sender_type, "motion") == 0)
 {
-  if (strcmp(myLocalData.motion, "1") == 0)
+  if (myLocalData.motion == 1)
     payload["motion"] = "ON";
-  if (strcmp(myLocalData.motion, "0") == 0)
+  if (myLocalData.motion == 0)
     payload["motion"] = "OFF";
 }
+// "motion" sensors only END
 
   payload["name"]               = myLocalData.name;
   payload["mac"]                = myLocalData_aux.macStr;
   payload["rssi"]               = myLocalData_aux.rssi;
   payload["version"]            = myLocalData.ver;
   payload["dev_type"]           = myLocalData.sender_type;
-  // payload["sender_type"]        = myLocalData.sender_type;
 
   char payload_json[JSON_PAYLOAD_SIZE];
   int size_pl = serializeJson(payload, payload_json);
 
-  if (mqtt_connected){ if (!mqttc.publish(sensors_topic_state,(uint8_t*)payload_json,strlen(payload_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}}
-  // #ifdef DEBUG
+
+  if (publish_sensors_to_ha)
+  {
+    if (mqtt_connected){ if (!mqttc.publish(sensors_topic_state,(uint8_t*)payload_json,strlen(payload_json), true)) { publish_status = false; Serial.println("PUBLISH FAILED");}}
     Serial.printf(" -> sending to HA...");
     if (publish_status)
     {
@@ -793,26 +806,29 @@ if (strcmp(myLocalData.sender_type, "motion") == 0)
     {
       Serial.println("FAILED");
     }
-  // #endif
-  if (debug_mode) {
-    Serial.println("\n============ DEBUG PAYLOAD SENSORS============");
-    Serial.println("Size of sensors payload="+String(size_pl)+" bytes");
-    Serial.println("Serialised payload_json:");
-    Serial.println(payload_json);
-    Serial.println("serializeJsonPretty");
-    serializeJsonPretty(payload, Serial);
-    if (publish_status) {
-      Serial.println("\n SENSORS VALUES published OK");
-    } else
-    {
-      Serial.println("\n SENSORS VALUES NOT published");
+    if (debug_mode) {
+      Serial.println("\n============ DEBUG PAYLOAD SENSORS============");
+      Serial.println("Size of sensors payload="+String(size_pl)+" bytes");
+      Serial.println("Serialised payload_json:");
+      Serial.println(payload_json);
+      Serial.println("serializeJsonPretty");
+      serializeJsonPretty(payload, Serial);
+      if (publish_status) {
+        Serial.println("\n SENSORS VALUES published OK");
+      } else
+      {
+        Serial.println("\n SENSORS VALUES NOT published");
+      }
+      Serial.println("============ DEBUG PAYLOAD SENSORS END ========\n");
     }
-    Serial.println("============ DEBUG PAYLOAD SENSORS END ========\n");
+    if (!publish_status) {Serial.println("\n SENSORS VALUES NOT published");}
+
+    publish_status = mqtt_publish_gw_last_updated_sensor_values(myLocalData.host);
+  } else
+  {
+    Serial.println(" -> NOT sending to HA as publish_sensors_to_ha=OFF\n");
+    mqtt_publish_gw_last_updated_sensor_values("N/A");
   }
-  if (!publish_status) {Serial.println("\n SENSORS VALUES NOT published");}
-
-
-  publish_status = mqtt_publish_gw_last_updated_sensor_values(myLocalData.host);
 
   #ifdef DEBUG
     Serial.printf("[%s]: updating GW on HA...",__func__);

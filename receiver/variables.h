@@ -5,26 +5,26 @@ variables
 #include "config.h"
 
 // data structure for sensors
-/* TODO: change to:
-- unsigned int: boot, lux
-- float: temp, hum, bat, batpct, batchr
+/* TODO:
+
 */
-typedef struct struct_message
+
+typedef struct struct_message          // 88 bytes
 {
-  char host[10];        // esp32123 [9]
-  char temp[7];         // 123.56   [7]
-  char hum[7];          // 123.56   [7]
-  char lux[6];          // 12345    [6]
-  char bat[5];          // 1.34     [5]
-  char batpct[8];       // 123.56   [7]
-  char ver[10];         // 123.56.89[10]
-  char charg[5];        // FULL     [5]
-  char name[11];        //          [11]
-  char boot[6];         // 12345    [6]
-  unsigned long ontime;
-  char batchr[10];       // -234.6789 [10]
-  char sender_type[10];  // "motion" "env"
-  char motion[2];        // "0" "1"  [2]
+  char host[10];        // esp32123   - 9 characters maximum (esp32123=8)
+  char name[16];        // 15 characters maximum
+  char ver[10];         // 123.56.89  - 9 characters maximum (123.56.89=9)
+  char sender_type[10]; // "motion" "env", space for others as well in the future
+  char charg[5];        // "FULL","ON","NC" - 4 characters maximum
+  float temp;
+  float hum;
+  float lux;
+  float bat;
+  float batpct;
+  float batchr;
+  byte motion;          // 0 - no motion, 1 - motion
+  unsigned int boot;
+  unsigned long ontime; // seconds, probably unsigned int would be enough - check it
 } struct_message;
 // espnow data structure END
 

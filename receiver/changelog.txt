@@ -2,6 +2,9 @@ TODO:
 1 - implement #ifdef DEBUG instead of if (debug_mode)
 2 - data structure for sensors - change from char[] to digits
 
+2022-07-26:
+  1.12.0  - change of the data structure 
+
 2022-07-24:
   1.11.b2 - device name with or without MAC (chose in mqtt_publish_sensors_config())
           - model = ESP32
