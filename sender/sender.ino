@@ -17,23 +17,22 @@ sender.ino
 // detailed config in the file devices_config.h
 
 // #define DEVICE_ID  28           // "esp32028" - S,  production - Garage
-// #define DEVICE_ID  100          // "esp32100" - S2, production - Papa
-// #define DEVICE_ID  101          // "esp32101" - S,  production - Dining
-// #define DEVICE_ID  102          // "esp32102" - S,  production - Toilet
-#define DEVICE_ID  104          // "esp32104" - S,  production - Milena
+// #define DEVICE_ID  100          // "esp32100" - S2, production - Papa, new
+// #define DEVICE_ID  101          // "esp32101" - S2,  production - Dining, new
+// #define DEVICE_ID  102          // "esp32102" - S,  production - Toilet, new
+// #define DEVICE_ID  104          // "esp32104" - S,  production - Milena
 // #define DEVICE_ID  105          // "esp32105" - S2, production - Garden
 
-// #define DEVICE_ID  86           // "esp32086" - S2, test - Lilygo1
-// #define DEVICE_ID  89           // "esp32089" - S2, test - Lilygo3
-// #define DEVICE_ID  91           // "esp32091" - S,  testS
+// #define DEVICE_ID  86           // "esp32086" - S2, new device template
 // #define DEVICE_ID  92           // "esp32092" - S3, test - Ai-Thinker
+// #define DEVICE_ID  93           // "esp32093" - S,  ex S
 
 
 // **** format FS on first deployment only, then change to 0 or comment out ****
 #define FORMAT_FS   0
 
 // version < 10 chars, description in changelog.txt
-#define VERSION "1.16.0"
+#define VERSION "1.16.1"
 
 // configure device in this file, choose which one you are compiling for on top of this script: #define DEVICE_ID x
 #include "devices_config.h"
@@ -44,7 +43,7 @@ sender.ino
 #define MINIMUM_VOLTS       3.3   // this might go to every device section
 #define WAIT_FOR_WIFI       5     // in seconds, for upgrade firmware
 #ifndef PERIODIC_FW_CHECK_HRS     // if not found custom PERIODIC_FW_CHECK_HRS in devices_config.h (per device custom)
-  #define PERIODIC_FW_CHECK_HRS   168
+  #define PERIODIC_FW_CHECK_HRS  14400 //168 = 7 days, 14400 = 30 days for SLEEP_TIME = 180s (3 minutes)
 #endif
 // ******************************  some consistency checks *************************
 #if ((USE_TSL2561 == 1) and (USE_TEPT4400 == 1))

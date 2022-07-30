@@ -1,3 +1,7 @@
+2022-07-30:
+  1.16.1  - new devices: 100. 101, 102, 104
+          - PERIODIC_FW_CHECK_HRS  14400 -> 30 days between updates
+
 2022-07-26:
   1.16.0  - change of the data structure
           - lux_with_tept(long int* lux_int); - not char
