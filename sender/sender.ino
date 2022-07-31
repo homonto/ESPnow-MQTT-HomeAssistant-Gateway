@@ -20,7 +20,7 @@ sender.ino
 // #define DEVICE_ID  100          // "esp32100" - S2, production - Papa, new
 // #define DEVICE_ID  101          // "esp32101" - S2,  production - Dining, new
 // #define DEVICE_ID  102          // "esp32102" - S,  production - Toilet, new
-// #define DEVICE_ID  104          // "esp32104" - S,  production - Milena
+// #define DEVICE_ID  104          // "esp32104" - S,  production - Milena, new
 // #define DEVICE_ID  105          // "esp32105" - S2, production - Garden
 
 // #define DEVICE_ID  86           // "esp32086" - S2, new device template
@@ -32,7 +32,7 @@ sender.ino
 #define FORMAT_FS   0
 
 // version < 10 chars, description in changelog.txt
-#define VERSION "1.16.1"
+#define VERSION "1.16.2"
 
 // configure device in this file, choose which one you are compiling for on top of this script: #define DEVICE_ID x
 #include "devices_config.h"
@@ -40,10 +40,13 @@ sender.ino
 // ****************  ALL BELOW ALL IS COMMON FOR ANY ESP32 *********************
 #define HIBERNATE           1     // 1=hibernate, 0=deep sleep
 #define WIFI_CHANNEL        8     // in my house
-#define MINIMUM_VOLTS       3.3   // this might go to every device section
+
 #define WAIT_FOR_WIFI       5     // in seconds, for upgrade firmware
 #ifndef PERIODIC_FW_CHECK_HRS     // if not found custom PERIODIC_FW_CHECK_HRS in devices_config.h (per device custom)
   #define PERIODIC_FW_CHECK_HRS  14400 //168 = 7 days, 14400 = 30 days for SLEEP_TIME = 180s (3 minutes)
+#endif
+#ifndef MINIMUM_VOLTS
+  #define MINIMUM_VOLTS     3.3   // if not found in device specific config
 #endif
 // ******************************  some consistency checks *************************
 #if ((USE_TSL2561 == 1) and (USE_TEPT4400 == 1))
@@ -709,23 +712,27 @@ void setup_wifi()
   wifi_start_time = millis();
   WiFi.begin(BT_SSID, BT_PASSWORD,WIFI_CHANNEL);
 
-  // convert MAC address to char array
-  uint8_t MAC_array[6];
-  char MAC_char[18];
-  WiFi.macAddress(MAC_array);
-  for (int i = 0; i < sizeof(MAC_array); ++i)
-  {
-    if (i<sizeof(MAC_array)-1)
-    {
-      sprintf(MAC_char,"%s%02x:",MAC_char,MAC_array[i]);
-    } else
-    {
-      sprintf(MAC_char,"%s%02x",MAC_char,MAC_array[i]);
-    }
-  }
-  // convert MAC address to char array END
+  // // convert MAC address to char array
+  // uint8_t MAC_array[6];
+  // char MAC_char[18];
+  // WiFi.macAddress(MAC_array);
+  // for (int i = 0; i < sizeof(MAC_array); ++i)
+  // {
+  //   if (i<sizeof(MAC_array)-1)
+  //   {
+  //     sprintf(MAC_char,"%s%02x:",MAC_char,MAC_array[i]);
+  //   } else
+  //   {
+  //     sprintf(MAC_char,"%s%02x",MAC_char,MAC_array[i]);
+  //   }
+  // }
+  // // convert MAC address to char array END
 
-  Serial.printf("\n[%s]: ESP Mac Address: %s\n",__func__,MAC_char);
+  uint8_t MAC_array[6];
+  WiFi.macAddress(MAC_array);
+  Serial.printf("[%s]: my MAC address:%02X:%02X:%02X:%02X:%02X:%02X\n",__func__,MAC_array[0],MAC_array[1],MAC_array[2],MAC_array[3],MAC_array[4],MAC_array[5]);
+
+  // Serial.printf("\n[%s]: ESP Mac Address: %s\n",__func__,MAC_char);
   Serial.printf("[%s]: Connecting to %s ...\n",__func__,BT_SSID);
 
   while (WiFi.status() != WL_CONNECTED)
@@ -738,6 +745,12 @@ void setup_wifi()
     }
   }
   Serial.printf("[%s]: connected after %dms\n",__func__,ttc);
+
+  // print IP address from router
+  IPAddress ip = WiFi.localIP();
+  char buf[17];
+  sprintf(buf, "%u.%u.%u.%u", ip[0], ip[1], ip[2], ip[3]);
+  Serial.printf("[%s]: my IP address: %s\n",__func__,buf);
 }
 
 
@@ -927,6 +940,14 @@ void setup()
   Serial.begin(115200);
   Serial.printf("\n======= S T A R T =======\n");
   Serial.printf("[%s]: Device: %s (%s)\n",__func__,DEVICE_NAME,HOSTNAME);
+
+  #ifdef DEBUG
+    // print MAC to enable it on router
+    uint8_t MAC_array[6];
+    WiFi.macAddress(MAC_array);
+    Serial.printf("[%s]: my MAC address:%02X:%02X:%02X:%02X:%02X:%02X\n",__func__,MAC_array[0],MAC_array[1],MAC_array[2],MAC_array[3],MAC_array[4],MAC_array[5]);
+  #endif
+
   esp_sleep_enable_timer_wakeup(SLEEP_TIME * uS_TO_S_FACTOR);
 
   boot_reason = esp_reset_reason();

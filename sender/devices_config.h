@@ -7,6 +7,7 @@ device configuration template:
 #define HOSTNAME              "esp32028"   // obligatory, max 9 characters
 #define DEVICE_NAME           "Garage"     // obligatory, max 15 characters
 #define BOARD_TYPE            1     // obligatory, 1=ESP32/WROOM,WROVER 2=ESP32S2 3=ESP32S3 4=ESP32C3
+#define MINIMUM_VOLTS         3.3   // minimum voltage to start wifi, if not defined in device config then it is done in sender.ino
 #define ENABLE_3V_GPIO        21    // if not equipped comment out - power for sensors from Vcc
 #define ACT_BLUE_LED_GPIO     25    // if not equipped comment out - it blinks when sensor is ON/ if not defined ERROR_RED_LED_GPIO then it blinks when upgrade firmware is ongoing or on error
 #define ERROR_RED_LED_GPIO    26    // if not equipped comment out - blinks when upgrade firmware is ongoing and or error
@@ -23,7 +24,7 @@ device configuration template:
 #define SDA_GPIO              18    // relevant only if USE_CUSTOM_I2C_GPIO=1
 #define SCL_GPIO              19    // relevant only if USE_CUSTOM_I2C_GPIO=1
 #define GND_GPIO_FOR_LED      13    // if not equipped comment out - GND for ACT_BLUE_LED_GPIO
-#define PERIODIC_FW_CHECK_HRS 24    // check FW update every hours
+#define PERIODIC_FW_CHECK_HRS 24    // check FW update every hours, if not defined in device config then it is done in sender.ino
 
 test devices: esp32080 - 099
 */
@@ -125,6 +126,31 @@ test devices: esp32080 - 099
   // #define PERIODIC_FW_CHECK_HRS
   #pragma message "compilation for: esp32102-Toilet up-NEW device"
 
+
+// *************** "esp32104" - S2, production - Milena new ************************
+#elif DEVICE_ID == 104
+  #define HOSTNAME              "esp32104"
+  #define DEVICE_NAME           "Milena"
+  #define BOARD_TYPE            2
+  #define ENABLE_3V_GPIO        3
+  #define ACT_BLUE_LED_GPIO     6
+  #define ERROR_RED_LED_GPIO    5
+  #define CHARGING_GPIO         39
+  #define POWER_GPIO            38
+  #define SLEEP_TIME            180
+  #define USE_MAX17048          1
+  #define USE_SHT31             1
+  #define USE_TSL2561           1
+  #define USE_TEPT4400          0
+  #define LUX_ADC_GPIO          13
+  #define LUX_MAX_RAW_READING   2900
+  // #define USE_CUSTOM_I2C_GPIO   0
+  // #define SDA_GPIO              18
+  // #define SCL_GPIO              19
+  // #define GND_GPIO_FOR_LED      13
+  // #define PERIODIC_FW_CHECK_HRS
+  #pragma message "compilation for: esp32102-Milena-NEW device"
+
 // *************** "esp32105" - S2, production - Garden ************************
 #elif DEVICE_ID == 105
   #define HOSTNAME              "esp32105"
@@ -151,11 +177,12 @@ test devices: esp32080 - 099
 
 // =======================================================================================================
 
-// *************** "esp32086" - S2, new template -  ****************************
+// *************** "esp32086" - S2, new_device template -  ****************************
 #elif DEVICE_ID == 86
   #define HOSTNAME              "esp32086"
   #define DEVICE_NAME           "new_dev"
   #define BOARD_TYPE            2
+  #define MINIMUM_VOLTS         3.3
   #define ENABLE_3V_GPIO        3
   #define ACT_BLUE_LED_GPIO     6
   #define ERROR_RED_LED_GPIO    5
@@ -173,7 +200,7 @@ test devices: esp32080 - 099
   // #define SCL_GPIO              19
   // #define GND_GPIO_FOR_LED      13
   // #define PERIODIC_FW_CHECK_HRS
-  #pragma message "compilation for: esp32086-new_device template"
+  #pragma message "compilation for: esp32086-new_device S2 template"
 //
 
 // *************** "esp32092" - S3,  test - S3 ***********************************
@@ -225,6 +252,30 @@ test devices: esp32080 - 099
   // #define PERIODIC_FW_CHECK_HRS
   #pragma message "compilation for: esp32093-S-old "
 
+
+// *************** "esp32094" - S2, old  ************************ - based on garden S2 105
+#elif DEVICE_ID == 94
+  #define HOSTNAME              "esp32094"
+  #define DEVICE_NAME           "testS2"
+  #define BOARD_TYPE            2
+  #define ENABLE_3V_GPIO        3
+  #define ACT_BLUE_LED_GPIO     6
+  #define ERROR_RED_LED_GPIO    5
+  #define CHARGING_GPIO         38
+  #define POWER_GPIO            39
+  #define SLEEP_TIME            180
+  #define USE_MAX17048          1
+  #define USE_SHT31             1
+  #define USE_TSL2561           1
+  #define USE_TEPT4400          0
+  #define LUX_ADC_GPIO          36
+  #define LUX_MAX_RAW_READING   2900
+  #define USE_CUSTOM_I2C_GPIO   0
+  #define SDA_GPIO              18
+  #define SCL_GPIO              19
+  // #define GND_GPIO_FOR_LED      13
+  // #define PERIODIC_FW_CHECK_HRS
+  #pragma message "compilation for: esp32094-S2-old "
 // ---------------------------------------------------------------------------------------------------
 
 #else
